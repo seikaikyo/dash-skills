@@ -12,3 +12,10 @@
 
 # Backup files
 *.backup.*
+
+# Auth state files (private)
+*-auth.json
+*.auth.json
+
+# Sync state files
+.last-*-hash
