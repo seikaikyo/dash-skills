@@ -19,3 +19,4 @@
 
 # Sync state files
 .last-*-hash
+.last-update
