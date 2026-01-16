@@ -6,9 +6,11 @@
 
 ## 概述
 
-這個 repo 集中管理我為 Claude Code 建立的自定義 Skills。Skills 是 Claude Code 的擴充功能，可以讓 AI 助手在特定技術領域提供更精準的指導。
+這個 repo 集中管理 Claude Code 的 Skills。包含自建的技術棧規範，以及收錄的優質外部 Skills。
 
 ## 包含的 Skills
+
+### 自建 Skills (`skills/`)
 
 | Skill | 描述 | 適用場景 |
 |-------|------|---------|
@@ -16,12 +18,19 @@
 | **vue-daisyui** | Vue 3 CDN + DaisyUI 快速原型開發 | POC、Demo、內部工具 |
 | **fastapi-patterns** | FastAPI + SQLModel + Neon 後端開發 | Render 部署的 API 服務 |
 
+### 外部收錄 (`external/`)
+
+| Skill | 來源 | 描述 |
+|-------|------|------|
+| **react-best-practices** | [Vercel Labs](https://github.com/vercel-labs/agent-skills) | React/Next.js 效能優化指南 (40+ 規則) |
+| **agent-browser** | [Vercel Labs](https://github.com/vercel-labs/agent-browser) | 瀏覽器自動化 (200+ 操作指令) |
+
 ## 安裝方式
 
 ### 方法一：使用安裝腳本（推薦）
 
 ```bash
-git clone https://github.com/anthropics/dash-skills.git
+git clone https://github.com/seikaikyo/dash-skills.git
 cd dash-skills
 ./scripts/install.sh
 ```
@@ -31,6 +40,7 @@ cd dash-skills
 ```bash
 # 複製到 Claude Code skills 目錄
 cp -r skills/* ~/.claude/skills/
+cp -r external/* ~/.claude/skills/
 ```
 
 ### 方法三：Symlink（開發用）
@@ -45,12 +55,15 @@ cp -r skills/* ~/.claude/skills/
 安裝後，在 Claude Code 中可以透過指令觸發：
 
 ```
+# 自建 Skills
 /angular-primeng  - 載入 Angular + PrimeNG 開發規範
 /vue-daisyui      - 載入 Vue + DaisyUI 快速原型規範
 /fastapi-patterns - 載入 FastAPI 後端開發規範
-```
 
-或者 Claude Code 會根據你的專案類型自動建議適合的 Skill。
+# 外部 Skills
+/react-best-practices - 載入 React/Next.js 效能優化指南
+/agent-browser        - 載入瀏覽器自動化工具
+```
 
 ## 目錄結構
 
@@ -62,14 +75,28 @@ dash-skills/
 ├── scripts/
 │   ├── install.sh         # 安裝腳本
 │   ├── link.sh            # Symlink 腳本
-│   └── sync.sh            # 同步腳本
-└── skills/
-    ├── angular-primeng/
-    │   └── SKILL.md
-    ├── vue-daisyui/
-    │   └── SKILL.md
-    └── fastapi-patterns/
-        └── SKILL.md
+│   ├── sync.sh            # 同步腳本（自建）
+│   └── update-external.sh # 同步腳本（外部）
+├── skills/                # 自建 Skills
+│   ├── angular-primeng/
+│   ├── vue-daisyui/
+│   └── fastapi-patterns/
+└── external/              # 外部收錄 Skills
+    ├── react-best-practices/
+    └── agent-browser/
+```
+
+## 同步外部 Skills
+
+外部 Skills 可以從官方來源更新：
+
+```bash
+# 更新全部外部 skills
+./scripts/update-external.sh
+
+# 更新指定的 skill
+./scripts/update-external.sh react-best-practices
+./scripts/update-external.sh agent-browser
 ```
 
 ## Skill 規格
@@ -80,37 +107,30 @@ dash-skills/
 ---
 name: skill-name
 description: Skill 的簡短描述
-source: custom
+source: custom | URL
 updated: YYYY-MM-DD
 ---
 
 # Skill 標題
-
-## 適用場景
-...
-
-## 核心原則
 ...
 ```
 
 ## 新增 Skill
 
+### 新增自建 Skill
+
 1. 在 `skills/` 下建立新目錄
 2. 建立 `SKILL.md` 檔案
 3. 執行 `./scripts/sync.sh` 同步到 `~/.claude/skills/`
 
-## 同步更新
+### 收錄外部 Skill
 
-當你更新了 repo 中的 skill 後：
-
-```bash
-git pull
-./scripts/sync.sh
-```
+1. 在 `external/` 下建立新目錄
+2. 複製 Skill 檔案
+3. 在 `scripts/update-external.sh` 新增同步函數
+4. 執行安裝腳本
 
 ## 技術棧總覽
-
-這些 Skills 是根據我的技術棧需求設計的：
 
 | 層級 | 技術選擇 |
 |------|---------|
@@ -123,8 +143,13 @@ git pull
 
 ## 授權
 
-MIT License
+- 自建 Skills：MIT License
+- 外部 Skills：依各來源授權
 
 ## 作者
 
 Dash
+
+## 致謝
+
+- [Vercel Labs](https://github.com/vercel-labs) - react-best-practices, agent-browser
