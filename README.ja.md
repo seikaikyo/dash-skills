@@ -20,10 +20,24 @@
 
 ### 外部スキル (`external/`)
 
-| スキル | ソース | 説明 |
-|--------|--------|------|
-| **react-best-practices** | [Vercel Labs](https://github.com/vercel-labs/agent-skills) | React/Next.js パフォーマンスガイド (40+ ルール) |
-| **agent-browser** | [Vercel Labs](https://github.com/vercel-labs/agent-browser) | ブラウザ自動化 (200+ コマンド) |
+#### Vercel Labs
+
+| スキル | 説明 | ルール数 |
+|--------|------|----------|
+| **react-best-practices** | React/Next.js パフォーマンスガイド | 40+ |
+| **agent-browser** | ブラウザ自動化 CLI | 200+ コマンド |
+| **web-design-guidelines** | UI レビュールール (a11y, UX, パフォーマンス) | 80+ |
+
+#### Neon Database (`neon-skills/`)
+
+| スキル | 説明 |
+|--------|------|
+| **neon-drizzle** | Drizzle ORM 統合 |
+| **neon-serverless** | サーバーレス接続設定 |
+| **neon-toolkit** | 一時 DB 管理 (テスト/CI) |
+| **neon-auth** | 認証統合 |
+| **neon-js** | JS SDK 設定 |
+| **add-neon-docs** | ドキュメントインストール |
 
 ## インストール方法
 
@@ -38,7 +52,6 @@ cd dash-skills
 ### 方法2：手動コピー
 
 ```bash
-# Claude Code スキルディレクトリにコピー
 cp -r skills/* ~/.claude/skills/
 cp -r external/* ~/.claude/skills/
 ```
@@ -46,89 +59,69 @@ cp -r external/* ~/.claude/skills/
 ### 方法3：シンボリックリンク（開発用）
 
 ```bash
-# 同期しやすいようにシンボリックリンクを作成
 ./scripts/link.sh
 ```
 
 ## 使い方
 
-インストール後、Claude Code でコマンドを使ってスキルを呼び出せます：
+インストール後、Claude Code でスキルを呼び出せます：
 
-```
+```bash
 # 自作スキル
-/angular-primeng  - Angular + PrimeNG ガイドラインを読み込む
-/vue-daisyui      - Vue + DaisyUI プロトタイピングガイドラインを読み込む
-/fastapi-patterns - FastAPI バックエンドガイドラインを読み込む
+/angular-primeng       # Angular + PrimeNG ガイドライン
+/vue-daisyui           # Vue + DaisyUI プロトタイピング
+/fastapi-patterns      # FastAPI バックエンドガイドライン
 
-# 外部スキル
-/react-best-practices - React/Next.js パフォーマンスガイドを読み込む
-/agent-browser        - ブラウザ自動化ツールを読み込む
+# Vercel Labs
+/react-best-practices  # React/Next.js パフォーマンス
+/agent-browser         # ブラウザ自動化
+/web-design-guidelines # UI レビュー
+
+# Neon Database
+/neon-drizzle          # Drizzle ORM 設定
+/neon-serverless       # サーバーレス接続
+/neon-auth             # 認証統合
 ```
 
 ## ディレクトリ構造
 
 ```
 dash-skills/
-├── README.md              # ドキュメント（繁体字中国語）
-├── README.en.md           # ドキュメント（英語）
-├── README.ja.md           # ドキュメント（日本語）
-├── scripts/
-│   ├── install.sh         # インストールスクリプト
-│   ├── link.sh            # シンボリックリンクスクリプト
-│   ├── sync.sh            # 同期スクリプト（自作）
-│   └── update-external.sh # 同期スクリプト（外部）
-├── skills/                # 自作スキル
+├── skills/                      # 自作スキル (3)
 │   ├── angular-primeng/
 │   ├── vue-daisyui/
 │   └── fastapi-patterns/
-└── external/              # 外部スキル
-    ├── react-best-practices/
-    └── agent-browser/
+├── external/                    # 外部スキル (4 ソース, 9 スキル)
+│   ├── react-best-practices/    # Vercel Labs
+│   ├── agent-browser/           # Vercel Labs
+│   ├── web-design-guidelines/   # Vercel Labs
+│   └── neon-skills/             # Neon Database (6 スキル)
+│       ├── neon-drizzle/
+│       ├── neon-serverless/
+│       ├── neon-toolkit/
+│       ├── neon-auth/
+│       ├── neon-js/
+│       └── add-neon-docs/
+└── scripts/
+    ├── install.sh
+    ├── link.sh
+    ├── sync.sh
+    └── update-external.sh
 ```
 
 ## 外部スキルの同期
 
-外部スキルは公式ソースから更新できます：
-
 ```bash
-# すべての外部スキルを更新
+# すべて更新
 ./scripts/update-external.sh
+
+# 利用可能なスキルを表示
+./scripts/update-external.sh --list
 
 # 特定のスキルを更新
 ./scripts/update-external.sh react-best-practices
-./scripts/update-external.sh agent-browser
+./scripts/update-external.sh neon-skills
 ```
-
-## スキルフォーマット
-
-各スキルには `SKILL.md` ファイルが含まれています：
-
-```yaml
----
-name: skill-name
-description: 簡単な説明
-source: custom | URL
-updated: YYYY-MM-DD
----
-
-# スキルタイトル
-...
-```
-
-## スキルの追加
-
-### 自作スキルの追加
-
-1. `skills/` 配下に新しいディレクトリを作成
-2. `SKILL.md` ファイルを作成
-3. `./scripts/sync.sh` を実行して `~/.claude/skills/` に同期
-
-### 外部スキルの追加
-
-1. `external/` 配下に新しいディレクトリを作成
-2. スキルファイルをコピー
-3. `scripts/update-external.sh` に同期関数を追加
-4. インストールスクリプトを実行
 
 ## 技術スタック
 
@@ -152,4 +145,5 @@ Dash
 
 ## 謝辞
 
-- [Vercel Labs](https://github.com/vercel-labs) - react-best-practices, agent-browser
+- [Vercel Labs](https://github.com/vercel-labs) - react-best-practices, agent-browser, web-design-guidelines
+- [Neon Database](https://github.com/neondatabase) - neon-skills

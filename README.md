@@ -20,10 +20,24 @@
 
 ### 外部收錄 (`external/`)
 
-| Skill | 來源 | 描述 |
-|-------|------|------|
-| **react-best-practices** | [Vercel Labs](https://github.com/vercel-labs/agent-skills) | React/Next.js 效能優化指南 (40+ 規則) |
-| **agent-browser** | [Vercel Labs](https://github.com/vercel-labs/agent-browser) | 瀏覽器自動化 (200+ 操作指令) |
+#### Vercel Labs
+
+| Skill | 描述 | 規則數 |
+|-------|------|--------|
+| **react-best-practices** | React/Next.js 效能優化指南 | 40+ |
+| **agent-browser** | 瀏覽器自動化工具 | 200+ 指令 |
+| **web-design-guidelines** | UI 審查規則 (a11y, UX, 效能) | 80+ |
+
+#### Neon Database (`neon-skills/`)
+
+| Skill | 描述 |
+|-------|------|
+| **neon-drizzle** | Drizzle ORM 整合設定 |
+| **neon-serverless** | 無伺服器連線設定 |
+| **neon-toolkit** | 暫時 DB 管理 (測試/CI) |
+| **neon-auth** | 驗證整合 |
+| **neon-js** | JS SDK 設定 |
+| **add-neon-docs** | 文檔安裝 |
 
 ## 安裝方式
 
@@ -46,7 +60,6 @@ cp -r external/* ~/.claude/skills/
 ### 方法三：Symlink（開發用）
 
 ```bash
-# 建立符號連結，方便同步更新
 ./scripts/link.sh
 ```
 
@@ -54,81 +67,62 @@ cp -r external/* ~/.claude/skills/
 
 安裝後，在 Claude Code 中可以透過指令觸發：
 
-```
+```bash
 # 自建 Skills
-/angular-primeng  - 載入 Angular + PrimeNG 開發規範
-/vue-daisyui      - 載入 Vue + DaisyUI 快速原型規範
-/fastapi-patterns - 載入 FastAPI 後端開發規範
+/angular-primeng       # Angular + PrimeNG 開發規範
+/vue-daisyui           # Vue + DaisyUI 快速原型規範
+/fastapi-patterns      # FastAPI 後端開發規範
 
-# 外部 Skills
-/react-best-practices - 載入 React/Next.js 效能優化指南
-/agent-browser        - 載入瀏覽器自動化工具
+# Vercel Labs
+/react-best-practices  # React/Next.js 效能優化
+/agent-browser         # 瀏覽器自動化
+/web-design-guidelines # UI 審查
+
+# Neon Database
+/neon-drizzle          # Drizzle ORM 設定
+/neon-serverless       # 無伺服器連線
+/neon-auth             # 驗證整合
 ```
 
 ## 目錄結構
 
 ```
 dash-skills/
-├── README.md              # 說明文件（正體中文）
-├── README.en.md           # 說明文件（英文）
-├── README.ja.md           # 說明文件（日文）
-├── scripts/
-│   ├── install.sh         # 安裝腳本
-│   ├── link.sh            # Symlink 腳本
-│   ├── sync.sh            # 同步腳本（自建）
-│   └── update-external.sh # 同步腳本（外部）
-├── skills/                # 自建 Skills
+├── skills/                      # 自建 Skills (3)
 │   ├── angular-primeng/
 │   ├── vue-daisyui/
 │   └── fastapi-patterns/
-└── external/              # 外部收錄 Skills
-    ├── react-best-practices/
-    └── agent-browser/
+├── external/                    # 外部收錄 (4 來源, 9 skills)
+│   ├── react-best-practices/    # Vercel Labs
+│   ├── agent-browser/           # Vercel Labs
+│   ├── web-design-guidelines/   # Vercel Labs
+│   └── neon-skills/             # Neon Database (6 skills)
+│       ├── neon-drizzle/
+│       ├── neon-serverless/
+│       ├── neon-toolkit/
+│       ├── neon-auth/
+│       ├── neon-js/
+│       └── add-neon-docs/
+└── scripts/
+    ├── install.sh               # 安裝全部
+    ├── link.sh                  # Symlink
+    ├── sync.sh                  # 同步自建
+    └── update-external.sh       # 同步外部
 ```
 
 ## 同步外部 Skills
 
-外部 Skills 可以從官方來源更新：
-
 ```bash
-# 更新全部外部 skills
+# 更新全部
 ./scripts/update-external.sh
 
-# 更新指定的 skill
+# 列出可用的
+./scripts/update-external.sh --list
+
+# 更新指定的
 ./scripts/update-external.sh react-best-practices
-./scripts/update-external.sh agent-browser
+./scripts/update-external.sh neon-skills
 ```
-
-## Skill 規格
-
-每個 Skill 包含一個 `SKILL.md` 檔案，格式如下：
-
-```yaml
----
-name: skill-name
-description: Skill 的簡短描述
-source: custom | URL
-updated: YYYY-MM-DD
----
-
-# Skill 標題
-...
-```
-
-## 新增 Skill
-
-### 新增自建 Skill
-
-1. 在 `skills/` 下建立新目錄
-2. 建立 `SKILL.md` 檔案
-3. 執行 `./scripts/sync.sh` 同步到 `~/.claude/skills/`
-
-### 收錄外部 Skill
-
-1. 在 `external/` 下建立新目錄
-2. 複製 Skill 檔案
-3. 在 `scripts/update-external.sh` 新增同步函數
-4. 執行安裝腳本
 
 ## 技術棧總覽
 
@@ -152,4 +146,5 @@ Dash
 
 ## 致謝
 
-- [Vercel Labs](https://github.com/vercel-labs) - react-best-practices, agent-browser
+- [Vercel Labs](https://github.com/vercel-labs) - react-best-practices, agent-browser, web-design-guidelines
+- [Neon Database](https://github.com/neondatabase) - neon-skills
