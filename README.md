@@ -17,6 +17,7 @@
 | **angular-primeng** | Angular 21 + PrimeNG 企業應用開發規範 | MES、ERP、後台管理系統 |
 | **vue-daisyui** | Vue 3 CDN + DaisyUI 快速原型開發 | POC、Demo、內部工具 |
 | **fastapi-patterns** | FastAPI + SQLModel + Neon 後端開發 | Render 部署的 API 服務 |
+| **openspec** | OpenSpec 規格驅動開發 (SDD) 工作流程 | 功能規劃、變更管理 |
 
 ### 外部收錄 (`external/`)
 
@@ -72,6 +73,7 @@ cp -r external/* ~/.claude/skills/
 /angular-primeng       # Angular + PrimeNG 開發規範
 /vue-daisyui           # Vue + DaisyUI 快速原型規範
 /fastapi-patterns      # FastAPI 後端開發規範
+/openspec              # OpenSpec 規格驅動開發
 
 # Vercel Labs
 /react-best-practices  # React/Next.js 效能優化
@@ -88,10 +90,11 @@ cp -r external/* ~/.claude/skills/
 
 ```
 dash-skills/
-├── skills/                      # 自建 Skills (3)
+├── skills/                      # 自建 Skills (4)
 │   ├── angular-primeng/
 │   ├── vue-daisyui/
-│   └── fastapi-patterns/
+│   ├── fastapi-patterns/
+│   └── openspec/
 ├── external/                    # 外部收錄 (4 來源, 9 skills)
 │   ├── react-best-practices/    # Vercel Labs
 │   ├── agent-browser/           # Vercel Labs
