@@ -28,6 +28,13 @@
 | **agent-browser** | 瀏覽器自動化工具 | 200+ 指令 |
 | **web-design-guidelines** | UI 審查規則 (a11y, UX, 效能) | 80+ |
 
+#### UI/UX 設計
+
+| Skill | 描述 | 來源 |
+|-------|------|------|
+| **ux-designer** | 專業 UI/UX 設計指導 (WCAG、響應式、動效) | bencium |
+| **ui-agents** | UI/UX 提示詞模板集 (7 大類別) | JakobStadler |
+
 #### Neon Database (`neon-skills/`)
 
 | Skill | 描述 |
@@ -78,6 +85,10 @@ cp -r external/* ~/.claude/skills/
 /agent-browser         # 瀏覽器自動化
 /web-design-guidelines # UI 審查
 
+# UI/UX 設計
+/ux-designer           # 專業 UI/UX 設計指導
+# ui-agents            # 提示詞模板集（參考用）
+
 # Neon Database
 /neon-drizzle          # Drizzle ORM 設定
 /neon-serverless       # 無伺服器連線
@@ -92,10 +103,12 @@ dash-skills/
 │   ├── angular-primeng/
 │   ├── fastapi-patterns/
 │   └── openspec/
-├── external/                    # 外部收錄 (4 來源, 9 skills)
+├── external/                    # 外部收錄 (5 來源, 11 skills)
 │   ├── react-best-practices/    # Vercel Labs
 │   ├── agent-browser/           # Vercel Labs
 │   ├── web-design-guidelines/   # Vercel Labs
+│   ├── ux-designer/             # bencium (UI/UX 設計)
+│   ├── ui-agents/               # JakobStadler (提示詞模板)
 │   └── neon-skills/             # Neon Database (6 skills)
 │       ├── neon-drizzle/
 │       ├── neon-serverless/
@@ -163,3 +176,5 @@ Dash
 
 - [Vercel Labs](https://github.com/vercel-labs) - react-best-practices, agent-browser, web-design-guidelines
 - [Neon Database](https://github.com/neondatabase) - neon-skills
+- [bencium](https://github.com/bencium) - ux-designer (design-skill)
+- [JakobStadler](https://github.com/JakobStadler) - ui-agents (claude-code-ui-agents)

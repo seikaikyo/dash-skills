@@ -140,6 +140,69 @@ update_neon_skills() {
     rm -rf "$temp_dir"
 }
 
+# 函數：更新 ux-designer
+update_ux_designer() {
+    local skill_dir="$EXTERNAL_DIR/ux-designer"
+    local temp_dir=$(mktemp -d)
+    local repo="bencium/design-skill"
+
+    echo "更新: ux-designer"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
+
+    if [ -f "repo/SKILL.md" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        # 複製主要檔案
+        cp repo/SKILL.md "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/ACCESSIBILITY.md "$skill_dir/" 2>/dev/null || true
+        cp repo/RESPONSIVE-DESIGN.md "$skill_dir/" 2>/dev/null || true
+        cp repo/MOTION-SPEC.md "$skill_dir/" 2>/dev/null || true
+        cp repo/DESIGN-SYSTEM-TEMPLATE.md "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 ui-agents
+update_ui_agents() {
+    local skill_dir="$EXTERNAL_DIR/ui-agents"
+    local temp_dir=$(mktemp -d)
+    local repo="JakobStadler/claude-code-ui-agents"
+
+    echo "更新: ui-agents"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
+
+    if [ -d "repo/prompts" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp -r repo/prompts "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/CONTRIBUTING.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        # 複製 .claude 目錄（如果存在）
+        [ -d "repo/.claude" ] && cp -r repo/.claude "$skill_dir/"
+        echo "  狀態: 已更新"
+        echo "  類別:"
+        ls -1 "$skill_dir/prompts" | while read c; do
+            echo "    - $c"
+        done
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
 # 顯示可用的 skills
 show_available() {
     echo "可用的外部 Skills:"
@@ -147,6 +210,8 @@ show_available() {
     echo "  - agent-browser         (Vercel Labs)"
     echo "  - web-design-guidelines (Vercel Labs)"
     echo "  - neon-skills           (Neon Database, 6 skills)"
+    echo "  - ux-designer           (bencium, UI/UX 設計指導)"
+    echo "  - ui-agents             (JakobStadler, 提示詞模板集)"
     echo ""
 }
 
@@ -160,6 +225,10 @@ if [ $# -eq 0 ]; then
     update_web_design_guidelines
     echo ""
     update_neon_skills
+    echo ""
+    update_ux_designer
+    echo ""
+    update_ui_agents
 elif [ "$1" = "--list" ] || [ "$1" = "-l" ]; then
     show_available
     exit 0
@@ -178,6 +247,12 @@ else
                 ;;
             "neon-skills"|"neon")
                 update_neon_skills
+                ;;
+            "ux-designer")
+                update_ux_designer
+                ;;
+            "ui-agents")
+                update_ui_agents
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
