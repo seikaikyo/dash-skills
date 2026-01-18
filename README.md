@@ -112,6 +112,21 @@ dash-skills/
 
 ## 同步外部 Skills
 
+### 自動同步（推薦）
+
+將以下內容加入 `~/.zshrc`，每天第一次開啟 terminal 時自動同步：
+
+```bash
+source ~/Documents/github/dash-skills/scripts/auto-update.sh
+```
+
+自動同步功能：
+- 每日自動從官方來源更新外部 skills
+- 偵測到變更時自動 commit 並 push 到 GitHub
+- 透過 `.last-update` 檔案確保每天只執行一次
+
+### 手動同步
+
 ```bash
 # 更新全部
 ./scripts/update-external.sh
