@@ -15,7 +15,6 @@
 | Skill | 描述 | 適用場景 |
 |-------|------|---------|
 | **angular-primeng** | Angular 21 + PrimeNG 企業應用開發規範 | MES、ERP、後台管理系統 |
-| **vue-daisyui** | Vue 3 CDN + DaisyUI 快速原型開發 | POC、Demo、內部工具 |
 | **fastapi-patterns** | FastAPI + SQLModel + Neon 後端開發 | Render 部署的 API 服務 |
 | **openspec** | OpenSpec 規格驅動開發 (SDD) 工作流程 | 功能規劃、變更管理 |
 
@@ -71,7 +70,6 @@ cp -r external/* ~/.claude/skills/
 ```bash
 # 自建 Skills
 /angular-primeng       # Angular + PrimeNG 開發規範
-/vue-daisyui           # Vue + DaisyUI 快速原型規範
 /fastapi-patterns      # FastAPI 後端開發規範
 /openspec              # OpenSpec 規格驅動開發
 
@@ -90,9 +88,8 @@ cp -r external/* ~/.claude/skills/
 
 ```
 dash-skills/
-├── skills/                      # 自建 Skills (4)
+├── skills/                      # 自建 Skills (3)
 │   ├── angular-primeng/
-│   ├── vue-daisyui/
 │   ├── fastapi-patterns/
 │   └── openspec/
 ├── external/                    # 外部收錄 (4 來源, 9 skills)
@@ -132,7 +129,7 @@ dash-skills/
 | 層級 | 技術選擇 |
 |------|---------|
 | 前端（企業） | Angular 21 + PrimeNG |
-| 前端（原型） | Vue 3 CDN + DaisyUI |
+| 前端（一般） | Vite + Vue 3 + Shoelace |
 | 後端 | FastAPI + SQLModel |
 | 資料庫 | Neon PostgreSQL |
 | 前端部署 | Vercel |

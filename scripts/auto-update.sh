@@ -10,12 +10,12 @@ TODAY=$(date +%Y-%m-%d)
 
 # 檢查今天是否已更新
 if [ -f "$LAST_UPDATE_FILE" ] && [ "$(cat "$LAST_UPDATE_FILE")" = "$TODAY" ]; then
-    exit 0
+    return 0 2>/dev/null || exit 0
 fi
 
 # 檢查目錄是否存在
 if [ ! -d "$SKILL_DIR" ]; then
-    exit 0
+    return 0 2>/dev/null || exit 0
 fi
 
 echo "[dash-skills] 每日同步外部 skills..."
