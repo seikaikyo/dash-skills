@@ -20,3 +20,7 @@
 # Sync state files
 .last-*-hash
 .last-update
+
+# Temporary clone directories (used by auto-update.sh)
+*-tmp/
+external/*-tmp/
