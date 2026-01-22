@@ -17,6 +17,9 @@
 | **angular-primeng** | Angular 21 + PrimeNG 企業應用開發規範 | MES、ERP、後台管理系統 |
 | **fastapi-patterns** | FastAPI + SQLModel + Neon 後端開發 | Render 部署的 API 服務 |
 | **openspec** | OpenSpec 規格驅動開發 (SDD) 工作流程 | 功能規劃、變更管理 |
+| **security-reviewer** | 安全漏洞檢測 (OWASP Top 10) | 認證、用戶輸入、API、敏感資料處理 |
+| **build-error-resolver** | 建構/TypeScript 錯誤快速修復 | 建構失敗、類型錯誤 |
+| **refactor-cleaner** | 死代碼檢測與清理 | 程式碼健康檢查、依賴清理 |
 
 ### 外部收錄 (`external/`)
 
@@ -80,6 +83,11 @@ cp -r external/* ~/.claude/skills/
 /fastapi-patterns      # FastAPI 後端開發規範
 /openspec              # OpenSpec 規格驅動開發
 
+# 程式碼品質 (everything-claude-code)
+/security-reviewer     # 安全漏洞檢測
+/build-error-resolver  # 建構錯誤修復
+/refactor-cleaner      # 死代碼清理
+
 # Vercel Labs
 /react-best-practices  # React/Next.js 效能優化
 /agent-browser         # 瀏覽器自動化
@@ -99,10 +107,13 @@ cp -r external/* ~/.claude/skills/
 
 ```
 dash-skills/
-├── skills/                      # 自建 Skills (3)
+├── skills/                      # 自建 Skills (6)
 │   ├── angular-primeng/
 │   ├── fastapi-patterns/
-│   └── openspec/
+│   ├── openspec/
+│   ├── security-reviewer/       # 安全審查 (everything-claude-code)
+│   ├── build-error-resolver/    # 建構錯誤修復 (everything-claude-code)
+│   └── refactor-cleaner/        # 重構清理 (everything-claude-code)
 ├── external/                    # 外部收錄 (5 來源, 11 skills)
 │   ├── react-best-practices/    # Vercel Labs
 │   ├── agent-browser/           # Vercel Labs
@@ -116,11 +127,19 @@ dash-skills/
 │       ├── neon-auth/
 │       ├── neon-js/
 │       └── add-neon-docs/
-└── scripts/
-    ├── install.sh               # 安裝全部
-    ├── link.sh                  # Symlink
-    ├── sync.sh                  # 同步自建
-    └── update-external.sh       # 同步外部
+├── scripts/
+│   ├── install.sh               # 安裝全部
+│   ├── link.sh                  # Symlink
+│   ├── sync.sh                  # 同步自建
+│   ├── update-external.sh       # 同步外部
+│   └── hooks/                   # Hook 腳本 (everything-claude-code)
+│       ├── hooks-template.json  # Hooks 設定範本
+│       ├── session-start.sh     # 載入先前工作階段
+│       ├── session-end.sh       # 保存工作階段狀態
+│       └── pre-compact.sh       # 壓縮前保存狀態
+└── openspec/                    # OpenSpec 規格文件
+    ├── specs/
+    └── changes/
 ```
 
 ## 同步外部 Skills
@@ -178,3 +197,4 @@ Dash
 - [Neon Database](https://github.com/neondatabase) - neon-skills
 - [bencium](https://github.com/bencium) - ux-designer (design-skill)
 - [JakobStadler](https://github.com/JakobStadler) - ui-agents (claude-code-ui-agents)
+- [affaan-m](https://github.com/affaan-m) - everything-claude-code (security-reviewer, build-error-resolver, refactor-cleaner, hooks)
