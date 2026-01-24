@@ -37,6 +37,9 @@
 |-------|------|------|
 | **ux-designer** | 專業 UI/UX 設計指導 (WCAG、響應式、動效) | bencium |
 | **ui-agents** | UI/UX 提示詞模板集 (7 大類別) | JakobStadler |
+| **interface-design** | 設計記憶系統，確保元件風格一致 | Dammyjay93 |
+| **ui-ux-pro-max** | 67 種 UI 風格、96 色彩方案、56 字型配對 | nextlevelbuilder |
+| **claude-designer** | Jobs + Rams 設計理念，三階段工作流 | joeseesun |
 
 #### Neon Database (`neon-skills/`)
 
@@ -95,6 +98,9 @@ cp -r external/* ~/.claude/skills/
 
 # UI/UX 設計
 /ux-designer           # 專業 UI/UX 設計指導
+/interface-design      # 設計記憶系統
+/ui-ux-pro-max         # 67 種 UI 風格 + 96 色彩方案
+/claude-designer       # Jobs + Rams 設計理念
 # ui-agents            # 提示詞模板集（參考用）
 
 # Neon Database
@@ -114,12 +120,15 @@ dash-skills/
 │   ├── security-reviewer/       # 安全審查 (everything-claude-code)
 │   ├── build-error-resolver/    # 建構錯誤修復 (everything-claude-code)
 │   └── refactor-cleaner/        # 重構清理 (everything-claude-code)
-├── external/                    # 外部收錄 (5 來源, 11 skills)
+├── external/                    # 外部收錄 (8 來源, 14 skills)
 │   ├── react-best-practices/    # Vercel Labs
 │   ├── agent-browser/           # Vercel Labs
 │   ├── web-design-guidelines/   # Vercel Labs
 │   ├── ux-designer/             # bencium (UI/UX 設計)
 │   ├── ui-agents/               # JakobStadler (提示詞模板)
+│   ├── interface-design/        # Dammyjay93 (設計記憶系統) [NEW]
+│   ├── ui-ux-pro-max/           # nextlevelbuilder (67 風格) [NEW]
+│   ├── claude-designer/         # joeseesun (Jobs 設計) [NEW]
 │   └── neon-skills/             # Neon Database (6 skills)
 │       ├── neon-drizzle/
 │       ├── neon-serverless/
@@ -198,3 +207,6 @@ Dash
 - [bencium](https://github.com/bencium) - ux-designer (design-skill)
 - [JakobStadler](https://github.com/JakobStadler) - ui-agents (claude-code-ui-agents)
 - [affaan-m](https://github.com/affaan-m) - everything-claude-code (security-reviewer, build-error-resolver, refactor-cleaner, hooks)
+- [Dammyjay93](https://github.com/Dammyjay93) - interface-design (設計記憶系統)
+- [nextlevelbuilder](https://github.com/nextlevelbuilder) - ui-ux-pro-max (67 種 UI 風格)
+- [joeseesun](https://github.com/joeseesun) - claude-designer (Jobs + Rams 設計理念)
