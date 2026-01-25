@@ -203,6 +203,64 @@ update_ui_agents() {
     rm -rf "$temp_dir"
 }
 
+# 函數：更新 humanizer-zh-tw
+update_humanizer_zh_tw() {
+    local skill_dir="$EXTERNAL_DIR/humanizer-zh-tw"
+    local temp_dir=$(mktemp -d)
+    local repo="kevintsai1202/Humanizer-zh-TW"
+
+    echo "更新: humanizer-zh-tw (強制)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
+
+    if [ -f "repo/SKILL.md" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/SKILL.md "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 neon-ai-rules (完整版)
+update_neon_ai_rules() {
+    local skill_dir="$EXTERNAL_DIR/neon-ai-rules"
+    local temp_dir=$(mktemp -d)
+    local repo="neondatabase/ai-rules"
+
+    echo "更新: neon-ai-rules (完整規則)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
+
+    if [ -f "repo/CLAUDE.md" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/CLAUDE.md "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        # 複製所有 .mdc 檔案
+        cp repo/*.mdc "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+        echo "  規則檔案:"
+        ls -1 "$skill_dir"/*.mdc 2>/dev/null | xargs -n1 basename | while read f; do
+            echo "    - $f"
+        done
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
 # 顯示可用的 skills
 show_available() {
     echo "可用的外部 Skills:"
@@ -210,8 +268,10 @@ show_available() {
     echo "  - agent-browser         (Vercel Labs)"
     echo "  - web-design-guidelines (Vercel Labs)"
     echo "  - neon-skills           (Neon Database, 6 skills)"
+    echo "  - neon-ai-rules         (Neon Database, 完整規則 + .mdc 文件)"
     echo "  - ux-designer           (bencium, UI/UX 設計指導)"
     echo "  - ui-agents             (JakobStadler, 提示詞模板集)"
+    echo "  - humanizer-zh-tw       (kevintsai1202, 去除 AI 痕跡) [強制]"
     echo ""
 }
 
@@ -226,9 +286,13 @@ if [ $# -eq 0 ]; then
     echo ""
     update_neon_skills
     echo ""
+    update_neon_ai_rules
+    echo ""
     update_ux_designer
     echo ""
     update_ui_agents
+    echo ""
+    update_humanizer_zh_tw
 elif [ "$1" = "--list" ] || [ "$1" = "-l" ]; then
     show_available
     exit 0
@@ -248,11 +312,17 @@ else
             "neon-skills"|"neon")
                 update_neon_skills
                 ;;
+            "neon-ai-rules")
+                update_neon_ai_rules
+                ;;
             "ux-designer")
                 update_ux_designer
                 ;;
             "ui-agents")
                 update_ui_agents
+                ;;
+            "humanizer-zh-tw"|"humanizer")
+                update_humanizer_zh_tw
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"

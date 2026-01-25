@@ -41,16 +41,18 @@
 | **ui-ux-pro-max** | 67 種 UI 風格、96 色彩方案、56 字型配對 | nextlevelbuilder |
 | **claude-designer** | Jobs + Rams 設計理念，三階段工作流 | joeseesun |
 
-#### Neon Database (`neon-skills/`)
+#### 寫作風格
+
+| Skill | 描述 | 來源 |
+|-------|------|------|
+| **humanizer-zh-tw** | 去除 AI 寫作痕跡 (強制) | kevintsai1202 |
+
+#### Neon Database
 
 | Skill | 描述 |
 |-------|------|
-| **neon-drizzle** | Drizzle ORM 整合設定 |
-| **neon-serverless** | 無伺服器連線設定 |
-| **neon-toolkit** | 暫時 DB 管理 (測試/CI) |
-| **neon-auth** | 驗證整合 |
-| **neon-js** | JS SDK 設定 |
-| **add-neon-docs** | 文檔安裝 |
+| **neon-ai-rules** | 完整 Neon 規則 + .mdc 文件 (CLAUDE.md) |
+| **neon-skills/** | 6 個獨立 skills (drizzle, serverless, toolkit, auth, js, docs) |
 
 ## 安裝方式
 
@@ -120,15 +122,17 @@ dash-skills/
 │   ├── security-reviewer/       # 安全審查 (everything-claude-code)
 │   ├── build-error-resolver/    # 建構錯誤修復 (everything-claude-code)
 │   └── refactor-cleaner/        # 重構清理 (everything-claude-code)
-├── external/                    # 外部收錄 (8 來源, 14 skills)
+├── external/                    # 外部收錄 (10 來源, 17 skills)
 │   ├── react-best-practices/    # Vercel Labs
 │   ├── agent-browser/           # Vercel Labs
 │   ├── web-design-guidelines/   # Vercel Labs
 │   ├── ux-designer/             # bencium (UI/UX 設計)
 │   ├── ui-agents/               # JakobStadler (提示詞模板)
-│   ├── interface-design/        # Dammyjay93 (設計記憶系統) [NEW]
-│   ├── ui-ux-pro-max/           # nextlevelbuilder (67 風格) [NEW]
-│   ├── claude-designer/         # joeseesun (Jobs 設計) [NEW]
+│   ├── interface-design/        # Dammyjay93 (設計記憶系統)
+│   ├── ui-ux-pro-max/           # nextlevelbuilder (67 風格)
+│   ├── claude-designer/         # joeseesun (Jobs 設計)
+│   ├── humanizer-zh-tw/         # kevintsai1202 (去除 AI 痕跡) [強制]
+│   ├── neon-ai-rules/           # Neon Database (完整規則 + .mdc)
 │   └── neon-skills/             # Neon Database (6 skills)
 │       ├── neon-drizzle/
 │       ├── neon-serverless/
@@ -210,3 +214,4 @@ Dash
 - [Dammyjay93](https://github.com/Dammyjay93) - interface-design (設計記憶系統)
 - [nextlevelbuilder](https://github.com/nextlevelbuilder) - ui-ux-pro-max (67 種 UI 風格)
 - [joeseesun](https://github.com/joeseesun) - claude-designer (Jobs + Rams 設計理念)
+- [kevintsai1202](https://github.com/kevintsai1202) - humanizer-zh-tw (去除 AI 寫作痕跡)
