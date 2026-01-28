@@ -62,7 +62,8 @@ async function runMigrations() {
 
     if (errorMessage.includes('connect') || errorMessage.includes('connection')) {
       console.log('\n⚠️  Connection issue detected:');
-      console.log('   • Verify DATABASE_URL format: postgresql://user:pass@host/db?sslmode=require');
+      // 使用 placeholder 避免掃描工具誤報
+      console.log('   • Verify DATABASE_URL format: postgresql://<user>:<password>@<host>/<database>?sslmode=require');
       console.log('   • Ensure database is accessible');
       console.log('   • Check firewall/network settings');
       console.log('   • See guides/troubleshooting.md section: "Connection Errors"');
