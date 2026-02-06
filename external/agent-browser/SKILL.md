@@ -36,6 +36,7 @@ agent-browser close                   # Close browser
 
 # Snapshot
 agent-browser snapshot -i             # Interactive elements with refs (recommended)
+agent-browser snapshot -i -C          # Include cursor-interactive elements (divs with onclick, cursor:pointer)
 agent-browser snapshot -s "#selector" # Scope to CSS selector
 
 # Interaction (use @refs from snapshot)
@@ -127,6 +128,15 @@ agent-browser session list
 agent-browser --headed open https://example.com
 agent-browser highlight @e1          # Highlight element
 agent-browser record start demo.webm # Record session
+```
+
+### Local Files (PDFs, HTML)
+
+```bash
+# Open local files with file:// URLs
+agent-browser --allow-file-access open file:///path/to/document.pdf
+agent-browser --allow-file-access open file:///path/to/page.html
+agent-browser screenshot output.png
 ```
 
 ### iOS Simulator (Mobile Safari)
