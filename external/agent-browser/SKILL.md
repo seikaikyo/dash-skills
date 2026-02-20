@@ -82,6 +82,14 @@ agent-browser screenshot              # Screenshot to temp dir
 agent-browser screenshot --full       # Full page screenshot
 agent-browser screenshot --annotate   # Annotated screenshot with numbered element labels
 agent-browser pdf output.pdf          # Save as PDF
+
+# Diff (compare page states)
+agent-browser diff snapshot                          # Compare current vs last snapshot
+agent-browser diff snapshot --baseline before.txt    # Compare current vs saved file
+agent-browser diff screenshot --baseline before.png  # Visual pixel diff
+agent-browser diff url <url1> <url2>                 # Compare two pages
+agent-browser diff url <url1> <url2> --wait-until networkidle  # Custom wait strategy
+agent-browser diff url <url1> <url2> --selector "#main"  # Scope to element
 ```
 
 ## Common Patterns
@@ -218,6 +226,31 @@ agent-browser -p ios close
 **Requirements:** macOS with Xcode, Appium (`npm install -g appium && appium driver install xcuitest`)
 
 **Real devices:** Works with physical iOS devices if pre-configured. Use `--device "<UDID>"` where UDID is from `xcrun xctrace list devices`.
+
+## Diffing (Verifying Changes)
+
+Use `diff snapshot` after performing an action to verify it had the intended effect. This compares the current accessibility tree against the last snapshot taken in the session.
+
+```bash
+# Typical workflow: snapshot -> action -> diff
+agent-browser snapshot -i          # Take baseline snapshot
+agent-browser click @e2            # Perform action
+agent-browser diff snapshot        # See what changed (auto-compares to last snapshot)
+```
+
+For visual regression testing or monitoring:
+
+```bash
+# Save a baseline screenshot, then compare later
+agent-browser screenshot baseline.png
+# ... time passes or changes are made ...
+agent-browser diff screenshot --baseline baseline.png
+
+# Compare staging vs production
+agent-browser diff url https://staging.example.com https://prod.example.com --screenshot
+```
+
+`diff snapshot` output uses `+` for additions and `-` for removals, similar to git diff. `diff screenshot` produces a diff image with changed pixels highlighted in red, plus a mismatch percentage.
 
 ## Timeouts and Slow Pages
 
