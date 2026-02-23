@@ -64,6 +64,8 @@ agent-browser type @e2 "text"         # Type without clearing
 agent-browser select @e1 "option"     # Select dropdown option
 agent-browser check @e1               # Check checkbox
 agent-browser press Enter             # Press key
+agent-browser keyboard type "text"    # Type at current focus (no selector)
+agent-browser keyboard inserttext "text"  # Insert without key events
 agent-browser scroll down 500         # Scroll page
 
 # Get information
@@ -182,6 +184,19 @@ agent-browser --auto-connect snapshot
 agent-browser --cdp 9222 snapshot
 ```
 
+### Color Scheme (Dark Mode)
+
+```bash
+# Persistent dark mode via flag (applies to all pages and new tabs)
+agent-browser --color-scheme dark open https://example.com
+
+# Or via environment variable
+AGENT_BROWSER_COLOR_SCHEME=dark agent-browser open https://example.com
+
+# Or set during session (persists for subsequent commands)
+agent-browser set media dark
+```
+
 ### Visual Browser (Debugging)
 
 ```bash
@@ -254,7 +269,7 @@ agent-browser diff url https://staging.example.com https://prod.example.com --sc
 
 ## Timeouts and Slow Pages
 
-The default Playwright timeout is 60 seconds for local browsers. For slow websites or large pages, use explicit waits instead of relying on the default timeout:
+The default Playwright timeout is 25 seconds for local browsers. This can be overridden with the `AGENT_BROWSER_DEFAULT_TIMEOUT` environment variable (value in milliseconds). For slow websites or large pages, use explicit waits instead of relying on the default timeout:
 
 ```bash
 # Wait for network activity to settle (best for slow pages)
