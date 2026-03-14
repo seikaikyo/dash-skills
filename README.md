@@ -46,6 +46,16 @@
 |-------|------|------|------|
 | **accessibility-agents** | 57 個 WCAG 2.2 AA 審查代理 | Community-Access | 活躍 (185 stars) |
 
+#### 資安 / 合規
+
+| Skill | 描述 | 來源 |
+|-------|------|------|
+| **security-audit** | ISO 27001:2022 對映，850+ 安全檢查項 | afiqiqmal |
+| **ot-security-mcp** | IEC 62443 / NIST 800-82 OT Security MCP Server | Ansvar-Systems |
+| **trailofbits-security** | 35 個安全 plugin（CodeQL/Semgrep/變體分析） | Trail of Bits |
+| **sentry-security-review** | 低誤報率安全程式碼審查 | Sentry |
+| **cisco-skill-scanner** | Skill 供應鏈安全掃描器 | Cisco AI Defense |
+
 #### 寫作風格
 
 | Skill | 描述 | 來源 |
@@ -149,9 +159,8 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 ## 更新紀錄
 
 ### 2026-03-14
-- 新增 frontend-design (Anthropic 官方)
-- 新增 accessibility-agents (57 個 WCAG 2.2 agents)
-- 新增 bencium-marketplace (UX audit + typography)
+- 新增 5 個資安 skills（security-audit, ot-security-mcp, trailofbits, sentry, cisco）
+- 新增 3 個 UI/UX skills（frontend-design, accessibility-agents, bencium-marketplace）
 - 移除已消失的 repo（ux-designer, ui-agents, claude-designer）
 - 修復 `update-external.sh` 的 `set -e` 中斷問題
 - 新增 agent-browser CLI npm 自動更新

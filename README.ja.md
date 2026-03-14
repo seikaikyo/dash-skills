@@ -1,47 +1,69 @@
 # Dash Skills
 
-**Claude Code カスタムスキル集**
+**Claude Code スキル集**
 
-[English](./README.en.md) | 日本語 | [正體中文](./README.md)
+[English](./README.en.md) | **日本語** | [正體中文](./README.md)
 
 ## 概要
 
-このリポジトリは Claude Code のスキルを一元管理しています。自作の技術スタックガイドラインと、厳選された外部スキルが含まれています。
+Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + 厳選された外部スキル、毎日自動同期。
 
-## 含まれるスキル
+## 収録スキル
 
-### 自作スキル (`skills/`)
+### 自作 (`skills/`)
 
 | スキル | 説明 | 用途 |
 |--------|------|------|
-| **angular-primeng** | Angular 21 + PrimeNG エンタープライズアプリガイドライン | MES、ERP、管理画面 |
-| **vue-daisyui** | Vue 3 CDN + DaisyUI 高速プロトタイピング | POC、デモ、社内ツール |
-| **fastapi-patterns** | FastAPI + SQLModel + Neon バックエンド開発 | Render 上の API サービス |
+| **angular-primeng** | Angular 21 + PrimeNG 企業アプリ規範 | MES、ERP、管理画面 |
+| **fastapi-patterns** | FastAPI + SQLModel + Neon バックエンド | Render デプロイの API |
+| **openspec** | 仕様駆動開発 (SDD) ワークフロー | 機能企画、変更管理 |
+| **security-reviewer** | OWASP Top 10 脆弱性検出 | 認証、ユーザー入力、API |
+| **build-error-resolver** | ビルド/TypeScript エラー修復 | ビルド失敗、型エラー |
+| **refactor-cleaner** | 不使用コード検出・削除 | コード品質、依存関係整理 |
 
-### 外部スキル (`external/`)
+### 外部収録 (`external/`)
 
 #### Vercel Labs
-
-| スキル | 説明 | ルール数 |
-|--------|------|----------|
-| **react-best-practices** | React/Next.js パフォーマンスガイド | 40+ |
-| **agent-browser** | ブラウザ自動化 CLI | 200+ コマンド |
-| **web-design-guidelines** | UI レビュールール (a11y, UX, パフォーマンス) | 80+ |
-
-#### Neon Database (`neon-skills/`)
-
 | スキル | 説明 |
 |--------|------|
-| **neon-drizzle** | Drizzle ORM 統合 |
-| **neon-serverless** | サーバーレス接続設定 |
-| **neon-toolkit** | 一時 DB 管理 (テスト/CI) |
-| **neon-auth** | 認証統合 |
-| **neon-js** | JS SDK 設定 |
-| **add-neon-docs** | ドキュメントインストール |
+| **react-best-practices** | React/Next.js パフォーマンス最適化（40以上のルール） |
+| **agent-browser** | ブラウザ自動化（200以上のコマンド）+ CLI 自動更新 |
+| **web-design-guidelines** | UI 審査（a11y、UX、パフォーマンス、80以上のルール） |
 
-## インストール方法
+#### UI/UX デザイン
+| スキル | 説明 | ソース |
+|--------|------|--------|
+| **frontend-design** | AI っぽさを排除したフロントエンドデザイン | Anthropic 公式 |
+| **interface-design** | デザイン記憶システム（コンポーネント一貫性） | Dammyjay93 |
+| **ui-ux-pro-max** | 67 UI スタイル、96 カラーパレット、56 フォントペア | nextlevelbuilder |
+| **bencium-marketplace** | UX 監査 + タイポグラフィ + 革新的 UX | bencium |
 
-### 方法1：インストールスクリプト（推奨）
+#### アクセシビリティ
+| スキル | 説明 | ソース |
+|--------|------|--------|
+| **accessibility-agents** | 57 の WCAG 2.2 AA 監査エージェント | Community-Access |
+
+#### セキュリティ / コンプライアンス
+| スキル | 説明 | ソース |
+|--------|------|--------|
+| **security-audit** | ISO 27001:2022 対応、850以上のチェック項目 | afiqiqmal |
+| **ot-security-mcp** | IEC 62443 / NIST 800-82 OT セキュリティ MCP | Ansvar-Systems |
+| **trailofbits-security** | 35 プラグイン（CodeQL/Semgrep/変異分析） | Trail of Bits |
+| **sentry-security-review** | 低誤検出率のセキュリティコードレビュー | Sentry |
+| **cisco-skill-scanner** | スキルサプライチェーンセキュリティスキャナー | Cisco AI Defense |
+
+#### 文章スタイル
+| スキル | 説明 | ソース |
+|--------|------|--------|
+| **humanizer-zh-tw** | AI 文体の痕跡を除去（強制適用） | kevintsai1202 |
+
+#### Neon Database
+| スキル | 説明 |
+|--------|------|
+| **neon-ai-rules** | Neon 完全ルール + .mdc ファイル |
+| **neon-skills/** | 6 スキル（drizzle, serverless, toolkit, auth, js, docs） |
+
+## インストール
 
 ```bash
 git clone https://github.com/seikaikyo/dash-skills.git
@@ -49,101 +71,33 @@ cd dash-skills
 ./scripts/install.sh
 ```
 
-### 方法2：手動コピー
+## 自動同期
+
+`~/.zshrc` に追加：
 
 ```bash
-cp -r skills/* ~/.claude/skills/
-cp -r external/* ~/.claude/skills/
+source ~/Documents/github/dash-skills/scripts/auto-update.sh
 ```
 
-### 方法3：シンボリックリンク（開発用）
+毎日自動：SKILL.md 更新、agent-browser CLI バージョン確認、自動 commit + push。
 
-```bash
-./scripts/link.sh
-```
+## 更新履歴
 
-## 使い方
+### 2026-03-14
+- セキュリティスキル 5 個追加（security-audit, ot-security-mcp, trailofbits, sentry, cisco）
+- UI/UX スキル 3 個追加（frontend-design, accessibility-agents, bencium-marketplace）
+- 消滅したリポジトリを削除（ux-designer, ui-agents, claude-designer）
+- update-external.sh の git clone 失敗時クラッシュを修正
+- agent-browser CLI npm 自動更新を追加
 
-インストール後、Claude Code でスキルを呼び出せます：
-
-```bash
-# 自作スキル
-/angular-primeng       # Angular + PrimeNG ガイドライン
-/vue-daisyui           # Vue + DaisyUI プロトタイピング
-/fastapi-patterns      # FastAPI バックエンドガイドライン
-
-# Vercel Labs
-/react-best-practices  # React/Next.js パフォーマンス
-/agent-browser         # ブラウザ自動化
-/web-design-guidelines # UI レビュー
-
-# Neon Database
-/neon-drizzle          # Drizzle ORM 設定
-/neon-serverless       # サーバーレス接続
-/neon-auth             # 認証統合
-```
-
-## ディレクトリ構造
-
-```
-dash-skills/
-├── skills/                      # 自作スキル (3)
-│   ├── angular-primeng/
-│   ├── vue-daisyui/
-│   └── fastapi-patterns/
-├── external/                    # 外部スキル (4 ソース, 9 スキル)
-│   ├── react-best-practices/    # Vercel Labs
-│   ├── agent-browser/           # Vercel Labs
-│   ├── web-design-guidelines/   # Vercel Labs
-│   └── neon-skills/             # Neon Database (6 スキル)
-│       ├── neon-drizzle/
-│       ├── neon-serverless/
-│       ├── neon-toolkit/
-│       ├── neon-auth/
-│       ├── neon-js/
-│       └── add-neon-docs/
-└── scripts/
-    ├── install.sh
-    ├── link.sh
-    ├── sync.sh
-    └── update-external.sh
-```
-
-## 外部スキルの同期
-
-```bash
-# すべて更新
-./scripts/update-external.sh
-
-# 利用可能なスキルを表示
-./scripts/update-external.sh --list
-
-# 特定のスキルを更新
-./scripts/update-external.sh react-best-practices
-./scripts/update-external.sh neon-skills
-```
-
-## 技術スタック
-
-| レイヤー | 技術 |
-|----------|------|
-| フロントエンド（エンタープライズ） | Angular 21 + PrimeNG |
-| フロントエンド（プロトタイプ） | Vue 3 CDN + DaisyUI |
-| バックエンド | FastAPI + SQLModel |
-| データベース | Neon PostgreSQL |
-| フロントエンドデプロイ | Vercel |
-| バックエンドデプロイ | Render |
+### 2026-01-16
+- 初回リリース
 
 ## ライセンス
 
 - 自作スキル：MIT License
-- 外部スキル：各ソースのライセンスに従う
+- 外部スキル：各ソースのライセンスに準拠
 
 ## 作者
 
-Dash
-
-## 謝辞
-
-- [Vercel Labs](https://github.com/vercel-labs) - react-best-practices, agent-browser, web-design-guidelines
-- [Neon Database](https://github.com/neondatabase) - neon-skills
+SeiKai Kyo

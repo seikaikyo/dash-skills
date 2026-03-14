@@ -1,8 +1,6 @@
-# DashAI DevTools - 掃描排除規則
-# 格式：
-#   path/to/file          排除整個檔案
-#   path/to/dir/          排除整個目錄
-#   [pattern:名稱] glob   只排除特定 pattern
+# Cisco Skill Scanner - 測試用的 credentials patterns，不是真的 key
+external/cisco-skill-scanner/evals/
+external/cisco-skill-scanner/skill_scanner/data/
 
-# 外部 skills 的範例程式碼含 PostgreSQL 連線字串格式說明（非真實密碼）
-[pattern:PostgreSQL 連線字串] external/neon-skills/**
+# Neon Skills - 範例連線字串，不是真的 credentials
+external/neon-skills/neon-drizzle/scripts/run-migration.ts
