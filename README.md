@@ -35,8 +35,16 @@
 
 | Skill | 描述 | 來源 | 狀態 |
 |-------|------|------|------|
+| **frontend-design** | 反 AI 罐頭風格的前端設計 (277K+ 安裝) | Anthropic 官方 | 活躍 |
 | **interface-design** | 設計記憶系統，確保元件風格一致 | Dammyjay93 | 活躍 (3,973 stars) |
 | **ui-ux-pro-max** | 67 種 UI 風格、96 色彩方案、56 字型配對 | nextlevelbuilder | 活躍 (41,258 stars) |
+| **bencium-marketplace** | UX audit + typography + innovative UX | bencium | 活躍 |
+
+#### Accessibility
+
+| Skill | 描述 | 來源 | 狀態 |
+|-------|------|------|------|
+| **accessibility-agents** | 57 個 WCAG 2.2 AA 審查代理 | Community-Access | 活躍 (185 stars) |
 
 #### 寫作風格
 
@@ -141,6 +149,9 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 ## 更新紀錄
 
 ### 2026-03-14
+- 新增 frontend-design (Anthropic 官方)
+- 新增 accessibility-agents (57 個 WCAG 2.2 agents)
+- 新增 bencium-marketplace (UX audit + typography)
 - 移除已消失的 repo（ux-designer, ui-agents, claude-designer）
 - 修復 `update-external.sh` 的 `set -e` 中斷問題
 - 新增 agent-browser CLI npm 自動更新
