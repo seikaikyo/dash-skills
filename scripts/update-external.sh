@@ -141,9 +141,96 @@ update_neon_skills() {
 }
 
 # ux-designer (bencium/design-skill) - 已移除 (repo 不存在)
-# ui-ux-pro-max 和 claude-designer 已覆蓋同等功能
-
 # ui-agents (JakobStadler/claude-code-ui-agents) - 已移除 (repo 不存在)
+# claude-designer (joeseesun/claude-designer-skill) - 已移除 (repo 不存在)
+
+# 函數：更新 frontend-design (Anthropic 官方)
+update_frontend_design() {
+    local skill_dir="$EXTERNAL_DIR/frontend-design"
+    local temp_dir=$(mktemp -d)
+    local repo="anthropics/skills"
+
+    echo "更新: frontend-design (Anthropic 官方)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    cd repo
+    git sparse-checkout set skills/frontend-design 2>/dev/null
+
+    if [ -d "skills/frontend-design" ]; then
+        rm -rf "$skill_dir"
+        cp -r skills/frontend-design "$skill_dir"
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 accessibility-agents
+update_accessibility_agents() {
+    local skill_dir="$EXTERNAL_DIR/accessibility-agents"
+    local temp_dir=$(mktemp -d)
+    local repo="Community-Access/accessibility-agents"
+
+    echo "更新: accessibility-agents (57 agents)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo/claude-code-plugin/agents" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp -r repo/claude-code-plugin/agents "$skill_dir/"
+        cp repo/claude-code-plugin/CLAUDE.md "$skill_dir/" 2>/dev/null || true
+        cp repo/claude-code-plugin/AGENTS.md "$skill_dir/" 2>/dev/null || true
+        cp repo/claude-code-plugin/README.md "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 bencium-marketplace (UX 設計)
+update_bencium_marketplace() {
+    local skill_dir="$EXTERNAL_DIR/bencium-marketplace"
+    local temp_dir=$(mktemp -d)
+    local repo="bencium/bencium-marketplace"
+
+    echo "更新: bencium-marketplace (UX audit + typography)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    rm -rf "$skill_dir"
+    mkdir -p "$skill_dir"
+    cp repo/README.md "$skill_dir/" 2>/dev/null || true
+    for skill in bencium-controlled-ux-designer bencium-innovative-ux-designer design-audit typography; do
+        [ -d "repo/$skill" ] && cp -r "repo/$skill" "$skill_dir/"
+    done
+    echo "  狀態: 已更新"
+
+    rm -rf "$temp_dir"
+}
 
 # 函數：更新 humanizer-zh-tw
 update_humanizer_zh_tw() {
@@ -180,6 +267,9 @@ show_available() {
     echo "  - agent-browser         (Vercel Labs)"
     echo "  - web-design-guidelines (Vercel Labs)"
     echo "  - neon-skills           (Neon Database, 6 skills)"
+    echo "  - frontend-design       (Anthropic 官方, 前端設計)"
+    echo "  - accessibility-agents  (Community-Access, 57 a11y agents)"
+    echo "  - bencium-marketplace   (bencium, UX audit + typography)"
     echo "  - humanizer-zh-tw       (kevintsai1202, 去除 AI 痕跡) [強制]"
     echo ""
 }
@@ -194,6 +284,12 @@ if [ $# -eq 0 ]; then
     update_web_design_guidelines
     echo ""
     update_neon_skills
+    echo ""
+    update_frontend_design
+    echo ""
+    update_accessibility_agents
+    echo ""
+    update_bencium_marketplace
     echo ""
     update_humanizer_zh_tw
 elif [ "$1" = "--list" ] || [ "$1" = "-l" ]; then
