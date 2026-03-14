@@ -297,6 +297,19 @@ else
     done
 fi
 
+# === npm CLI 工具更新 ===
+echo "更新: agent-browser CLI"
+CURRENT_AB=$(npm ls -g agent-browser --depth=0 2>/dev/null | grep agent-browser | sed 's/.*@//')
+LATEST_AB=$(npm view agent-browser version 2>/dev/null)
+if [ -n "$LATEST_AB" ] && [ "$CURRENT_AB" != "$LATEST_AB" ]; then
+    echo "  $CURRENT_AB -> $LATEST_AB"
+    npm install -g agent-browser@latest > /dev/null 2>&1
+    echo "  狀態: 已更新"
+else
+    echo "  狀態: 已是最新 ($CURRENT_AB)"
+fi
+
+echo ""
 echo "同步完成!"
 echo ""
 echo "如果有更新，請執行:"
