@@ -1,47 +1,69 @@
 # Dash Skills
 
-**Custom Skills Collection for Claude Code**
+**Claude Code Skills Collection**
 
-English | [日本語](./README.ja.md) | [正體中文](./README.md)
+**English** | [日本語](./README.ja.md) | [正體中文](./README.md)
 
 ## Overview
 
-This repository centralizes Skills for Claude Code. It includes custom-built technical stack guidelines and curated external Skills.
+Centralized management of Claude Code Skills -- custom tech-stack standards + curated external skills, with daily auto-sync.
 
 ## Included Skills
 
-### Custom Skills (`skills/`)
+### Custom (`skills/`)
 
-| Skill | Description | Use Cases |
-|-------|-------------|-----------|
-| **angular-primeng** | Angular 21 + PrimeNG enterprise app guidelines | MES, ERP, admin dashboards |
-| **vue-daisyui** | Vue 3 CDN + DaisyUI rapid prototyping | POC, demos, internal tools |
-| **fastapi-patterns** | FastAPI + SQLModel + Neon backend development | API services on Render |
+| Skill | Description | Use Case |
+|-------|-------------|----------|
+| **angular-primeng** | Angular 21 + PrimeNG enterprise standards | MES, ERP, admin panels |
+| **fastapi-patterns** | FastAPI + SQLModel + Neon backend | Render-deployed APIs |
+| **openspec** | Spec-driven development (SDD) workflow | Feature planning, change management |
+| **security-reviewer** | OWASP Top 10 vulnerability detection | Auth, user input, APIs |
+| **build-error-resolver** | Build/TypeScript error quick-fix | Build failures, type errors |
+| **refactor-cleaner** | Dead code detection and cleanup | Code health, dependency cleanup |
 
-### External Skills (`external/`)
+### External (`external/`)
 
 #### Vercel Labs
-
-| Skill | Description | Rules |
-|-------|-------------|-------|
-| **react-best-practices** | React/Next.js performance guide | 40+ |
-| **agent-browser** | Browser automation CLI | 200+ commands |
-| **web-design-guidelines** | UI review rules (a11y, UX, perf) | 80+ |
-
-#### Neon Database (`neon-skills/`)
-
 | Skill | Description |
 |-------|-------------|
-| **neon-drizzle** | Drizzle ORM integration |
-| **neon-serverless** | Serverless connection setup |
-| **neon-toolkit** | Ephemeral DB management (testing/CI) |
-| **neon-auth** | Authentication integration |
-| **neon-js** | JS SDK setup |
-| **add-neon-docs** | Documentation installation |
+| **react-best-practices** | React/Next.js performance optimization (40+ rules) |
+| **agent-browser** | Browser automation (200+ commands) + CLI auto-update |
+| **web-design-guidelines** | UI review (a11y, UX, performance, 80+ rules) |
+
+#### UI/UX Design
+| Skill | Description | Source |
+|-------|-------------|--------|
+| **frontend-design** | Anti-generic AI aesthetic frontend design | Anthropic Official |
+| **interface-design** | Design memory system for consistent components | Dammyjay93 |
+| **ui-ux-pro-max** | 67 UI styles, 96 color palettes, 56 font pairings | nextlevelbuilder |
+| **bencium-marketplace** | UX audit + typography + innovative UX | bencium |
+
+#### Accessibility
+| Skill | Description | Source |
+|-------|-------------|--------|
+| **accessibility-agents** | 57 WCAG 2.2 AA audit agents | Community-Access |
+
+#### Security / Compliance
+| Skill | Description | Source |
+|-------|-------------|--------|
+| **security-audit** | ISO 27001:2022 mapped, 850+ checks | afiqiqmal |
+| **ot-security-mcp** | IEC 62443 / NIST 800-82 OT Security MCP | Ansvar-Systems |
+| **trailofbits-security** | 35 plugins (CodeQL/Semgrep/variant analysis) | Trail of Bits |
+| **sentry-security-review** | Low false-positive security code review | Sentry |
+| **cisco-skill-scanner** | Skill supply-chain security scanner | Cisco AI Defense |
+
+#### Writing
+| Skill | Description | Source |
+|-------|-------------|--------|
+| **humanizer-zh-tw** | Remove AI writing patterns (enforced) | kevintsai1202 |
+
+#### Neon Database
+| Skill | Description |
+|-------|-------------|
+| **neon-ai-rules** | Complete Neon rules + .mdc files |
+| **neon-skills/** | 6 skills (drizzle, serverless, toolkit, auth, js, docs) |
 
 ## Installation
-
-### Method 1: Install Script (Recommended)
 
 ```bash
 git clone https://github.com/seikaikyo/dash-skills.git
@@ -49,101 +71,33 @@ cd dash-skills
 ./scripts/install.sh
 ```
 
-### Method 2: Manual Copy
+## Auto-Sync
+
+Add to `~/.zshrc`:
 
 ```bash
-cp -r skills/* ~/.claude/skills/
-cp -r external/* ~/.claude/skills/
+source ~/Documents/github/dash-skills/scripts/auto-update.sh
 ```
 
-### Method 3: Symlink (For Development)
+Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit + push.
 
-```bash
-./scripts/link.sh
-```
+## Changelog
 
-## Usage
+### 2026-03-14
+- Added 5 security skills (security-audit, ot-security-mcp, trailofbits, sentry, cisco)
+- Added 3 UI/UX skills (frontend-design, accessibility-agents, bencium-marketplace)
+- Removed defunct repos (ux-designer, ui-agents, claude-designer)
+- Fixed update-external.sh crash on failed git clone
+- Added agent-browser CLI npm auto-update
 
-After installation, trigger skills in Claude Code:
-
-```bash
-# Custom Skills
-/angular-primeng       # Angular + PrimeNG guidelines
-/vue-daisyui           # Vue + DaisyUI prototyping
-/fastapi-patterns      # FastAPI backend guidelines
-
-# Vercel Labs
-/react-best-practices  # React/Next.js performance
-/agent-browser         # Browser automation
-/web-design-guidelines # UI review
-
-# Neon Database
-/neon-drizzle          # Drizzle ORM setup
-/neon-serverless       # Serverless connection
-/neon-auth             # Auth integration
-```
-
-## Directory Structure
-
-```
-dash-skills/
-├── skills/                      # Custom Skills (3)
-│   ├── angular-primeng/
-│   ├── vue-daisyui/
-│   └── fastapi-patterns/
-├── external/                    # External Skills (4 sources, 9 skills)
-│   ├── react-best-practices/    # Vercel Labs
-│   ├── agent-browser/           # Vercel Labs
-│   ├── web-design-guidelines/   # Vercel Labs
-│   └── neon-skills/             # Neon Database (6 skills)
-│       ├── neon-drizzle/
-│       ├── neon-serverless/
-│       ├── neon-toolkit/
-│       ├── neon-auth/
-│       ├── neon-js/
-│       └── add-neon-docs/
-└── scripts/
-    ├── install.sh
-    ├── link.sh
-    ├── sync.sh
-    └── update-external.sh
-```
-
-## Syncing External Skills
-
-```bash
-# Update all
-./scripts/update-external.sh
-
-# List available
-./scripts/update-external.sh --list
-
-# Update specific
-./scripts/update-external.sh react-best-practices
-./scripts/update-external.sh neon-skills
-```
-
-## Technology Stack
-
-| Layer | Technology |
-|-------|------------|
-| Frontend (Enterprise) | Angular 21 + PrimeNG |
-| Frontend (Prototype) | Vue 3 CDN + DaisyUI |
-| Backend | FastAPI + SQLModel |
-| Database | Neon PostgreSQL |
-| Frontend Deployment | Vercel |
-| Backend Deployment | Render |
+### 2026-01-16
+- Initial release
 
 ## License
 
 - Custom Skills: MIT License
-- External Skills: Per source license
+- External Skills: per source license
 
 ## Author
 
-Dash
-
-## Acknowledgments
-
-- [Vercel Labs](https://github.com/vercel-labs) - react-best-practices, agent-browser, web-design-guidelines
-- [Neon Database](https://github.com/neondatabase) - neon-skills
+SeiKai Kyo

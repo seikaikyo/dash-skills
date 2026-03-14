@@ -24,3 +24,5 @@
 # Temporary clone directories (used by auto-update.sh)
 *-tmp/
 external/*-tmp/
+external/cisco-skill-scanner/evals/
+external/cisco-skill-scanner/skill_scanner/data/
