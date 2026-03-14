@@ -4,7 +4,7 @@
 # 從官方來源更新 external/ 目錄下的 skills
 #
 
-set -e
+# 不用 set -e，各函數自行處理錯誤避免整體中斷
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
@@ -140,68 +140,10 @@ update_neon_skills() {
     rm -rf "$temp_dir"
 }
 
-# 函數：更新 ux-designer
-update_ux_designer() {
-    local skill_dir="$EXTERNAL_DIR/ux-designer"
-    local temp_dir=$(mktemp -d)
-    local repo="bencium/design-skill"
+# ux-designer (bencium/design-skill) - 已移除 (repo 不存在)
+# ui-ux-pro-max 和 claude-designer 已覆蓋同等功能
 
-    echo "更新: ux-designer"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
-
-    if [ -f "repo/SKILL.md" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        # 複製主要檔案
-        cp repo/SKILL.md "$skill_dir/"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/ACCESSIBILITY.md "$skill_dir/" 2>/dev/null || true
-        cp repo/RESPONSIVE-DESIGN.md "$skill_dir/" 2>/dev/null || true
-        cp repo/MOTION-SPEC.md "$skill_dir/" 2>/dev/null || true
-        cp repo/DESIGN-SYSTEM-TEMPLATE.md "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
-
-# 函數：更新 ui-agents
-update_ui_agents() {
-    local skill_dir="$EXTERNAL_DIR/ui-agents"
-    local temp_dir=$(mktemp -d)
-    local repo="JakobStadler/claude-code-ui-agents"
-
-    echo "更新: ui-agents"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
-
-    if [ -d "repo/prompts" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp -r repo/prompts "$skill_dir/"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/CONTRIBUTING.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        # 複製 .claude 目錄（如果存在）
-        [ -d "repo/.claude" ] && cp -r repo/.claude "$skill_dir/"
-        echo "  狀態: 已更新"
-        echo "  類別:"
-        ls -1 "$skill_dir/prompts" | while read c; do
-            echo "    - $c"
-        done
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
+# ui-agents (JakobStadler/claude-code-ui-agents) - 已移除 (repo 不存在)
 
 # 函數：更新 humanizer-zh-tw
 update_humanizer_zh_tw() {
@@ -238,8 +180,6 @@ show_available() {
     echo "  - agent-browser         (Vercel Labs)"
     echo "  - web-design-guidelines (Vercel Labs)"
     echo "  - neon-skills           (Neon Database, 6 skills)"
-    echo "  - ux-designer           (bencium, UI/UX 設計指導)"
-    echo "  - ui-agents             (JakobStadler, 提示詞模板集)"
     echo "  - humanizer-zh-tw       (kevintsai1202, 去除 AI 痕跡) [強制]"
     echo ""
 }
@@ -254,10 +194,6 @@ if [ $# -eq 0 ]; then
     update_web_design_guidelines
     echo ""
     update_neon_skills
-    echo ""
-    update_ux_designer
-    echo ""
-    update_ui_agents
     echo ""
     update_humanizer_zh_tw
 elif [ "$1" = "--list" ] || [ "$1" = "-l" ]; then
@@ -278,12 +214,6 @@ else
                 ;;
             "neon-skills"|"neon")
                 update_neon_skills
-                ;;
-            "ux-designer")
-                update_ux_designer
-                ;;
-            "ui-agents")
-                update_ui_agents
                 ;;
             "humanizer-zh-tw"|"humanizer")
                 update_humanizer_zh_tw
