@@ -158,6 +158,10 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 ## 更新紀錄
 
+### 2026-03-15
+- 移除 accessibility-agents 38 個已刪除的 agent 檔案（上游同步）
+- 機敏資料自動 redact 功能加入 auto-update
+
 ### 2026-03-14
 - 新增 5 個資安 skills（security-audit, ot-security-mcp, trailofbits, sentry, cisco）
 - 新增 3 個 UI/UX skills（frontend-design, accessibility-agents, bencium-marketplace）
