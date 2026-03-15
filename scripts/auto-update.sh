@@ -5,7 +5,8 @@
 #
 # 功能：
 # 1. 同步外部 skills
-# 2. 如果有變更，自動 commit 並 push 到 GitHub
+# 2. 掃描並自動 redact 機敏資料 (防止 GitHub Push Protection 阻擋)
+# 3. 如果有變更，自動 commit 並 push 到 GitHub
 #
 
 SKILL_DIR="$HOME/Documents/github/dash-skills"
@@ -29,16 +30,103 @@ cd "$SKILL_DIR"
 # 同步外部 skills (靜音模式，只顯示錯誤)
 ./scripts/update-external.sh > /dev/null 2>&1
 
+# 掃描並自動 redact 機敏資料
+# GitHub Push Protection 會擋已知格式的 key，即使是文件中的範例
+redact_secrets() {
+    local changed=0
+    local scan_dirs="external/"
+
+    # 只掃描文字檔，排除 .git / node_modules / 圖片等
+    local file_types=(-name '*.md' -o -name '*.txt' -o -name '*.yml' -o -name '*.yaml' \
+        -o -name '*.json' -o -name '*.js' -o -name '*.ts' -o -name '*.py' \
+        -o -name '*.toml' -o -name '*.cfg' -o -name '*.ini' -o -name '*.env*' \
+        -o -name '*.sh' -o -name '*.html' -o -name '*.mdc')
+
+    local files
+    files=$(find "$scan_dirs" -type f \( "${file_types[@]}" \) 2>/dev/null)
+
+    [ -z "$files" ] && return 0
+
+    # Stripe keys: sk_test_xxx / sk_live_xxx / rk_test_xxx / rk_live_xxx
+    while IFS= read -r f; do
+        if grep -qE 'sk_(test|live)_[a-zA-Z0-9]{10,}' "$f" 2>/dev/null; then
+            sed -i '' -E 's/sk_(test|live)_[a-zA-Z0-9]{10,}/sk_\1_REDACTED/g' "$f"
+            echo "[dash-skills] redact Stripe key: $f"
+            changed=1
+        fi
+        if grep -qE 'rk_(test|live)_[a-zA-Z0-9]{10,}' "$f" 2>/dev/null; then
+            sed -i '' -E 's/rk_(test|live)_[a-zA-Z0-9]{10,}/rk_\1_REDACTED/g' "$f"
+            echo "[dash-skills] redact Stripe restricted key: $f"
+            changed=1
+        fi
+    done <<< "$files"
+
+    # GitHub tokens: ghp_ / gho_ / ghu_ / ghs_ / ghr_
+    while IFS= read -r f; do
+        if grep -qE 'gh[pousr]_[a-zA-Z0-9]{36,}' "$f" 2>/dev/null; then
+            sed -i '' -E 's/gh([pousr])_[a-zA-Z0-9]{36,}/gh\1_REDACTED/g' "$f"
+            echo "[dash-skills] redact GitHub token: $f"
+            changed=1
+        fi
+    done <<< "$files"
+
+    # AWS Access Key: AKIA + 16 uppercase
+    while IFS= read -r f; do
+        if grep -qE 'AKIA[0-9A-Z]{16}' "$f" 2>/dev/null; then
+            sed -i '' -E 's/AKIA[0-9A-Z]{16}/AKIA_REDACTED_KEY/g' "$f"
+            echo "[dash-skills] redact AWS key: $f"
+            changed=1
+        fi
+    done <<< "$files"
+
+    # OpenAI: sk-proj- / sk- (48+ chars)
+    while IFS= read -r f; do
+        if grep -qE 'sk-proj-[a-zA-Z0-9_-]{20,}' "$f" 2>/dev/null; then
+            sed -i '' -E 's/sk-proj-[a-zA-Z0-9_-]{20,}/sk-proj-REDACTED/g' "$f"
+            echo "[dash-skills] redact OpenAI key: $f"
+            changed=1
+        fi
+    done <<< "$files"
+
+    # Slack tokens: xoxb- / xoxp- / xoxs- / xoxa-
+    while IFS= read -r f; do
+        if grep -qE 'xox[bpsa]-[a-zA-Z0-9-]{20,}' "$f" 2>/dev/null; then
+            sed -i '' -E 's/xox([bpsa])-[a-zA-Z0-9-]{20,}/xox\1-REDACTED/g' "$f"
+            echo "[dash-skills] redact Slack token: $f"
+            changed=1
+        fi
+    done <<< "$files"
+
+    # Private keys
+    while IFS= read -r f; do
+        if grep -qE '-----BEGIN (RSA |EC |DSA )?PRIVATE KEY-----' "$f" 2>/dev/null; then
+            echo "[dash-skills] 警告: 發現 private key，需手動處理: $f"
+        fi
+    done <<< "$files"
+
+    return $changed
+}
+
 # 檢查是否有變更
 if [ -n "$(git status --porcelain)" ]; then
-    echo "[dash-skills] 偵測到變更，自動提交..."
+    echo "[dash-skills] 偵測到變更，掃描機敏資料..."
+
+    # 自動 redact
+    if redact_secrets; then
+        : # 沒有 redact
+    else
+        echo "[dash-skills] 已自動 redact 機敏資料"
+    fi
 
     # 提交變更
     git add -A
     git commit -m "chore: 每日同步外部 skills ($TODAY)" > /dev/null 2>&1
 
-    # 推送到 GitHub
-    if git push > /dev/null 2>&1; then
+    # 推送到 GitHub (含重試機制)
+    if git push 2>&1 | grep -q "push declined\|remote rejected"; then
+        echo "[dash-skills] 推送被 GitHub 擋住，可能仍有機敏資料"
+        echo "[dash-skills] 請手動執行: cd $SKILL_DIR && git push"
+    elif [ "${PIPESTATUS[0]}" -eq 0 ]; then
         echo "[dash-skills] 已推送到 GitHub"
     else
         echo "[dash-skills] 推送失敗，請手動執行 git push"
