@@ -139,3 +139,23 @@ fi
 echo "$TODAY" > "$LAST_UPDATE_FILE"
 
 echo "[dash-skills] 同步完成"
+
+# === claude-config 備份 ===
+CLAUDE_CONFIG_DIR="$HOME/Documents/github/claude-config"
+if [ -d "$CLAUDE_CONFIG_DIR" ] && [ -x "$CLAUDE_CONFIG_DIR/sync.sh" ]; then
+    echo "[claude-config] 同步全域設定..."
+    "$CLAUDE_CONFIG_DIR/sync.sh" > /dev/null 2>&1
+
+    cd "$CLAUDE_CONFIG_DIR"
+    if [ -n "$(git status --porcelain)" ]; then
+        git add -A
+        git commit -m "sync: $TODAY" > /dev/null 2>&1
+        if git push > /dev/null 2>&1; then
+            echo "[claude-config] 已備份到 GitHub"
+        else
+            echo "[claude-config] 推送失敗，請手動 git push"
+        fi
+    else
+        echo "[claude-config] 無變更"
+    fi
+fi
