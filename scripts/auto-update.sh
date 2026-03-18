@@ -107,6 +107,14 @@ redact_secrets() {
     return $changed
 }
 
+# 清理 iCloud sync 衝突副本 (e.g. "SKILL 2.md", "README 3.md")
+icloud_dupes=$(find external/ -name "* [0-9]*" 2>/dev/null | wc -l | tr -d ' ')
+if [ "$icloud_dupes" -gt 0 ]; then
+    echo "[dash-skills] 清理 $icloud_dupes 個 iCloud 衝突副本..."
+    find external/ -name "* [0-9]*" -type f -delete 2>/dev/null
+    find external/ -depth -name "* [0-9]*" -type d -exec rm -rf {} \; 2>/dev/null
+fi
+
 # 檢查是否有變更
 if [ -n "$(git status --porcelain)" ]; then
     echo "[dash-skills] 偵測到變更，掃描機敏資料..."
