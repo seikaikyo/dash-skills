@@ -27,8 +27,17 @@ echo "[dash-skills] 每日同步外部 skills..."
 
 cd "$SKILL_DIR"
 
-# 同步外部 skills (靜音模式，只顯示錯誤)
-./scripts/update-external.sh > /dev/null 2>&1
+# 同步外部 skills (靜音模式，60 秒 timeout 避免卡住)
+./scripts/update-external.sh > /dev/null 2>&1 &
+_update_pid=$!
+( sleep 60 && kill $_update_pid 2>/dev/null ) &
+_timer_pid=$!
+if wait $_update_pid 2>/dev/null; then
+    kill $_timer_pid 2>/dev/null
+else
+    echo "[dash-skills] 同步逾時或失敗，跳過"
+    kill $_timer_pid 2>/dev/null
+fi
 
 # 掃描並自動 redact 機敏資料
 # GitHub Push Protection 會擋已知格式的 key，即使是文件中的範例
