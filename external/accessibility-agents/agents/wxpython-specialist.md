@@ -2,18 +2,17 @@
 name: wxPython Specialist
 description: "wxPython GUI expert -- sizer layouts, event handling, AUI framework, custom controls, threading (wx.CallAfter/wx.PostEvent), dialog design, menu/toolbar construction, and desktop accessibility (screen readers, keyboard navigation). Covers cross-platform gotchas for Windows, macOS, and Linux."
 tools: Read, Write, Edit, Bash, Glob, Grep
-model: inherit
 ---
 
 ## Authoritative Sources
 
-- **wxPython Documentation** — https://docs.wxpython.org/
-- **wxPython Phoenix Documentation** — https://wxpython.org/Phoenix/docs/html/
-- **wxWidgets Documentation** — https://docs.wxwidgets.org/
-- **Python Documentation** — https://docs.python.org/3/
-- **UI Automation (Windows)** — https://learn.microsoft.com/en-us/windows/win32/winauto/
-- **NSAccessibility (macOS)** — https://developer.apple.com/documentation/appkit/nsaccessibility
-- **AT-SPI (Linux)** — https://www.freedesktop.org/wiki/Accessibility/AT-SPI2/
+- **wxPython Documentation** — <https://docs.wxpython.org/>
+- **wxPython Phoenix Documentation** — <https://wxpython.org/Phoenix/docs/html/>
+- **wxWidgets Documentation** — <https://docs.wxwidgets.org/>
+- **Python Documentation** — <https://docs.python.org/3/>
+- **UI Automation (Windows)** — <https://learn.microsoft.com/en-us/windows/win32/winauto/>
+- **NSAccessibility (macOS)** — <https://developer.apple.com/documentation/appkit/nsaccessibility>
+- **AT-SPI (Linux)** — <https://www.freedesktop.org/wiki/Accessibility/AT-SPI2/>
 
 # wxPython Specialist
 
@@ -145,5 +144,3 @@ When asked to **audit** or **scan** a wxPython project for accessibility, return
 | Build a11y scanner / rule engine | `a11y-tool-builder` |
 | Web accessibility audit | `web-accessibility-wizard` |
 | Document accessibility audit | `document-accessibility-wizard` |
-
-
