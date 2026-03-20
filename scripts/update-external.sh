@@ -260,17 +260,196 @@ update_humanizer_zh_tw() {
 
 # 注意: neon-ai-rules 已移除 (含敏感資料，改用 neon-skills)
 
+# === 寫作 / 敘事 / 語言學 Skills ===
+
+# 函數：更新 humanizer-en (英文去 AI 痕跡)
+update_humanizer_en() {
+    local skill_dir="$EXTERNAL_DIR/humanizer-en"
+    local temp_dir=$(mktemp -d)
+    local repo="blader/humanizer"
+
+    echo "更新: humanizer-en"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
+
+    if [ -f "repo/SKILL.md" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/SKILL.md "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 creative-writing-skills (6 個子 skill)
+update_creative_writing_skills() {
+    local skill_dir="$EXTERNAL_DIR/creative-writing-skills"
+    local temp_dir=$(mktemp -d)
+    local repo="haowjy/creative-writing-skills"
+
+    echo "更新: creative-writing-skills (6 sub-skills)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
+
+    if [ -d "repo/creative-writing-skills" ]; then
+        rm -rf "$skill_dir"
+        cp -r repo/creative-writing-skills "$skill_dir"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+        echo "  包含:"
+        ls -1 "$skill_dir" | grep "^cw-" | while read s; do
+            echo "    - $s"
+        done
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 paper-writer-skill (EN+JA 學術寫作)
+update_paper_writer_skill() {
+    local skill_dir="$EXTERNAL_DIR/paper-writer-skill"
+    local temp_dir=$(mktemp -d)
+    local repo="kgraph57/paper-writer-skill"
+
+    echo "更新: paper-writer-skill (EN+JA)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
+
+    if [ -f "repo/SKILL.md" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/SKILL.md repo/README.md repo/README.ja.md "$skill_dir/" 2>/dev/null
+        cp -r repo/templates "$skill_dir/" 2>/dev/null || true
+        cp -r repo/references "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 content-research-writer
+update_content_research_writer() {
+    local skill_dir="$EXTERNAL_DIR/content-research-writer"
+    local temp_dir=$(mktemp -d)
+    local repo="ComposioHQ/awesome-claude-skills"
+
+    echo "更新: content-research-writer"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" repo 2>/dev/null
+
+    cd repo
+    git sparse-checkout set content-research-writer 2>/dev/null
+
+    if [ -d "content-research-writer" ]; then
+        rm -rf "$skill_dir"
+        cp -r content-research-writer "$skill_dir"
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 doc-coauthoring (Anthropic 官方)
+update_doc_coauthoring() {
+    local skill_dir="$EXTERNAL_DIR/doc-coauthoring"
+    local temp_dir=$(mktemp -d)
+    local repo="anthropics/skills"
+
+    echo "更新: doc-coauthoring (Anthropic 官方)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    cd repo
+    git sparse-checkout set skills/doc-coauthoring 2>/dev/null
+
+    if [ -d "skills/doc-coauthoring" ]; then
+        rm -rf "$skill_dir"
+        cp -r skills/doc-coauthoring "$skill_dir"
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 storytelling (SCAR 框架)
+update_storytelling() {
+    local skill_dir="$EXTERNAL_DIR/storytelling"
+    local temp_dir=$(mktemp -d)
+    local repo="gtmagents/gtm-agents"
+
+    echo "更新: storytelling (SCAR 框架)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    cd repo
+    git sparse-checkout set plugins/content-marketing/skills/storytelling 2>/dev/null
+
+    if [ -d "plugins/content-marketing/skills/storytelling" ]; then
+        rm -rf "$skill_dir"
+        cp -r plugins/content-marketing/skills/storytelling "$skill_dir"
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
 # 顯示可用的 skills
 show_available() {
     echo "可用的外部 Skills:"
-    echo "  - react-best-practices  (Vercel Labs)"
-    echo "  - agent-browser         (Vercel Labs)"
-    echo "  - web-design-guidelines (Vercel Labs)"
-    echo "  - neon-skills           (Neon Database, 6 skills)"
-    echo "  - frontend-design       (Anthropic 官方, 前端設計)"
-    echo "  - accessibility-agents  (Community-Access, 57 a11y agents)"
-    echo "  - bencium-marketplace   (bencium, UX audit + typography)"
-    echo "  - humanizer-zh-tw       (kevintsai1202, 去除 AI 痕跡) [強制]"
+    echo ""
+    echo "  開發類:"
+    echo "  - react-best-practices    (Vercel Labs)"
+    echo "  - agent-browser           (Vercel Labs)"
+    echo "  - web-design-guidelines   (Vercel Labs)"
+    echo "  - neon-skills             (Neon Database, 6 skills)"
+    echo "  - frontend-design         (Anthropic 官方, 前端設計)"
+    echo "  - accessibility-agents    (Community-Access, 57 a11y agents)"
+    echo "  - bencium-marketplace     (bencium, UX audit + typography)"
+    echo ""
+    echo "  寫作 / 敘事類:"
+    echo "  - humanizer-en            (blader, EN 去 AI 痕跡)"
+    echo "  - humanizer-zh-tw         (kevintsai1202, ZH-TW 去 AI 痕跡) [強制]"
+    echo "  - creative-writing-skills (haowjy, 6 sub-skills: 散文/腦力激盪/故事批評)"
+    echo "  - paper-writer-skill      (kgraph57, EN+JA 學術寫作)"
+    echo "  - content-research-writer (ComposioHQ, 研究寫作夥伴)"
+    echo "  - doc-coauthoring         (Anthropic 官方, 文件共筆)"
+    echo "  - storytelling            (GTM Agents, SCAR 敘事框架)"
     echo ""
 }
 
@@ -292,6 +471,19 @@ if [ $# -eq 0 ]; then
     update_bencium_marketplace
     echo ""
     update_humanizer_zh_tw
+    echo ""
+    # 寫作 / 敘事類
+    update_humanizer_en
+    echo ""
+    update_creative_writing_skills
+    echo ""
+    update_paper_writer_skill
+    echo ""
+    update_content_research_writer
+    echo ""
+    update_doc_coauthoring
+    echo ""
+    update_storytelling
 elif [ "$1" = "--list" ] || [ "$1" = "-l" ]; then
     show_available
     exit 0
@@ -311,8 +503,26 @@ else
             "neon-skills"|"neon")
                 update_neon_skills
                 ;;
-            "humanizer-zh-tw"|"humanizer")
+            "humanizer-zh-tw")
                 update_humanizer_zh_tw
+                ;;
+            "humanizer-en"|"humanizer")
+                update_humanizer_en
+                ;;
+            "creative-writing-skills"|"creative-writing"|"cw")
+                update_creative_writing_skills
+                ;;
+            "paper-writer-skill"|"paper-writer")
+                update_paper_writer_skill
+                ;;
+            "content-research-writer"|"content-writer")
+                update_content_research_writer
+                ;;
+            "doc-coauthoring"|"doc")
+                update_doc_coauthoring
+                ;;
+            "storytelling"|"story")
+                update_storytelling
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
