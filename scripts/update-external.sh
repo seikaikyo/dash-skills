@@ -547,6 +547,16 @@ fi
 
 echo ""
 echo "同步完成!"
-echo ""
-echo "如果有更新，請執行:"
-echo "  git add -A && git commit -m 'chore: 同步外部 skills' && git push"
+
+# === 自動 commit + push ===
+cd "$REPO_DIR"
+if [ -n "$(git status --porcelain)" ]; then
+    TODAY=$(date +%Y-%m-%d)
+    git add -A
+    git commit -m "chore: 每日同步外部 skills ($TODAY)"
+    git push
+    echo ""
+    echo "已自動 commit 並推送 ($TODAY)"
+else
+    echo "無變更，跳過 commit"
+fi
