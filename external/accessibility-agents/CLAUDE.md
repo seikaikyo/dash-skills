@@ -41,6 +41,7 @@ Before writing or modifying any web UI code - including HTML, JSX, CSS, React co
 | design-system-auditor | Color token contrast, focus ring tokens, spacing tokens |
 | web-accessibility-wizard | Full guided web accessibility audit |
 | document-accessibility-wizard | Document audit for .docx, .xlsx, .pptx, .pdf |
+| office-remediator | Programmatic Office document (Word/Excel/PowerPoint) remediation |
 | markdown-a11y-assistant | Markdown audit - links, headings, emoji, tables |
 | testing-coach | Screen reader testing, keyboard testing, automated testing |
 | wcag-guide | WCAG 2.2 criteria explanations, conformance levels |
