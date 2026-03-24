@@ -27,8 +27,8 @@ echo "[dash-skills] 每日同步外部 skills..."
 
 cd "$SKILL_DIR"
 
-# 同步外部 skills (靜音模式，60 秒 timeout 避免卡住)
-if ! perl -e 'alarm(60); exec @ARGV' ./scripts/update-external.sh > /dev/null 2>&1; then
+# 同步外部 skills (靜音模式，120 秒 timeout 避免卡住)
+if ! perl -e 'alarm(120); exec @ARGV' ./scripts/update-external.sh > /dev/null 2>&1; then
     echo "[dash-skills] 同步逾時或失敗，跳過"
 fi
 
@@ -132,12 +132,14 @@ if [ -n "$(git status --porcelain)" ]; then
     git add -A
     git commit -m "chore: 每日同步外部 skills ($TODAY)" > /dev/null 2>&1
 
-    # 推送到 GitHub (含重試機制)
-    if git push 2>&1 | grep -q "push declined\|remote rejected"; then
+    # 推送到 GitHub
+    push_output=$(git push 2>&1)
+    push_exit=$?
+    if [ $push_exit -eq 0 ]; then
+        echo "[dash-skills] 已推送到 GitHub"
+    elif echo "$push_output" | grep -q "push declined\|remote rejected"; then
         echo "[dash-skills] 推送被 GitHub 擋住，可能仍有機敏資料"
         echo "[dash-skills] 請手動執行: cd $SKILL_DIR && git push"
-    elif [ "${PIPESTATUS[0]}" -eq 0 ]; then
-        echo "[dash-skills] 已推送到 GitHub"
     else
         echo "[dash-skills] 推送失敗，請手動執行 git push"
     fi
@@ -159,11 +161,14 @@ if [ -d "$CLAUDE_CONFIG_DIR" ] && [ -x "$CLAUDE_CONFIG_DIR/sync.sh" ]; then
     cd "$CLAUDE_CONFIG_DIR"
     if [ -n "$(git status --porcelain)" ]; then
         git add -A
-        git commit -m "sync: $TODAY" > /dev/null 2>&1
-        if git push > /dev/null 2>&1; then
-            echo "[claude-config] 已備份到 GitHub"
+        if git commit -m "sync: $TODAY" > /dev/null 2>&1; then
+            if git push > /dev/null 2>&1; then
+                echo "[claude-config] 已備份到 GitHub"
+            else
+                echo "[claude-config] 推送失敗，請手動 git push"
+            fi
         else
-            echo "[claude-config] 推送失敗，請手動 git push"
+            echo "[claude-config] commit 失敗"
         fi
     else
         echo "[claude-config] 無變更"
