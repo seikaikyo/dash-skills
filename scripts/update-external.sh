@@ -530,6 +530,73 @@ update_trailofbits_skills_curated() {
     rm -rf "$temp_dir"
 }
 
+# 函數：更新 anthropic-cybersecurity-skills (MITRE ATT&CK 734+ skills)
+update_anthropic_cybersecurity_skills() {
+    local skill_dir="$EXTERNAL_DIR/anthropic-cybersecurity-skills"
+    local temp_dir=$(mktemp -d)
+    local repo="mukul975/Anthropic-Cybersecurity-Skills"
+
+    echo "更新: anthropic-cybersecurity-skills (MITRE ATT&CK 734+ skills)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp -r repo/skills "$skill_dir/" 2>/dev/null || true
+        cp -r repo/.claude "$skill_dir/" 2>/dev/null || true
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 security-skills (SecOps/SOAR 自動化)
+update_security_skills() {
+    local skill_dir="$EXTERNAL_DIR/security-skills"
+    local temp_dir=$(mktemp -d)
+    local repo="eth0izzle/security-skills"
+
+    echo "更新: security-skills (SecOps/SOAR)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        # 複製 skills 目錄和文件
+        for dir in repo/*/; do
+            local dirname=$(basename "$dir")
+            [ "$dirname" = ".git" ] && continue
+            [ "$dirname" = ".github" ] && continue
+            [ -d "$dir" ] && cp -r "$dir" "$skill_dir/"
+        done
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
 # === 影片製作類 Skills ===
 
 # 函數：更新 remotion-video-skill (程式化影片製作)
@@ -581,6 +648,8 @@ show_available() {
     echo "  - trailofbits-security       (Trail of Bits, 35+ security plugins)"
     echo "  - claude-code-owasp          (agamm, OWASP Top 10:2025 + ASVS 5.0)"
     echo "  - trailofbits-skills-curated (Trail of Bits, 審核過的 marketplace)"
+    echo "  - anthropic-cybersecurity-skills (mukul975, MITRE ATT&CK 734+ skills)"
+    echo "  - security-skills            (eth0izzle, SecOps/SOAR 自動化)"
     echo ""
     echo "  影片製作類:"
     echo "  - remotion-video-skill    (wshuyi, Remotion 程式化影片製作)"
@@ -635,6 +704,10 @@ if [ $# -eq 0 ]; then
     echo ""
     update_trailofbits_skills_curated
     echo ""
+    update_anthropic_cybersecurity_skills
+    echo ""
+    update_security_skills
+    echo ""
     # 影片製作類
     update_remotion_video
 elif [ "$1" = "--list" ] || [ "$1" = "-l" ]; then
@@ -688,6 +761,12 @@ else
                 ;;
             "trailofbits-skills-curated"|"tob-curated"|"skills-curated")
                 update_trailofbits_skills_curated
+                ;;
+            "anthropic-cybersecurity-skills"|"cybersecurity"|"mitre")
+                update_anthropic_cybersecurity_skills
+                ;;
+            "security-skills"|"secops"|"soar")
+                update_security_skills
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
