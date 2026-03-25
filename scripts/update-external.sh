@@ -429,6 +429,106 @@ update_storytelling() {
     rm -rf "$temp_dir"
 }
 
+# === 安全 / 資安類 Skills ===
+
+# 函數：更新 trailofbits-security (35+ security plugins)
+update_trailofbits_security() {
+    local skill_dir="$EXTERNAL_DIR/trailofbits-security"
+    local temp_dir=$(mktemp -d)
+    local repo="trailofbits/skills"
+
+    echo "更新: trailofbits-security (35+ plugins)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        # 複製所有 plugin 目錄（排除 .git 和非 skill 檔案）
+        for dir in repo/*/; do
+            local dirname=$(basename "$dir")
+            [ "$dirname" = ".git" ] && continue
+            [ "$dirname" = ".github" ] && continue
+            [ -d "$dir" ] && cp -r "$dir" "$skill_dir/"
+        done
+        cp repo/CLAUDE.md "$skill_dir/" 2>/dev/null || true
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+        echo "  包含: $(ls -1d "$skill_dir"/*/ 2>/dev/null | wc -l | tr -d ' ') plugins"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 claude-code-owasp (OWASP Top 10:2025 + ASVS 5.0)
+update_claude_code_owasp() {
+    local skill_dir="$EXTERNAL_DIR/claude-code-owasp"
+    local temp_dir=$(mktemp -d)
+    local repo="agamm/claude-code-owasp"
+
+    echo "更新: claude-code-owasp (OWASP Top 10:2025)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -f "repo/SKILL.md" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/SKILL.md "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 trailofbits-skills-curated (審核過的 skill marketplace)
+update_trailofbits_skills_curated() {
+    local skill_dir="$EXTERNAL_DIR/trailofbits-skills-curated"
+    local temp_dir=$(mktemp -d)
+    local repo="trailofbits/skills-curated"
+
+    echo "更新: trailofbits-skills-curated (審核過的 marketplace)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        # 複製 plugins 目錄
+        [ -d "repo/plugins" ] && cp -r repo/plugins "$skill_dir/"
+        cp repo/CLAUDE.md "$skill_dir/" 2>/dev/null || true
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
 # === 影片製作類 Skills ===
 
 # 函數：更新 remotion-video-skill (程式化影片製作)
@@ -476,6 +576,11 @@ show_available() {
     echo "  - accessibility-agents    (Community-Access, 57 a11y agents)"
     echo "  - bencium-marketplace     (bencium, UX audit + typography)"
     echo ""
+    echo "  安全 / 資安類:"
+    echo "  - trailofbits-security       (Trail of Bits, 35+ security plugins)"
+    echo "  - claude-code-owasp          (agamm, OWASP Top 10:2025 + ASVS 5.0)"
+    echo "  - trailofbits-skills-curated (Trail of Bits, 審核過的 marketplace)"
+    echo ""
     echo "  影片製作類:"
     echo "  - remotion-video-skill    (wshuyi, Remotion 程式化影片製作)"
     echo ""
@@ -522,6 +627,13 @@ if [ $# -eq 0 ]; then
     echo ""
     update_storytelling
     echo ""
+    # 安全 / 資安類
+    update_trailofbits_security
+    echo ""
+    update_claude_code_owasp
+    echo ""
+    update_trailofbits_skills_curated
+    echo ""
     # 影片製作類
     update_remotion_video
 elif [ "$1" = "--list" ] || [ "$1" = "-l" ]; then
@@ -566,6 +678,15 @@ else
                 ;;
             "remotion-video-skill"|"remotion-video"|"remotion")
                 update_remotion_video
+                ;;
+            "trailofbits-security"|"trailofbits"|"tob")
+                update_trailofbits_security
+                ;;
+            "claude-code-owasp"|"owasp")
+                update_claude_code_owasp
+                ;;
+            "trailofbits-skills-curated"|"tob-curated"|"skills-curated")
+                update_trailofbits_skills_curated
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
