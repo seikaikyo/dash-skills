@@ -429,6 +429,40 @@ update_storytelling() {
     rm -rf "$temp_dir"
 }
 
+# === 影片製作類 Skills ===
+
+# 函數：更新 remotion-video-skill (程式化影片製作)
+update_remotion_video() {
+    local skill_dir="$EXTERNAL_DIR/remotion-video-skill"
+    local temp_dir=$(mktemp -d)
+    local repo="wshuyi/remotion-video-skill"
+
+    echo "更新: remotion-video-skill (Remotion 程式化影片)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -f "repo/SKILL.md" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/SKILL.md "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/README_CN.md "$skill_dir/" 2>/dev/null || true
+        cp -r repo/scripts "$skill_dir/" 2>/dev/null || true
+        cp -r repo/templates "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
 # 顯示可用的 skills
 show_available() {
     echo "可用的外部 Skills:"
@@ -441,6 +475,9 @@ show_available() {
     echo "  - frontend-design         (Anthropic 官方, 前端設計)"
     echo "  - accessibility-agents    (Community-Access, 57 a11y agents)"
     echo "  - bencium-marketplace     (bencium, UX audit + typography)"
+    echo ""
+    echo "  影片製作類:"
+    echo "  - remotion-video-skill    (wshuyi, Remotion 程式化影片製作)"
     echo ""
     echo "  寫作 / 敘事類:"
     echo "  - humanizer-en            (blader, EN 去 AI 痕跡)"
@@ -484,6 +521,9 @@ if [ $# -eq 0 ]; then
     update_doc_coauthoring
     echo ""
     update_storytelling
+    echo ""
+    # 影片製作類
+    update_remotion_video
 elif [ "$1" = "--list" ] || [ "$1" = "-l" ]; then
     show_available
     exit 0
@@ -523,6 +563,9 @@ else
                 ;;
             "storytelling"|"story")
                 update_storytelling
+                ;;
+            "remotion-video-skill"|"remotion-video"|"remotion")
+                update_remotion_video
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
