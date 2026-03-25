@@ -4,3 +4,6 @@ external/cisco-skill-scanner/skill_scanner/data/
 
 # Neon Skills - 範例連線字串，不是真的 credentials
 external/neon-skills/neon-drizzle/scripts/run-migration.ts
+
+# Anthropic Cybersecurity Skills - 安全教學範例中的假密碼/假 key
+external/anthropic-cybersecurity-skills/
