@@ -484,10 +484,11 @@ update_claude_code_owasp() {
         return 0
     fi
 
-    if [ -f "repo/SKILL.md" ]; then
+    if [ -f "repo/.claude/skills/owasp-security/SKILL.md" ]; then
         rm -rf "$skill_dir"
         mkdir -p "$skill_dir"
-        cp repo/SKILL.md "$skill_dir/"
+        cp repo/.claude/skills/owasp-security/SKILL.md "$skill_dir/"
+        cp repo/OWASP-2025-2026-Report.md "$skill_dir/" 2>/dev/null || true
         cp repo/README.md "$skill_dir/" 2>/dev/null || true
         cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
         echo "  狀態: 已更新"
