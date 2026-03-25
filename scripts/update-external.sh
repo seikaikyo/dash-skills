@@ -597,6 +597,159 @@ update_security_skills() {
     rm -rf "$temp_dir"
 }
 
+# 函數：更新 security-audit (OWASP/CWE/NIST/MITRE 白箱審計)
+update_security_audit() {
+    local skill_dir="$EXTERNAL_DIR/security-audit"
+    local temp_dir=$(mktemp -d)
+    local repo="afiqiqmal/claude-security-audit"
+
+    echo "更新: security-audit (白箱/灰箱安全審計)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/CLAUDE.md "$skill_dir/" 2>/dev/null || true
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        [ -d "repo/commands" ] && cp -r repo/commands "$skill_dir/"
+        [ -d "repo/references" ] && cp -r repo/references "$skill_dir/"
+        [ -d "repo/targets" ] && cp -r repo/targets "$skill_dir/"
+        cp repo/security-audit-guidelines.md "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 sentry-security-review (Sentry 官方 security review)
+update_sentry_security_review() {
+    local skill_dir="$EXTERNAL_DIR/sentry-security-review"
+    local temp_dir=$(mktemp -d)
+    local repo="getsentry/skills"
+
+    echo "更新: sentry-security-review (Sentry 官方)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo/plugins/sentry-skills/skills" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp -r repo/plugins/sentry-skills/skills/* "$skill_dir/"
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 ot-security-mcp (IEC 62443 OT 安全)
+update_ot_security_mcp() {
+    local skill_dir="$EXTERNAL_DIR/ot-security-mcp"
+    local temp_dir=$(mktemp -d)
+    local repo="Ansvar-Systems/ot-security-mcp"
+
+    echo "更新: ot-security-mcp (IEC 62443)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/package.json "$skill_dir/" 2>/dev/null || true
+        [ -d "repo/src" ] && cp -r repo/src "$skill_dir/"
+        [ -d "repo/skills" ] && cp -r repo/skills "$skill_dir/"
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# === 設計類 Skills (手動來源) ===
+
+# 函數：更新 interface-design (儀表板/後台介面設計)
+update_interface_design() {
+    local skill_dir="$EXTERNAL_DIR/interface-design"
+    local temp_dir=$(mktemp -d)
+    local repo="Dammyjay93/interface-design"
+
+    echo "更新: interface-design (介面設計系統)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -f "repo/.claude/skills/interface-design/SKILL.md" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp -r repo/.claude/skills/interface-design/* "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 ui-ux-pro-max (50 styles + 21 palettes)
+update_ui_ux_pro_max() {
+    local skill_dir="$EXTERNAL_DIR/ui-ux-pro-max"
+    local temp_dir=$(mktemp -d)
+    local repo="nextlevelbuilder/ui-ux-pro-max-skill"
+
+    echo "更新: ui-ux-pro-max (50 styles + 21 palettes)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -f "repo/SKILL.md" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/SKILL.md "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
 # === 影片製作類 Skills ===
 
 # 函數：更新 remotion-video-skill (程式化影片製作)
@@ -643,6 +796,8 @@ show_available() {
     echo "  - frontend-design         (Anthropic 官方, 前端設計)"
     echo "  - accessibility-agents    (Community-Access, 57 a11y agents)"
     echo "  - bencium-marketplace     (bencium, UX audit + typography)"
+    echo "  - interface-design        (Dammyjay93, 儀表板/後台介面設計)"
+    echo "  - ui-ux-pro-max           (nextlevelbuilder, 50 styles + 21 palettes)"
     echo ""
     echo "  安全 / 資安類:"
     echo "  - trailofbits-security       (Trail of Bits, 35+ security plugins)"
@@ -650,6 +805,9 @@ show_available() {
     echo "  - trailofbits-skills-curated (Trail of Bits, 審核過的 marketplace)"
     echo "  - anthropic-cybersecurity-skills (mukul975, MITRE ATT&CK 734+ skills)"
     echo "  - security-skills            (eth0izzle, SecOps/SOAR 自動化)"
+    echo "  - security-audit             (afiqiqmal, OWASP/CWE/NIST 白箱審計)"
+    echo "  - sentry-security-review     (Sentry 官方, security code review)"
+    echo "  - ot-security-mcp            (Ansvar, IEC 62443 OT 安全)"
     echo ""
     echo "  影片製作類:"
     echo "  - remotion-video-skill    (wshuyi, Remotion 程式化影片製作)"
@@ -707,6 +865,17 @@ if [ $# -eq 0 ]; then
     update_anthropic_cybersecurity_skills
     echo ""
     update_security_skills
+    echo ""
+    update_security_audit
+    echo ""
+    update_sentry_security_review
+    echo ""
+    update_ot_security_mcp
+    echo ""
+    # 設計類 (手動來源)
+    update_interface_design
+    echo ""
+    update_ui_ux_pro_max
     echo ""
     # 影片製作類
     update_remotion_video
@@ -767,6 +936,21 @@ else
                 ;;
             "security-skills"|"secops"|"soar")
                 update_security_skills
+                ;;
+            "security-audit"|"audit")
+                update_security_audit
+                ;;
+            "sentry-security-review"|"sentry-review")
+                update_sentry_security_review
+                ;;
+            "ot-security-mcp"|"ot-security")
+                update_ot_security_mcp
+                ;;
+            "interface-design")
+                update_interface_design
+                ;;
+            "ui-ux-pro-max"|"ux-pro-max")
+                update_ui_ux_pro_max
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
