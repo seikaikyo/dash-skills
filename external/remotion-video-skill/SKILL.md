@@ -145,28 +145,97 @@ import { Sequence } from "remotion";
 
 ## AI 语音解说集成
 
-为视频添加 AI 语音解说，实现音视频同步。支持两种方案：
+为视频添加 AI 语音解说，实现音视频同步。支持四种方案：
 
-| 方案 | 优点 | 缺点 | 硬件要求 | 推荐度 |
-|------|------|------|----------|--------|
-| **MiniMax TTS** | 云端克隆、速度极快（<3秒）、音质优秀 | 按字符计费 | 无 | ⭐⭐⭐ 首选 |
-| **Edge TTS** | 零配置、免费 | 固定音色、无法自定义 | 无 | ⭐⭐ |
+| 方案 | 优点 | 缺点 | 费用 | 推荐度 |
+|------|------|------|------|--------|
+| **ElevenLabs** | 多语言（含 zh-TW/en/ja）、音质顶级、支持克隆 | 按字符计费 | 付费 | 首选（产品影片） |
+| **Google Cloud TTS** | Neural2/Wavenet 高品质、多语言、稳定 | 需 gcloud auth | 低（每月免费额度） | 首选（低成本） |
+| **MiniMax TTS** | 云端克隆、速度极快（<3秒）、音质优秀 | 按字符计费 | 付费 | 中文场景优选 |
+| **Edge TTS** | 零配置、免费 | 固定音色、无法自定义 | 免费 | 备选 |
 
 ### 方案选择流程
 
 ```
-1. 首选 MiniMax TTS
-   - 检测 API Key 是否配置
-   - 测试调用是否正常（余额充足）
-   - 如果成功 → 使用 MiniMax
-
-2. MiniMax 不可用时
-   → 退回 Edge TTS（使用预设音色 zh-CN-YunyangNeural）
+1. 有 ELEVENLABS_API_KEY → ElevenLabs（音质最佳，支持 zh-TW/en/ja）
+2. 有 gcloud auth → Google Cloud TTS（低成本，支持 cmn-TW/en-US/ja-JP）
+3. 有 MINIMAX_API_KEY → MiniMax TTS（中文克隆音色）
+4. 以上都没有 → Edge TTS（免费，仅简体中文）
 ```
 
 ---
 
-## 方案一：MiniMax TTS（推荐）
+## 方案一：ElevenLabs TTS（产品影片首选）
+
+多语言高品质 TTS，支持 zh-TW / en / ja，适合产品介绍影片。
+
+### 配置
+
+1. 注册 https://elevenlabs.io
+2. 取得 API Key
+3. 选择或克隆语音，取得 Voice ID
+
+### 环境变量
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `ELEVENLABS_API_KEY` | API 金钥（必要） | - |
+| `ELEVENLABS_VOICE_ID` | 语音 ID | `EXAVITQu4vr4xnSDxMaL`（Sarah） |
+| `ELEVENLABS_MODEL_ID` | 模型 ID | `eleven_multilingual_v2` |
+| `ELEVENLABS_STABILITY` | 稳定度 0-1 | `0.42` |
+| `ELEVENLABS_SIMILARITY_BOOST` | 相似度 0-1 | `0.78` |
+| `ELEVENLABS_STYLE` | 风格 0-1 | `0.20` |
+
+### 生成脚本
+
+```bash
+export ELEVENLABS_API_KEY="your_key"
+python scripts/generate_audio_elevenlabs.py
+```
+
+支持断点续作、自动更新 audioConfig.ts。
+
+---
+
+## 方案二：Google Cloud TTS（低成本首选）
+
+Neural2 / Wavenet 高品质语音，每月有免费额度，适合频繁生成。
+
+### 前置条件
+
+```bash
+gcloud auth login
+gcloud auth application-default login
+```
+
+### 语系对应语音
+
+| 语系 | 语音名称 | 语言代码 |
+|------|----------|----------|
+| zh-TW | `cmn-TW-Wavenet-A` | `cmn-TW` |
+| en | `en-US-Neural2-D` | `en-US` |
+| ja | `ja-JP-Neural2-D` | `ja-JP` |
+
+### 环境变量
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `GCLOUD_PROJECT_ID` | GCP 专案 ID | `dashai-490610` |
+| `GCLOUD_LANG_CODE` | 语言代码 | `cmn-TW` |
+| `GCLOUD_VOICE_NAME` | 语音名称 | 依语系自动选择 |
+| `GCLOUD_SPEAKING_RATE` | 语速 0.25-4.0 | `0.95` |
+
+### 生成脚本
+
+```bash
+python scripts/generate_audio_gcloud.py
+```
+
+支持断点续作、自动更新 audioConfig.ts。
+
+---
+
+## 方案三：MiniMax TTS
 
 云端 API 方案，无需本地 GPU，生成速度极快，音色克隆效果优秀。
 
@@ -236,7 +305,7 @@ content = f'''export const SCENES = [
 
 ---
 
-## 方案二：Edge TTS
+## 方案四：Edge TTS
 
 无需特殊硬件，完全免费，适合不需要克隆音色的场景。
 
