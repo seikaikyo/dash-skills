@@ -146,7 +146,7 @@ python-nmap         # Could be confused with nmap
 # VULNERABLE: Secrets in plain text
 # .github/workflows/build.yml
 env:
-  AWS_SECRET_KEY: AKIA_REDACTED_KEY
+  AWS_SECRET_KEY: AKIAIOSFODNN7EXAMPLE
 
 # VULNERABLE: Running arbitrary code from PRs
 on:
