@@ -736,13 +736,18 @@ update_ui_ux_pro_max() {
         return 0
     fi
 
-    if [ -f "repo/SKILL.md" ]; then
+    if [ -d "repo/.claude/skills/ui-ux-pro-max" ]; then
         rm -rf "$skill_dir"
         mkdir -p "$skill_dir"
-        cp repo/SKILL.md "$skill_dir/"
+        # 複製所有子 skills
+        for s in repo/.claude/skills/*/; do
+            local sname=$(basename "$s")
+            cp -r "$s" "$skill_dir/$sname"
+        done
         cp repo/README.md "$skill_dir/" 2>/dev/null || true
         cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
         echo "  狀態: 已更新"
+        echo "  包含: $(ls -1d "$skill_dir"/*/ 2>/dev/null | wc -l | tr -d ' ') sub-skills"
     else
         echo "  狀態: 失敗"
     fi
