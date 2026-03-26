@@ -122,7 +122,7 @@ redacted, findings = guard.redact("Contact john@example.com for details")
 | `CREDIT_CARD` | 4111-1111-1111-1111 | [CARD_REDACTED] |
 | `IP_ADDRESS` | 192.168.1.1 | [IP_REDACTED] |
 | `US_PASSPORT` | A12345678 | [PASSPORT_REDACTED] |
-| `AWS_ACCESS_KEY` | AKIAIOSFODNN7EXAMPLE | [AWS_KEY_REDACTED] |
+| `AWS_ACCESS_KEY` | AKIA_REDACTED_KEY | [AWS_KEY_REDACTED] |
 | `GENERIC_API_KEY` | api_key=abc123... | [API_KEY_REDACTED] |
 
 ### OutputGuard
