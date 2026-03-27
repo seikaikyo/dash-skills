@@ -79,7 +79,7 @@ regexes = [
 # Per-rule allowlists
 [[rules.allowlist]]
 description = "Allow AWS example keys"
-regexes = ["AKIA_REDACTED_KEY"]
+regexes = ["AKIAIOSFODNN7EXAMPLE"]
 ```
 
 ## GitHub Actions Workflow
