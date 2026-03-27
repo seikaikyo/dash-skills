@@ -23,3 +23,25 @@ learned_count=$(find "$LEARNED_DIR" -name "*.md" 2>/dev/null | wc -l | tr -d ' '
 if [ "$learned_count" -gt 0 ]; then
   echo "[SessionStart] $learned_count 個已學習 skill 可用於 $LEARNED_DIR" >&2
 fi
+
+# Sentry 錯誤檢查
+SENTRY_CHECK="${HOME}/.claude/hooks/sentry-check.sh"
+if [ -x "$SENTRY_CHECK" ]; then
+  "$SENTRY_CHECK"
+fi
+
+# 架構文件檢查
+PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$PROJECT_ROOT" ]; then
+  if [ ! -f "$PROJECT_ROOT/CLAUDE.md" ]; then
+    echo "[SessionStart] 此專案缺少 CLAUDE.md，建議先建立架構文件" >&2
+  else
+    claude_ts=$(git -C "$PROJECT_ROOT" log -1 --format=%ct -- CLAUDE.md 2>/dev/null)
+    if [ -n "$claude_ts" ]; then
+      claude_days=$(( ($(date +%s) - claude_ts) / 86400 ))
+    if [ "$claude_days" -gt 30 ]; then
+        echo "[SessionStart] CLAUDE.md 已 ${claude_days} 天未更新，請確認是否需要同步" >&2
+      fi
+    fi
+  fi
+fi
