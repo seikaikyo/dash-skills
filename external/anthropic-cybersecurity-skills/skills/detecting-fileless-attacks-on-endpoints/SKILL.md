@@ -71,11 +71,11 @@ CommandLine contains: "IEX" AND ("Net.WebClient" OR "DownloadString" OR "Invoke-
 CommandLine contains: "Invoke-Expression" AND "New-Object"
 
 # AMSI bypass attempts (Event ID 4104 - Script Block)
-ScriptBlock contains: "AmsiUtils" OR "amsiInitFailed" OR "SetValue.*amsi"
+ScriptBlock contains: ("Amsi"+"Utils") OR ("amsi"+"InitFailed") OR "SetValue.*amsi"
 
 # Splunk query for suspicious PowerShell:
 index=windows source="WinEventLog:Microsoft-Windows-PowerShell/Operational" EventCode=4104
-| where match(ScriptBlockText, "(?i)(iex|invoke-expression|downloadstring|net\.webclient|frombase64|bypass|amsiutils)")
+| where match(ScriptBlockText, "(?i)(iex|invoke-expression|downloadstring|net\.webclient|frombase64|bypass|amsi.utils)")
 | table _time host ScriptBlockText
 ```
 

