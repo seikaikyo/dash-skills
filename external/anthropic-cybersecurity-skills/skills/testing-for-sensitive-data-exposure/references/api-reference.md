@@ -15,7 +15,7 @@ hsts = resp.headers.get("Strict-Transport-Security", "")
 ## Secret Detection Patterns
 | Pattern | Regex | Example |
 |---------|-------|---------|
-| AWS Access Key | `AKIA[0-9A-Z]{16}` | AKIA_REDACTED_KEY |
+| AWS Access Key | `AKIA[0-9A-Z]{16}` | AKIAIOSFODNN7EXAMPLE |
 | Google API Key | `AIza[0-9A-Za-z\-_]{35}` | AIzaSyA... |
 | Stripe Secret | `sk_live_[0-9a-zA-Z]{24,}` | sk_live_... |
 | GitHub Token | `ghp_[a-zA-Z0-9]{36}` | ghp_xxxx... |

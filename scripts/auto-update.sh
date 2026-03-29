@@ -38,77 +38,59 @@ fi
 
 # 掃描並自動 redact 機敏資料
 # GitHub Push Protection 會擋已知格式的 key，即使是文件中的範例
+# 用 grep -rl 批次掃描，只對命中的檔案跑 sed（5000+ 檔 x 6 pattern → 6 次 grep）
 redact_secrets() {
     local changed=0
     local scan_dirs="external/"
-
-    # 只掃描文字檔，排除 .git / node_modules / 圖片等
-    local file_types=(-name '*.md' -o -name '*.txt' -o -name '*.yml' -o -name '*.yaml' \
-        -o -name '*.json' -o -name '*.js' -o -name '*.ts' -o -name '*.py' \
-        -o -name '*.toml' -o -name '*.cfg' -o -name '*.ini' -o -name '*.env*' \
-        -o -name '*.sh' -o -name '*.html' -o -name '*.mdc')
-
-    local files
-    files=$(find "$scan_dirs" -type f \( "${file_types[@]}" \) 2>/dev/null)
-
-    [ -z "$files" ] && return 0
+    local include="--include=*.md --include=*.txt --include=*.yml --include=*.yaml \
+        --include=*.json --include=*.js --include=*.ts --include=*.py \
+        --include=*.toml --include=*.cfg --include=*.ini --include=*.env* \
+        --include=*.sh --include=*.html --include=*.mdc"
 
     # Stripe keys: sk_test_xxx / sk_live_xxx / rk_test_xxx / rk_live_xxx
-    while IFS= read -r f; do
-        if grep -qE 'sk_(test|live)_[a-zA-Z0-9]{10,}' "$f" 2>/dev/null; then
-            sed -i '' -E 's/sk_(test|live)_[a-zA-Z0-9]{10,}/sk_\1_REDACTED/g' "$f"
-            echo "[dash-skills] redact Stripe key: $f"
-            changed=1
-        fi
-        if grep -qE 'rk_(test|live)_[a-zA-Z0-9]{10,}' "$f" 2>/dev/null; then
-            sed -i '' -E 's/rk_(test|live)_[a-zA-Z0-9]{10,}/rk_\1_REDACTED/g' "$f"
-            echo "[dash-skills] redact Stripe restricted key: $f"
-            changed=1
-        fi
-    done <<< "$files"
+    for f in $(grep -rlE 'sk_(test|live)_[a-zA-Z0-9]{10,}' $include "$scan_dirs" 2>/dev/null); do
+        sed -i '' -E 's/sk_(test|live)_[a-zA-Z0-9]{10,}/sk_\1_REDACTED/g' "$f"
+        echo "[dash-skills] redact Stripe key: $f"
+        changed=1
+    done
+    for f in $(grep -rlE 'rk_(test|live)_[a-zA-Z0-9]{10,}' $include "$scan_dirs" 2>/dev/null); do
+        sed -i '' -E 's/rk_(test|live)_[a-zA-Z0-9]{10,}/rk_\1_REDACTED/g' "$f"
+        echo "[dash-skills] redact Stripe restricted key: $f"
+        changed=1
+    done
 
     # GitHub tokens: ghp_ / gho_ / ghu_ / ghs_ / ghr_
-    while IFS= read -r f; do
-        if grep -qE 'gh[pousr]_[a-zA-Z0-9]{36,}' "$f" 2>/dev/null; then
-            sed -i '' -E 's/gh([pousr])_[a-zA-Z0-9]{36,}/gh\1_REDACTED/g' "$f"
-            echo "[dash-skills] redact GitHub token: $f"
-            changed=1
-        fi
-    done <<< "$files"
+    for f in $(grep -rlE 'gh[pousr]_[a-zA-Z0-9]{36,}' $include "$scan_dirs" 2>/dev/null); do
+        sed -i '' -E 's/gh([pousr])_[a-zA-Z0-9]{36,}/gh\1_REDACTED/g' "$f"
+        echo "[dash-skills] redact GitHub token: $f"
+        changed=1
+    done
 
     # AWS Access Key: AKIA + 16 uppercase
-    while IFS= read -r f; do
-        if grep -qE 'AKIA[0-9A-Z]{16}' "$f" 2>/dev/null; then
-            sed -i '' -E 's/AKIA[0-9A-Z]{16}/AKIA_REDACTED_KEY/g' "$f"
-            echo "[dash-skills] redact AWS key: $f"
-            changed=1
-        fi
-    done <<< "$files"
+    for f in $(grep -rlE 'AKIA[0-9A-Z]{16}' $include "$scan_dirs" 2>/dev/null); do
+        sed -i '' -E 's/AKIA[0-9A-Z]{16}/AKIA_REDACTED_KEY/g' "$f"
+        echo "[dash-skills] redact AWS key: $f"
+        changed=1
+    done
 
     # OpenAI: sk-proj- / sk- (48+ chars)
-    while IFS= read -r f; do
-        if grep -qE 'sk-proj-[a-zA-Z0-9_-]{20,}' "$f" 2>/dev/null; then
-            sed -i '' -E 's/sk-proj-[a-zA-Z0-9_-]{20,}/sk-proj-REDACTED/g' "$f"
-            echo "[dash-skills] redact OpenAI key: $f"
-            changed=1
-        fi
-    done <<< "$files"
+    for f in $(grep -rlE 'sk-proj-[a-zA-Z0-9_-]{20,}' $include "$scan_dirs" 2>/dev/null); do
+        sed -i '' -E 's/sk-proj-[a-zA-Z0-9_-]{20,}/sk-proj-REDACTED/g' "$f"
+        echo "[dash-skills] redact OpenAI key: $f"
+        changed=1
+    done
 
     # Slack tokens: xoxb- / xoxp- / xoxs- / xoxa-
-    while IFS= read -r f; do
-        if grep -qE 'xox[bpsa]-[a-zA-Z0-9-]{20,}' "$f" 2>/dev/null; then
-            sed -i '' -E 's/xox([bpsa])-[a-zA-Z0-9-]{20,}/xox\1-REDACTED/g' "$f"
-            echo "[dash-skills] redact Slack token: $f"
-            changed=1
-        fi
-    done <<< "$files"
+    for f in $(grep -rlE 'xox[bpsa]-[a-zA-Z0-9-]{20,}' $include "$scan_dirs" 2>/dev/null); do
+        sed -i '' -E 's/xox([bpsa])-[a-zA-Z0-9-]{20,}/xox\1-REDACTED/g' "$f"
+        echo "[dash-skills] redact Slack token: $f"
+        changed=1
+    done
 
     # Private keys
-    while IFS= read -r f; do
-        if grep -qE '-----BEGIN (RSA |EC |DSA )?PRIVATE KEY-----' "$f" 2>/dev/null; then
-            echo "[dash-skills] 警告: 發現 private key，需手動處理: $f"
-        fi
-    done <<< "$files"
+    for f in $(grep -rlE '-----BEGIN (RSA |EC |DSA )?PRIVATE KEY-----' $include "$scan_dirs" 2>/dev/null); do
+        echo "[dash-skills] 警告: 發現 private key，需手動處理: $f"
+    done
 
     return $changed
 }

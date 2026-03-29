@@ -78,8 +78,8 @@ CANARY_FILE_TEMPLATES = {
     ),
     "AWS_Access_Keys.csv": (
         b"User Name,Access Key ID,Secret Access Key\n"
-        b"svc-prod-deploy,AKIA_REDACTED_KEY,wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY\n"
-        b"svc-backup,AKIA_REDACTED_KEY,je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY\n"
+        b"svc-prod-deploy,AKIAIOSFODNN7EXAMPLE,wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY\n"
+        b"svc-backup,AKIAI44QH8DHBEXAMPLE,je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY\n"
     ),
 }
 
