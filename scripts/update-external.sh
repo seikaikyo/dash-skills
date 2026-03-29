@@ -862,26 +862,95 @@ if [ $# -eq 0 ]; then
         update_remotion_video
     )
 
-    # 平行啟動所有更新（每個 job 30 秒 timeout，避免卡住的 clone 拖住全部）
+    total=${#all_updates[@]}
+    done_count=0
+
+    # 進度條函數（寫到 stderr 避免被 > /dev/null 吞掉）
+    show_progress() {
+        local current=$1 total=$2 name=$3
+        local pct=$((current * 100 / total))
+        local filled=$((pct / 4))
+        local empty=$((25 - filled))
+        local bar=$(printf '%0.s#' $(seq 1 $filled 2>/dev/null))$(printf '%0.s-' $(seq 1 $empty 2>/dev/null))
+        printf '\r  [%s] %d/%d (%d%%) %s     ' "$bar" "$current" "$total" "$pct" "$name" >&2
+    }
+
+    # 平行啟動所有更新（子 shell fork 自動繼承函數定義）
     pids=()
     for fn in "${all_updates[@]}"; do
-        (
-            # 30 秒後自動終止（含 clone + sparse-checkout + cp）
-            ( sleep 30; kill $$ 2>/dev/null ) &
-            _timer_pid=$!
-            $fn
-            kill $_timer_pid 2>/dev/null
-        ) > "$LOG_DIR/$fn.log" 2>&1 &
+        ( $fn ) > "$LOG_DIR/$fn.log" 2>&1 &
         pids+=($!)
     done
 
-    # 等待全部完成（最慢也不超過 30 秒）
-    wait "${pids[@]}" 2>/dev/null
+    # npm 更新也平行跑（不計入 skill 進度條，但同時執行）
+    (
+        echo "更新: agent-browser CLI"
+        CURRENT_AB=$(npm ls -g agent-browser --depth=0 2>/dev/null | grep agent-browser | sed 's/.*@//')
+        LATEST_AB=$(npm view agent-browser version 2>/dev/null)
+        if [ -n "$LATEST_AB" ] && [ "$CURRENT_AB" != "$LATEST_AB" ]; then
+            echo "  $CURRENT_AB -> $LATEST_AB"
+            npm install -g agent-browser@latest > /dev/null 2>&1
+            echo "  狀態: 已更新"
+        else
+            echo "  狀態: 已是最新 ($CURRENT_AB)"
+        fi
+    ) > "$LOG_DIR/npm_update.log" 2>&1 &
+    npm_pid=$!
 
-    # 依序印出結果
+    # 監控進度 + 45 秒 timeout（輪詢已完成的 job 數）
+    _start_time=$(date +%s)
+    while true; do
+        done_count=0
+        last_done=""
+        for i in "${!all_updates[@]}"; do
+            if ! kill -0 "${pids[$i]}" 2>/dev/null; then
+                done_count=$((done_count + 1))
+                last_done="${all_updates[$i]#update_}"
+            fi
+        done
+        show_progress "$done_count" "$total" "${last_done//_/-}"
+        [ "$done_count" -ge "$total" ] && break
+
+        # 45 秒硬上限：kill 所有仍在跑的 job
+        _elapsed=$(( $(date +%s) - _start_time ))
+        if [ "$_elapsed" -ge 45 ]; then
+            for i in "${!pids[@]}"; do
+                kill "${pids[$i]}" 2>/dev/null
+            done
+            printf '\r  [#########################] 逾時，已終止剩餘 job         \n' >&2
+            break
+        fi
+
+        sleep 0.3
+    done
+    [ "$done_count" -ge "$total" ] && \
+        printf '\r  [#########################] %d/%d (100%%)                   \n' "$total" "$total" >&2
+
+    # 等待全部完成（回收 exit code）
+    wait "${pids[@]}" 2>/dev/null
+    wait "$npm_pid" 2>/dev/null
+
+    # 統計結果
+    ok=0 fail=0 timeout_count=0
     for fn in "${all_updates[@]}"; do
-        cat "$LOG_DIR/$fn.log"
-        echo ""
+        if grep -q '狀態: 已更新' "$LOG_DIR/$fn.log" 2>/dev/null; then
+            ok=$((ok + 1))
+        elif grep -q '狀態: 逾時' "$LOG_DIR/$fn.log" 2>/dev/null; then
+            timeout_count=$((timeout_count + 1))
+        else
+            fail=$((fail + 1))
+        fi
+    done
+    echo ""
+    echo "  結果: $ok 成功 / $fail 失敗 / $timeout_count 逾時 (共 $total)"
+    echo ""
+
+    # 只印出失敗/逾時的詳細資訊，成功的跳過（減少輸出噪音）
+    for fn in "${all_updates[@]}"; do
+        if ! grep -q '狀態: 已更新' "$LOG_DIR/$fn.log" 2>/dev/null; then
+            cat "$LOG_DIR/$fn.log"
+            echo ""
+        fi
     done
 
     rm -rf "$LOG_DIR"
@@ -968,15 +1037,20 @@ else
 fi
 
 # === npm CLI 工具更新 ===
-echo "更新: agent-browser CLI"
-CURRENT_AB=$(npm ls -g agent-browser --depth=0 2>/dev/null | grep agent-browser | sed 's/.*@//')
-LATEST_AB=$(npm view agent-browser version 2>/dev/null)
-if [ -n "$LATEST_AB" ] && [ "$CURRENT_AB" != "$LATEST_AB" ]; then
-    echo "  $CURRENT_AB -> $LATEST_AB"
-    npm install -g agent-browser@latest > /dev/null 2>&1
-    echo "  狀態: 已更新"
+# 在 skill 同步的平行 wait 期間就已開始（npm_log 在上方平行區產生）
+if [ -f "$LOG_DIR/npm_update.log" ] 2>/dev/null; then
+    cat "$LOG_DIR/npm_update.log"
 else
-    echo "  狀態: 已是最新 ($CURRENT_AB)"
+    echo "更新: agent-browser CLI"
+    CURRENT_AB=$(npm ls -g agent-browser --depth=0 2>/dev/null | grep agent-browser | sed 's/.*@//')
+    LATEST_AB=$(npm view agent-browser version 2>/dev/null)
+    if [ -n "$LATEST_AB" ] && [ "$CURRENT_AB" != "$LATEST_AB" ]; then
+        echo "  $CURRENT_AB -> $LATEST_AB"
+        npm install -g agent-browser@latest > /dev/null 2>&1
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 已是最新 ($CURRENT_AB)"
+    fi
 fi
 
 echo ""
