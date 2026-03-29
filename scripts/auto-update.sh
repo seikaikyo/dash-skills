@@ -159,8 +159,10 @@ if [ -d "$CLAUDE_CONFIG_DIR" ] && [ -x "$CLAUDE_CONFIG_DIR/sync.sh" ]; then
     "$CLAUDE_CONFIG_DIR/sync.sh" > /dev/null 2>&1
 
     cd "$CLAUDE_CONFIG_DIR"
-    if [ -n "$(git status --porcelain)" ]; then
-        git add -A
+    git add -A
+    if git diff --cached --quiet; then
+        echo "[claude-config] 無變更"
+    else
         if git commit -m "sync: $TODAY" > /dev/null 2>&1; then
             if git push > /dev/null 2>&1; then
                 echo "[claude-config] 已備份到 GitHub"
@@ -170,7 +172,5 @@ if [ -d "$CLAUDE_CONFIG_DIR" ] && [ -x "$CLAUDE_CONFIG_DIR/sync.sh" ]; then
         else
             echo "[claude-config] commit 失敗"
         fi
-    else
-        echo "[claude-config] 無變更"
     fi
 fi
