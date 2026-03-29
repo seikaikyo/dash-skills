@@ -832,6 +832,7 @@ show_available() {
 if [ $# -eq 0 ]; then
     # 沒有參數，平行更新全部（各 clone 同時執行）
     LOG_DIR=$(mktemp -d)
+    trap 'rm -rf "$LOG_DIR"' EXIT
 
     all_updates=(
         update_react_best_practices
@@ -861,14 +862,20 @@ if [ $# -eq 0 ]; then
         update_remotion_video
     )
 
-    # 平行啟動所有更新（每個在子 shell 中跑，輸出存到暫存檔）
+    # 平行啟動所有更新（每個 job 30 秒 timeout，避免卡住的 clone 拖住全部）
     pids=()
     for fn in "${all_updates[@]}"; do
-        ( $fn ) > "$LOG_DIR/$fn.log" 2>&1 &
+        (
+            # 30 秒後自動終止（含 clone + sparse-checkout + cp）
+            ( sleep 30; kill $$ 2>/dev/null ) &
+            _timer_pid=$!
+            $fn
+            kill $_timer_pid 2>/dev/null
+        ) > "$LOG_DIR/$fn.log" 2>&1 &
         pids+=($!)
     done
 
-    # 等待全部完成
+    # 等待全部完成（最慢也不超過 30 秒）
     wait "${pids[@]}" 2>/dev/null
 
     # 依序印出結果
@@ -976,14 +983,19 @@ echo ""
 echo "同步完成!"
 
 # === 自動 commit + push ===
-cd "$REPO_DIR"
-if [ -n "$(git status --porcelain)" ]; then
-    TODAY=$(date +%Y-%m-%d)
-    git add -A
-    git commit -m "chore: 每日同步外部 skills ($TODAY)"
-    git push
-    echo ""
-    echo "已自動 commit 並推送 ($TODAY)"
+# 從 auto-update.sh 呼叫時跳過（由呼叫端統一 redact + commit + push）
+if [ -z "$DASH_SKILLS_NO_PUSH" ]; then
+    cd "$REPO_DIR"
+    if [ -n "$(git status --porcelain)" ]; then
+        TODAY=$(date +%Y-%m-%d)
+        git add -A
+        git commit -m "chore: 每日同步外部 skills ($TODAY)"
+        git push
+        echo ""
+        echo "已自動 commit 並推送 ($TODAY)"
+    else
+        echo "無變更，跳過 commit"
+    fi
 else
-    echo "無變更，跳過 commit"
+    echo "跳過 commit（由呼叫端處理）"
 fi
