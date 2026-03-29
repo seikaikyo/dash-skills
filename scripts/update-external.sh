@@ -830,60 +830,54 @@ show_available() {
 
 # 主程式
 if [ $# -eq 0 ]; then
-    # 沒有參數，更新全部
-    update_react_best_practices
-    echo ""
-    update_agent_browser
-    echo ""
-    update_web_design_guidelines
-    echo ""
-    update_neon_skills
-    echo ""
-    update_frontend_design
-    echo ""
-    update_accessibility_agents
-    echo ""
-    update_bencium_marketplace
-    echo ""
-    update_humanizer_zh_tw
-    echo ""
-    # 寫作 / 敘事類
-    update_humanizer_en
-    echo ""
-    update_creative_writing_skills
-    echo ""
-    update_paper_writer_skill
-    echo ""
-    update_content_research_writer
-    echo ""
-    update_doc_coauthoring
-    echo ""
-    update_storytelling
-    echo ""
-    # 安全 / 資安類
-    update_trailofbits_security
-    echo ""
-    update_claude_code_owasp
-    echo ""
-    update_trailofbits_skills_curated
-    echo ""
-    update_anthropic_cybersecurity_skills
-    echo ""
-    update_security_skills
-    echo ""
-    update_security_audit
-    echo ""
-    update_sentry_security_review
-    echo ""
-    update_ot_security_mcp
-    echo ""
-    # 設計類 (手動來源)
-    update_interface_design
-    echo ""
-    update_ui_ux_pro_max
-    echo ""
-    # 影片製作類
-    update_remotion_video
+    # 沒有參數，平行更新全部（各 clone 同時執行）
+    LOG_DIR=$(mktemp -d)
+
+    all_updates=(
+        update_react_best_practices
+        update_agent_browser
+        update_web_design_guidelines
+        update_neon_skills
+        update_frontend_design
+        update_accessibility_agents
+        update_bencium_marketplace
+        update_humanizer_zh_tw
+        update_humanizer_en
+        update_creative_writing_skills
+        update_paper_writer_skill
+        update_content_research_writer
+        update_doc_coauthoring
+        update_storytelling
+        update_trailofbits_security
+        update_claude_code_owasp
+        update_trailofbits_skills_curated
+        update_anthropic_cybersecurity_skills
+        update_security_skills
+        update_security_audit
+        update_sentry_security_review
+        update_ot_security_mcp
+        update_interface_design
+        update_ui_ux_pro_max
+        update_remotion_video
+    )
+
+    # 平行啟動所有更新（每個在子 shell 中跑，輸出存到暫存檔）
+    pids=()
+    for fn in "${all_updates[@]}"; do
+        ( $fn ) > "$LOG_DIR/$fn.log" 2>&1 &
+        pids+=($!)
+    done
+
+    # 等待全部完成
+    wait "${pids[@]}" 2>/dev/null
+
+    # 依序印出結果
+    for fn in "${all_updates[@]}"; do
+        cat "$LOG_DIR/$fn.log"
+        echo ""
+    done
+
+    rm -rf "$LOG_DIR"
 elif [ "$1" = "--list" ] || [ "$1" = "-l" ]; then
     show_available
     exit 0
