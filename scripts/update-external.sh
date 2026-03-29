@@ -865,14 +865,16 @@ if [ $# -eq 0 ]; then
     total=${#all_updates[@]}
     done_count=0
 
-    # 進度條函數（寫到 stderr 避免被 > /dev/null 吞掉）
+    # 進度條函數（寫到 stderr，\r 覆蓋同一行）
     show_progress() {
         local current=$1 total=$2 name=$3
         local pct=$((current * 100 / total))
-        local filled=$((pct / 4))
-        local empty=$((25 - filled))
-        local bar=$(printf '%0.s#' $(seq 1 $filled 2>/dev/null))$(printf '%0.s-' $(seq 1 $empty 2>/dev/null))
-        printf '\r  [%s] %d/%d (%d%%) %s     ' "$bar" "$current" "$total" "$pct" "$name" >&2
+        local filled=$((pct / 5))  # 20 格寬
+        local empty=$((20 - filled))
+        local bar=""
+        [ "$filled" -gt 0 ] && bar=$(printf '%*s' "$filled" '' | tr ' ' '#')
+        [ "$empty" -gt 0 ] && bar="${bar}$(printf '%*s' "$empty" '' | tr ' ' '-')"
+        printf '\r  [%s] %d/%d %s        ' "$bar" "$current" "$total" "$name" >&2
     }
 
     # 平行啟動所有更新（子 shell fork 自動繼承函數定義）
@@ -897,18 +899,26 @@ if [ $# -eq 0 ]; then
     ) > "$LOG_DIR/npm_update.log" 2>&1 &
     npm_pid=$!
 
-    # 監控進度 + 45 秒 timeout（輪詢已完成的 job 數）
+    # 監控進度 + 45 秒 timeout
     _start_time=$(date +%s)
+    # 追蹤已完成的 job（避免重複計算）
+    declare -a _job_done
+    for i in "${!all_updates[@]}"; do _job_done[$i]=0; done
+    last_done="waiting..."
+
     while true; do
         done_count=0
-        last_done=""
         for i in "${!all_updates[@]}"; do
-            if ! kill -0 "${pids[$i]}" 2>/dev/null; then
+            if [ "${_job_done[$i]}" -eq 1 ]; then
+                done_count=$((done_count + 1))
+            elif ! kill -0 "${pids[$i]}" 2>/dev/null; then
+                _job_done[$i]=1
                 done_count=$((done_count + 1))
                 last_done="${all_updates[$i]#update_}"
+                last_done="${last_done//_/-}"
             fi
         done
-        show_progress "$done_count" "$total" "${last_done//_/-}"
+        show_progress "$done_count" "$total" "$last_done"
         [ "$done_count" -ge "$total" ] && break
 
         # 45 秒硬上限：kill 所有仍在跑的 job
@@ -917,14 +927,14 @@ if [ $# -eq 0 ]; then
             for i in "${!pids[@]}"; do
                 kill "${pids[$i]}" 2>/dev/null
             done
-            printf '\r  [#########################] 逾時，已終止剩餘 job         \n' >&2
+            printf '\r  [####################] 逾時，已終止剩餘 job            \n' >&2
             break
         fi
 
         sleep 0.3
     done
     [ "$done_count" -ge "$total" ] && \
-        printf '\r  [#########################] %d/%d (100%%)                   \n' "$total" "$total" >&2
+        printf '\r  [####################] %d/%d done                       \n' "$total" "$total" >&2
 
     # 等待全部完成（回收 exit code）
     wait "${pids[@]}" 2>/dev/null

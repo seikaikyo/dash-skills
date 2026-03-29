@@ -125,6 +125,17 @@ if [ -n "$(git status --porcelain)" ]; then
     push_exit=$?
     if [ $push_exit -eq 0 ]; then
         echo "[dash-skills]   已推送到 GitHub"
+
+        # Push 後自動檢查 GitGuardian（3 秒後查，等 webhook 處理）
+        if [ -n "$GITGUARDIAN_API_KEY" ]; then
+            sleep 3
+            gg_count=$(curl -s "https://api.gitguardian.com/v1/incidents/secrets?status=TRIGGERED&per_page=1" \
+              -H "Authorization: Token $GITGUARDIAN_API_KEY" 2>/dev/null | \
+              python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null)
+            if [ -n "$gg_count" ] && [ "$gg_count" -gt 0 ] 2>/dev/null; then
+                echo "[dash-skills]   GitGuardian: $gg_count 個新 incident，需處理"
+            fi
+        fi
     elif echo "$push_output" | grep -q "push declined\|remote rejected"; then
         echo "[dash-skills]   推送被 GitHub 擋住，可能仍有機敏資料"
         echo "[dash-skills]   請手動執行: cd $SKILL_DIR && git push"
