@@ -49,7 +49,7 @@ from datetime import datetime, timedelta
 class APIKeyManager:
     """Manages secure API key lifecycle: generation, storage, validation, rotation."""
 
-    # Key format: prefix_base64random (e.g., sk_live_a1b2c3d4e5f6...)
+    # Key format: prefix_base64random (e.g., sk_live_REDACTED...)
     # Prefix identifies the key type and environment for leak detection
     KEY_PREFIXES = {
         "live_secret": "sk_live_",

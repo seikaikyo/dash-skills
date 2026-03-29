@@ -148,7 +148,7 @@ Deploy the fake credentials:
 ```ini
 # Place in ~/.aws/credentials on honeypot or jump servers
 [default]
-aws_access_key_id = AKIAIOSFODNN7EXAMPLE
+aws_access_key_id = AKIA_REDACTED_KEY
 aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 region = us-east-1
 

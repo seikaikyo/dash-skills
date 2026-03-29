@@ -23,12 +23,16 @@ if [ ! -d "$SKILL_DIR" ]; then
     return 0 2>/dev/null || exit 0
 fi
 
+# 保存原始目錄，結束時還原（sourced 時會影響 shell 工作目錄）
+_dash_original_dir="$PWD"
+
 echo "[dash-skills] 每日同步外部 skills..."
 
 cd "$SKILL_DIR"
 
 # 同步外部 skills (靜音模式，120 秒 timeout 避免卡住)
-if ! perl -e 'alarm(120); exec @ARGV' ./scripts/update-external.sh > /dev/null 2>&1; then
+# DASH_SKILLS_NO_PUSH: 讓 update-external.sh 跳過 commit+push，由本腳本統一 redact 後再推
+if ! DASH_SKILLS_NO_PUSH=1 perl -e 'alarm(120); exec @ARGV' ./scripts/update-external.sh > /dev/null 2>&1; then
     echo "[dash-skills] 同步逾時或失敗，跳過"
 fi
 
@@ -174,3 +178,7 @@ if [ -d "$CLAUDE_CONFIG_DIR" ] && [ -x "$CLAUDE_CONFIG_DIR/sync.sh" ]; then
         fi
     fi
 fi
+
+# 還原工作目錄
+cd "$_dash_original_dir" 2>/dev/null
+unset _dash_original_dir
