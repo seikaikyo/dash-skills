@@ -117,30 +117,34 @@ if [ -n "$(git status --porcelain)" ]; then
     fi
 
     # [3/4] 提交 + 推送
-    echo "[dash-skills] [3/4] 提交並推送..."
     git add -A
-    git commit -m "chore: 每日同步外部 skills ($TODAY)" > /dev/null 2>&1
-
-    push_output=$(git push 2>&1)
-    push_exit=$?
-    if [ $push_exit -eq 0 ]; then
-        echo "[dash-skills]   已推送到 GitHub"
-
-        # Push 後自動檢查 GitGuardian（3 秒後查，等 webhook 處理）
-        if [ -n "$GITGUARDIAN_API_KEY" ]; then
-            sleep 3
-            gg_count=$(curl -s "https://api.gitguardian.com/v1/incidents/secrets?status=TRIGGERED&per_page=1" \
-              -H "Authorization: Token $GITGUARDIAN_API_KEY" 2>/dev/null | \
-              python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null)
-            if [ -n "$gg_count" ] && [ "$gg_count" -gt 0 ] 2>/dev/null; then
-                echo "[dash-skills]   GitGuardian: $gg_count 個新 incident，需處理"
-            fi
-        fi
-    elif echo "$push_output" | grep -q "push declined\|remote rejected"; then
-        echo "[dash-skills]   推送被 GitHub 擋住，可能仍有機敏資料"
-        echo "[dash-skills]   請手動執行: cd $SKILL_DIR && git push"
+    if git diff --cached --quiet; then
+        echo "[dash-skills] [3/4] 無實質差異，跳過推送"
     else
-        echo "[dash-skills]   推送失敗，請手動執行 git push"
+        echo "[dash-skills] [3/4] 提交並推送..."
+        git commit -m "chore: 每日同步外部 skills ($TODAY)" > /dev/null 2>&1
+
+        push_output=$(git push 2>&1)
+        push_exit=$?
+        if [ $push_exit -eq 0 ]; then
+            echo "[dash-skills]   已推送到 GitHub"
+
+            # Push 後自動檢查 GitGuardian（3 秒後查，等 webhook 處理）
+            if [ -n "$GITGUARDIAN_API_KEY" ]; then
+                sleep 3
+                gg_count=$(curl -s "https://api.gitguardian.com/v1/incidents/secrets?status=TRIGGERED&per_page=1" \
+                  -H "Authorization: Token $GITGUARDIAN_API_KEY" 2>/dev/null | \
+                  python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null)
+                if [ -n "$gg_count" ] && [ "$gg_count" -gt 0 ] 2>/dev/null; then
+                    echo "[dash-skills]   GitGuardian: $gg_count 個新 incident，需處理"
+                fi
+            fi
+        elif echo "$push_output" | grep -q "push declined\|remote rejected"; then
+            echo "[dash-skills]   推送被 GitHub 擋住，可能仍有機敏資料"
+            echo "[dash-skills]   請手動執行: cd $SKILL_DIR && git push"
+        else
+            echo "[dash-skills]   推送失敗，請手動執行 git push"
+        fi
     fi
 else
     echo "[dash-skills] [3/4] 無變更，跳過推送"
