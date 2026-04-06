@@ -144,13 +144,13 @@ When building or reviewing AI agent systems, check for:
 |------|-------------|------------|
 | ASI01: Goal Hijack | Prompt injection alters agent objectives | Input sanitization, goal boundaries, behavioral monitoring |
 | ASI02: Tool Misuse | Tools used in unintended ways | Least privilege, fine-grained permissions, validate I/O |
-| ASI03: Privilege Abuse | Credential escalation across agents | Short-lived scoped tokens, identity verification |
+| ASI03: Identity & Privilege Abuse | Delegated trust, inherited credentials, role chain exploits | Short-lived scoped tokens, identity verification |
 | ASI04: Supply Chain | Compromised plugins/MCP servers | Verify signatures, sandbox, allowlist plugins |
 | ASI05: Code Execution | Unsafe code generation/execution | Sandbox execution, static analysis, human approval |
 | ASI06: Memory Poisoning | Corrupted RAG/context data | Validate stored content, segment by trust level |
-| ASI07: Agent Comms | Spoofing between agents | Authenticate, encrypt, verify message integrity |
+| ASI07: Insecure Inter-Agent Comms | Spoofing/intercepting agent-to-agent messages | Authenticate, encrypt, verify message integrity |
 | ASI08: Cascading Failures | Errors propagate across systems | Circuit breakers, graceful degradation, isolation |
-| ASI09: Trust Exploitation | Social engineering via AI | Label AI content, user education, verification steps |
+| ASI09: Human-Agent Trust Exploitation | Over-trust in agents leveraged to manipulate users | Label AI content, user education, verification steps |
 | ASI10: Rogue Agents | Compromised agents acting maliciously | Behavior monitoring, kill switches, anomaly detection |
 
 ### Agent Security Checklist
