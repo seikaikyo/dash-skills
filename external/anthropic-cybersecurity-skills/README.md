@@ -1,165 +1,196 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Anthropic Cybersecurity Skills — 753 skills for AI agents" width="100%" />
+  <img src="assets/banner.png" alt="Anthropic Cybersecurity Skills" width="100%">
 </p>
 
 <p align="center">
-  <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge" alt="License: Apache 2.0" /></a>
-  <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/stargazers"><img src="https://img.shields.io/github/stars/mukul975/Anthropic-Cybersecurity-Skills?style=for-the-badge&logo=github" alt="GitHub Stars" /></a>
-  <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/network/members"><img src="https://img.shields.io/github/forks/mukul975/Anthropic-Cybersecurity-Skills?style=for-the-badge&logo=github" alt="GitHub Forks" /></a>
-  <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/commits"><img src="https://img.shields.io/github/last-commit/mukul975/Anthropic-Cybersecurity-Skills?style=for-the-badge&logo=github" alt="Last Commit" /></a>
-  <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills"><img src="https://img.shields.io/badge/Skills-753-blueviolet?style=for-the-badge&logo=bookstack&logoColor=white" alt="753 Skills" /></a>
-  <a href="https://attack.mitre.org/"><img src="https://img.shields.io/badge/MITRE_ATT%26CK-Mapped-red?style=for-the-badge&logo=shield&logoColor=white" alt="MITRE ATT&CK Mapped" /></a>
-  <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/graphs/contributors"><img src="https://img.shields.io/github/contributors/mukul975/Anthropic-Cybersecurity-Skills?style=for-the-badge&logo=github" alt="Contributors" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License"></a>
+  <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/stargazers"><img src="https://img.shields.io/github/stars/mukul975/Anthropic-Cybersecurity-Skills?style=social" alt="Stars"></a>
+  <a href="#️-framework-coverage"><img src="https://img.shields.io/badge/frameworks-5%20mapped-brightgreen.svg" alt="Frameworks"></a>
+  <a href="#️-whats-inside"><img src="https://img.shields.io/badge/skills-754-orange.svg" alt="Skills"></a>
+  <a href="https://agentskills.io"><img src="https://img.shields.io/badge/standard-agentskills.io-purple.svg" alt="agentskills.io"></a>
+  <a href="#-compatible-platforms"><img src="https://img.shields.io/badge/platforms-26%2B-blue.svg" alt="Platforms"></a>
 </p>
 
 <p align="center">
-  <b>The largest open-source collection of cybersecurity skills for AI agents.<br/>753 structured skills · MITRE ATT&CK mapped · NIST CSF 2.0 aligned · <a href="https://agentskills.io">agentskills.io</a> open standard</b>
+  <strong>754 production-grade cybersecurity skills for AI agents — mapped to 5 industry frameworks</strong>
 </p>
 
 <p align="center">
-  <a href="https://mahipal.engineer/Anthropic-Cybersecurity-Skills/">🌐 Landing Page</a> · <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/releases/tag/v1.1.0">📦 v1.1.0 Release</a> · <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/issues">🐛 Report Bug</a> · <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/issues">💡 Request Feature</a>
+  <em>MITRE ATT&CK · NIST CSF 2.0 · MITRE ATLAS · MITRE D3FEND · NIST AI RMF</em>
 </p>
+
+> ⚠️ **Community Project** — This is an independent, community-created project. Not affiliated with Anthropic PBC.
 
 ---
 
-Anthropic Cybersecurity Skills gives every AI agent — from Claude Code to GitHub Copilot to your custom LangChain pipeline — instant access to **753 production-grade cybersecurity skills** spanning 26 security domains. Each skill follows the [agentskills.io](https://agentskills.io) open standard: a YAML frontmatter header for lightning-fast discovery, a structured Markdown body for step-by-step execution, and reference files for deep technical context. The entire collection is mapped to **MITRE ATT&CK** (all 14 Enterprise tactics, 200+ techniques) and aligned to **NIST CSF 2.0** — giving AI agents the same structured knowledge that senior security practitioners carry in their heads. Install in one command and your agent immediately knows how to perform memory forensics, hunt for C2 beaconing, audit Kubernetes RBAC, reverse .NET malware, and hundreds more tasks.
+## Why this exists
 
-## 📑 Table of contents
+AI agents are transforming cybersecurity — but they lack structured domain knowledge. A junior analyst knows which Volatility3 plugin to run on a suspicious memory dump. Your AI agent doesn't — unless you give it the skills.
 
-- [🚀 Quick start](#-quick-start--install-cybersecurity-skills-for-ai-agents)
-- [🛡️ What's inside](#️-whats-inside--753-cybersecurity-skills-across-38-domains)
-- [🤖 Compatible platforms](#-compatible-ai-agent-platforms)
-- [📐 Skill structure](#-skill-structure-and-agentskillsio-format)
-- [🗺️ MITRE ATT&CK coverage](#️-mitre-attck-and-nist-csf-20-coverage)
-- [🧠 How AI agents use these skills](#-how-ai-agents-use-these-cybersecurity-skills)
-- [📝 Example skills](#-example-cybersecurity-skills)
-- [👥 Contributors](#-contributors)
-- [🤝 Contributing](#-contributing-to-cybersecurity-ai-skills)
-- [⭐ Star history](#-star-history)
-- [🌐 Community](#-community)
-- [📄 License](#-license)
+**Anthropic Cybersecurity Skills** gives every AI agent instant access to **754 production-grade cybersecurity skills** spanning 26 security domains. Each skill follows the [agentskills.io](https://agentskills.io) open standard: YAML frontmatter for lightning-fast discovery, structured Markdown for step-by-step execution, and reference files for deep technical context.
 
----
+**What makes v1.2.0 different from every other security skills repo:**
 
-## 🚀 Quick start — install cybersecurity skills for AI agents
+- **5-framework mapping** — Every skill is mapped to MITRE ATT&CK, NIST CSF 2.0, MITRE ATLAS v5.5, MITRE D3FEND v1.3, and NIST AI RMF 1.0. No other open-source library does this.
+- **AI-native format** — Skills cost ~30 tokens to scan, provide full expert-level guidance when triggered, and work across 26+ AI agent platforms.
+- **Real practitioner knowledge** — Not generated summaries. Structured workflows that mirror how senior security professionals actually work.
 
-Get up and running in under 30 seconds. Choose your preferred method:
-
-### Option 1 · npx (recommended)
+## 🚀 Quick start
 
 ```bash
+# Option 1: npx (recommended)
 npx skills add mukul975/Anthropic-Cybersecurity-Skills
-```
 
-### Option 2 · Claude Code plugin marketplace
-
-```
+# Option 2: Claude Code
 /plugin marketplace add mukul975/Anthropic-Cybersecurity-Skills
-```
 
-### Option 3 · Manual clone
-
-```bash
+# Option 3: Manual clone
 git clone https://github.com/mukul975/Anthropic-Cybersecurity-Skills.git
 cd Anthropic-Cybersecurity-Skills
 ```
 
-> **That's it.** Your AI agent can now discover and execute 753 cybersecurity skills on demand. No configuration, no API keys, no setup scripts.
+Works immediately with Claude Code, GitHub Copilot, OpenAI Codex CLI, Cursor, Gemini CLI, and any MCP-compatible agent.
 
----
+## 📖 Table of contents
 
-## 🛡️ What's inside — 753 cybersecurity skills across 38 domains
+- [🛡️ What's inside](#️-whats-inside)
+- [🗺️ Framework coverage](#️-framework-coverage)
+- [🤖 Compatible platforms](#-compatible-platforms)
+- [📐 Skill structure](#-skill-structure)
+- [🧠 How AI agents use these skills](#-how-ai-agents-use-these-skills)
+- [📝 Example skills](#-example-skills)
+- [👥 Contributing](#-contributing)
+- [⭐ Star history](#-star-history)
+- [📄 License](#-license)
 
-Every skill is a self-contained directory with structured workflows, reference materials, helper scripts, and validation steps. Here are the top 16 domains:
+## 🛡️ What's inside
+
+**754 skills across 26 security domains:**
 
 | Domain | Skills | Example capabilities |
-|:-------|:------:|:---------------------|
-| ☁️ **Cloud Security** | **48** | AWS S3 bucket audit, Azure AD config review, GCP IAM assessment |
-| 🌐 **Web Application Security** | **45** | HTTP request smuggling, XSS with Burp Suite, web cache poisoning |
-| 🔌 **Network Security** | **41** | Wireshark traffic analysis, VLAN segmentation, Suricata IDS tuning |
-| 🎯 **Penetration Testing** | **38** | Active Directory exploitation, OSCP-style methodology, pivoting |
-| 🔴 **Red Teaming** | **35** | Cobalt Strike operations, LOTL techniques, evasion & persistence |
-| 🔍 **DFIR** | **32** | Disk imaging, memory forensics with Volatility3, browser forensics |
-| 🦠 **Malware Analysis** | **28** | Ghidra reverse engineering, YARA rules, .NET decompilation |
-| 📡 **Threat Intelligence** | **26** | APT group analysis with MITRE Navigator, campaign attribution |
-| ☸️ **Cloud Native / Kubernetes** | **24** | etcd security assessment, pod security policies, RBAC audit |
-| 📋 **Compliance & Governance** | **22** | PCI DSS scoping, SOC 2 readiness, GDPR data mapping |
-| 🔑 **IAM Security** | **20** | SAML SSO with Okta, PAM deployment, service account hardening |
-| 🔐 **Cryptography** | **18** | TLS configuration audit, certificate lifecycle, key management |
-| 🏰 **Zero Trust** | **16** | Microsegmentation, BeyondCorp implementation, continuous verification |
-| 🏭 **OT / ICS Security** | **14** | SCADA monitoring, Modbus anomaly detection, Purdue model |
-| 🔧 **DevSecOps** | **12** | Pipeline security gates, SAST/DAST integration, IaC scanning |
-| 🕵️ **OSINT** | **15** | Domain reconnaissance, social engineering recon, dark web monitoring |
-| ➕ **Additional domains (10+)** | **300+** | SOC operations, API security, endpoint security, phishing defense, ransomware defense, mobile security, deception technology, and more |
-| | **753** | **Total skills across 38 domains** |
+|--------|--------|---------------------|
+| ☁️ Cloud Security | 60 | AWS S3 bucket audit, Azure AD config review, GCP IAM assessment |
+| 🔍 Threat Hunting | 55 | C2 beaconing detection, DNS tunneling analysis, living-off-the-land |
+| 📡 Threat Intelligence | 50 | APT group analysis with MITRE Navigator, campaign attribution, IOC enrichment |
+| 🌐 Web Application Security | 42 | HTTP request smuggling, XSS with Burp Suite, web cache poisoning |
+| 🔌 Network Security | 40 | Wireshark traffic analysis, VLAN segmentation, Suricata IDS tuning |
+| 🦠 Malware Analysis | 39 | Ghidra reverse engineering, YARA rules, .NET decompilation |
+| 🔎 Digital Forensics | 37 | Disk imaging with dd/dcfldd, Volatility3 memory forensics, browser artifacts |
+| 📊 Security Operations | 36 | SIEM correlation rules, alert triage workflows, SOC playbooks |
+| 🔑 IAM Security | 35 | SAML SSO with Okta, PAM deployment, service account hardening |
+| 🖥️ SOC Operations | 33 | Tier 1-3 escalation procedures, incident classification, metrics tracking |
+| ☸️ Container Security | 30 | Kubernetes RBAC audit, pod security policies, etcd encryption |
+| 🏭 OT/ICS Security | 28 | SCADA monitoring, Modbus anomaly detection, Purdue model enforcement |
+| 🔗 API Security | 28 | OAuth2 flow analysis, rate limiting, API gateway hardening |
+| 🎯 Vulnerability Management | 25 | Nessus scanning, CVSS scoring, risk-based prioritization |
+| 🚨 Incident Response | 25 | Containment procedures, evidence preservation, post-incident review |
+| 🔴 Red Teaming | 24 | Cobalt Strike operations, LOTL techniques, evasion & persistence |
+| 🎯 Penetration Testing | 23 | Active Directory exploitation, OSCP-style methodology, pivoting |
+| 💻 Endpoint Security | 17 | EDR deployment, host-based detection, anti-tamper configuration |
+| 🔧 DevSecOps | 17 | Pipeline security gates, SAST/DAST integration, IaC scanning |
+| 🎣 Phishing Defense | 16 | Email header analysis, phishing simulation, DMARC/DKIM/SPF |
+| 🕵️ OSINT | 15 | Domain reconnaissance, social engineering recon, dark web monitoring |
+| 🔐 Cryptography | 14 | TLS configuration audit, certificate lifecycle, key management |
+| 🏰 Zero Trust | 13 | Microsegmentation, BeyondCorp implementation, continuous verification |
+| 📱 Mobile Security | 12 | APK analysis with APKTool, iOS forensics, MDM bypass detection |
+| 🛡️ Ransomware Defense | 7 | Backup validation, recovery procedures, negotiation awareness |
+| 🪤 Deception Technology | 5 | Honeypot deployment, honey tokens, decoy credential monitoring |
+| **TOTAL** | **754** | |
 
----
+## 🗺️ Framework coverage
 
-## 🤖 Compatible AI agent platforms
+v1.2.0 maps every skill to **5 industry-standard frameworks** — a first for any open-source cybersecurity skills library.
 
-Skills follow the [agentskills.io](https://agentskills.io) open standard — **write once, use everywhere**. Any platform that reads `SKILL.md` files with YAML frontmatter works out of the box.
+### MITRE ATT&CK Enterprise — 754/754 skills mapped
 
-### AI code assistants
+All 14 Enterprise tactics covered with 200+ technique mappings:
 
-| Platform | Status | Install method |
-|:---------|:------:|:---------------|
-| **Claude Code** (Anthropic) | ✅ | `/plugin marketplace add mukul975/Anthropic-Cybersecurity-Skills` |
-| **GitHub Copilot** (Microsoft) | ✅ | Place in `.github/skills` directory |
-| **Cursor** | ✅ | `npx skills add` or manual clone |
-| **Windsurf** | ✅ | `npx skills add` or manual clone |
-| **Cline** | ✅ | `npx skills add` or manual clone |
-| **Aider** | ✅ | `npx skills add` or manual clone |
-| **Continue** | ✅ | `npx skills add` or manual clone |
-| **Roo Code** | ✅ | `npx skills add` or manual clone |
-| **Amazon Q Developer** | ✅ | `npx skills add` or manual clone |
-| **Tabnine** | ✅ | `npx skills add` or manual clone |
-| **Sourcegraph Cody** | ✅ | `npx skills add` or manual clone |
-| **JetBrains AI** | ✅ | `npx skills add` or manual clone |
+| Tactic | ID | Skills |
+|--------|----|--------|
+| Reconnaissance | TA0043 | 45+ |
+| Resource Development | TA0042 | 30+ |
+| Initial Access | TA0001 | 55+ |
+| Execution | TA0002 | 60+ |
+| Persistence | TA0003 | 50+ |
+| Privilege Escalation | TA0004 | 55+ |
+| Defense Evasion | TA0005 | 65+ |
+| Credential Access | TA0006 | 45+ |
+| Discovery | TA0007 | 50+ |
+| Lateral Movement | TA0008 | 40+ |
+| Collection | TA0009 | 35+ |
+| Command and Control | TA0011 | 40+ |
+| Exfiltration | TA0010 | 30+ |
+| Impact | TA0040 | 35+ |
 
-### CLI agents
+### NIST CSF 2.0 — 754/754 skills aligned
 
-| Platform | Status | Install method |
-|:---------|:------:|:---------------|
-| **OpenAI Codex CLI** | ✅ | `npx skills add` — reads from `~/.codex/skills` |
-| **Gemini CLI** (Google) | ✅ | `npx skills add` or manual clone |
+| Function | Skills | Coverage areas |
+|----------|--------|---------------|
+| Govern (GV) | 80+ | Policy, risk strategy, supply chain oversight |
+| Identify (ID) | 120+ | Asset management, risk assessment, improvement |
+| Protect (PR) | 150+ | Access control, awareness, data security, platform security |
+| Detect (DE) | 200+ | Continuous monitoring, adverse event analysis |
+| Respond (RS) | 160+ | Incident management, analysis, mitigation, reporting |
+| Recover (RC) | 44+ | Recovery planning, execution, communication |
 
-### Autonomous agents
+### 🆕 MITRE ATLAS v5.5 — 81 skills (NEW in v1.2.0)
 
-| Platform | Status | Install method |
-|:---------|:------:|:---------------|
-| **Devin** | ✅ | Point to cloned skill directory |
-| **Replit Agent** | ✅ | Import via repo URL |
-| **SWE-agent** | ✅ | Mount skill directory |
-| **OpenHands** | ✅ | Mount skill directory |
+AI-specific adversarial threat coverage including:
+- ML model poisoning and evasion techniques
+- AI supply chain compromise scenarios
+- LLM prompt injection defense workflows
+- AI agent tool abuse detection
+- Agentic AI escape-to-host prevention
 
-### Agent frameworks & SDKs
+### 🆕 MITRE D3FEND v1.3 — 139 skills (NEW in v1.2.0)
 
-| Platform | Status | Install method |
-|:---------|:------:|:---------------|
-| **LangChain** | ✅ | Load `SKILL.md` files as tool descriptions |
-| **CrewAI** | ✅ | Load as agent knowledge base |
-| **AutoGen** | ✅ | Load as agent knowledge base |
-| **Semantic Kernel** | ✅ | Load as plugins |
-| **Haystack** | ✅ | Ingest via document store |
-| **Vercel AI SDK** | ✅ | Load as tool definitions |
-| **Any MCP-compatible agent** | ✅ | Via MCP tool integration |
+Defensive technique mappings across all 7 D3FEND tactics:
+- **Model** (27 techniques) — Threat modeling, attack surface analysis
+- **Harden** (51 techniques) — System hardening, configuration management
+- **Detect** (90 techniques) — Monitoring, anomaly detection, behavioral analysis
+- **Isolate** (57 techniques) — Segmentation, sandboxing, containment
+- **Deceive** (11 techniques) — Honeypots, decoys, misdirection
+- **Evict** (19 techniques) — Threat removal, credential rotation
+- **Restore** (12 techniques) — Backup, recovery, resilience
 
----
+### 🆕 NIST AI RMF 1.0 — 85 skills (NEW in v1.2.0)
 
-## 📐 Skill structure and agentskills.io format
+AI risk management coverage aligned with the four core functions:
+- **Govern** — AI governance, accountability, organizational policies
+- **Map** — AI system context, risk identification, stakeholder analysis
+- **Measure** — AI risk metrics, testing, validation
+- **Manage** — AI risk treatment, monitoring, continuous improvement
 
-Every skill lives in its own directory under `skills/` and follows a consistent structure:
+> 💡 **Why 5 frameworks matter:** Organizations face overlapping compliance requirements. A single skill like "analyzing-network-traffic-of-malware" maps to ATT&CK T1071 (Application Layer Protocol), NIST CSF DE.CM (Continuous Monitoring), ATLAS AML.T0047 (Evade ML Model), D3FEND D3-NTA (Network Traffic Analysis), and AI RMF MEASURE 2.6 (AI system monitoring). One skill, five compliance checkboxes.
+
+## 🤖 Compatible platforms
+
+**AI code assistants:**
+Claude Code (Anthropic) · GitHub Copilot (Microsoft) · Cursor · Windsurf · Cline · Aider · Continue · Roo Code · Amazon Q Developer · Tabnine · Sourcegraph Cody · JetBrains AI
+
+**CLI agents:**
+OpenAI Codex CLI · Gemini CLI (Google)
+
+**Autonomous agents:**
+Devin · Replit Agent · SWE-agent · OpenHands
+
+**Agent frameworks & SDKs:**
+LangChain · CrewAI · AutoGen · Semantic Kernel · Haystack · Vercel AI SDK · Any MCP-compatible agent
+
+## 📐 Skill structure
+
+Every skill follows the [agentskills.io](https://agentskills.io) open standard:
 
 ```
 skills/performing-memory-forensics-with-volatility3/
 ├── SKILL.md              # Skill definition (YAML frontmatter + Markdown body)
-│   ├── Frontmatter       #   → name, description, domain, subdomain, tags
+│   ├── Frontmatter       #   → name, description, domain, tags, frameworks
 │   ├── When to Use       #   → Trigger conditions for AI agents
 │   ├── Prerequisites     #   → Required tools, access, environment
-│   ├── Workflow           #   → Step-by-step execution guide
+│   ├── Workflow          #   → Step-by-step execution guide
 │   └── Verification      #   → How to confirm success
 ├── references/
-│   ├── standards.md      # NIST, MITRE ATT&CK, CVE references
+│   ├── standards.md      # MITRE ATT&CK, ATLAS, D3FEND, NIST mappings
 │   └── workflows.md      # Deep technical procedure reference
 ├── scripts/
 │   └── process.py        # Practitioner helper scripts
@@ -167,102 +198,9 @@ skills/performing-memory-forensics-with-volatility3/
     └── template.md       # Checklists, report templates
 ```
 
-### YAML frontmatter (the discovery layer)
+**YAML frontmatter example:**
 
 ```yaml
----
-name: performing-memory-forensics-with-volatility3
-description: >-
-  Analyze memory dumps to extract running processes, network connections,
-  injected code, and malware artifacts using Volatility3 framework.
-domain: cybersecurity
-subdomain: digital-forensics
-tags: [forensics, memory-analysis, volatility3, incident-response, dfir]
-version: "1.0"
-author: mukul975
-license: Apache-2.0
----
-```
-
-**Required fields:** `name` (kebab-case, 1–64 chars), `description` (keyword-rich for agent discovery), `domain`, `subdomain`, `tags`
-
-**Optional fields:** `version`, `author`, `license`
-
----
-
-## 🗺️ MITRE ATT&CK and NIST CSF 2.0 coverage
-
-This collection provides **comprehensive coverage** of the two most widely adopted cybersecurity frameworks in the industry.
-
-### MITRE ATT&CK Enterprise
-
-All **14 Enterprise tactics** are covered, with skills mapped to **200+ individual techniques**:
-
-| Tactic | Coverage | Example skills |
-|:-------|:--------:|:---------------|
-| Reconnaissance | ✅ | OSINT gathering, domain enumeration, social engineering recon |
-| Resource Development | ✅ | Infrastructure profiling, certificate analysis |
-| Initial Access | ✅ | Phishing analysis, exploit detection, supply chain review |
-| Execution | ✅ | Script analysis, command-line forensics, scheduled task audit |
-| Persistence | ✅ | Registry analysis, startup item review, implant detection |
-| Privilege Escalation | ✅ | Token manipulation detection, UAC bypass analysis |
-| Defense Evasion | ✅ | Process injection detection, obfuscation analysis |
-| Credential Access | ✅ | Credential dumping detection, Kerberoasting defense |
-| Discovery | ✅ | Network scanning detection, AD enumeration monitoring |
-| Lateral Movement | ✅ | Pass-the-hash detection, RDP abuse monitoring |
-| Collection | ✅ | Data staging detection, screen capture forensics |
-| Command and Control | ✅ | C2 beaconing detection, DNS tunneling analysis |
-| Exfiltration | ✅ | Data transfer monitoring, covert channel detection |
-| Impact | ✅ | Ransomware response, data destruction forensics |
-
-### NIST CSF 2.0 alignment
-
-Every skill maps to one or more **NIST Cybersecurity Framework 2.0** functions:
-
-- **Identify (ID)** — Asset management, risk assessment, governance skills
-- **Protect (PR)** — Access control, awareness training, data security skills
-- **Detect (DE)** — Anomaly detection, continuous monitoring, event analysis skills
-- **Respond (RS)** — Incident response, mitigation, communication skills
-- **Recover (RC)** — Recovery planning, improvement, communication skills
-
-> An ATT&CK Navigator layer file is included in the v1.1.0 release for visual coverage mapping.
-
----
-
-## 🧠 How AI agents use these cybersecurity skills
-
-Skills use a **progressive disclosure pattern** that minimizes token usage while maximizing agent capability. Here's what happens when you ask your AI agent to "analyze this memory dump for signs of compromise":
-
-### Stage 1 · Discovery (~30–50 tokens per skill)
-
-The agent scans **only YAML frontmatter** across all 753 skills. Each scan costs ~30–50 tokens — the entire collection can be indexed for under 40K tokens. The agent matches your task against `name`, `description`, `subdomain`, and `tags` fields to find relevant skills.
-
-```yaml
-# Agent reads ONLY this:
-name: performing-memory-forensics-with-volatility3
-description: Analyze memory dumps to extract processes, network connections, and malware artifacts using Volatility3.
-subdomain: digital-forensics
-tags: [forensics, memory-analysis, volatility3, incident-response]
-```
-
-### Stage 2 · Full workflow load (~200–500 tokens)
-
-Once a skill matches, the agent loads the **complete `SKILL.md` body** — trigger conditions, prerequisites, step-by-step workflow, and verification checks. This gives the agent a structured playbook to follow.
-
-### Stage 3 · Deep reference access (on demand)
-
-For complex tasks, the agent pulls in **supporting files** from `references/`, `scripts/`, and `assets/` — NIST standards mappings, detailed technical procedures, helper scripts, and report templates. These files are loaded only when the agent needs deeper context.
-
-> **Result:** Irrelevant skills cost ~30 tokens. Relevant skills provide complete, structured, expert-level guidance. No wasted context window.
-
----
-
-## 📝 Example cybersecurity skills
-
-<details>
-<summary><b>🔍 Memory forensics with Volatility3</b> — DFIR domain</summary>
-
-````yaml
 ---
 name: performing-memory-forensics-with-volatility3
 description: >-
@@ -271,304 +209,103 @@ description: >-
 domain: cybersecurity
 subdomain: digital-forensics
 tags: [forensics, memory-analysis, volatility3, incident-response, dfir]
-version: "1.0"
+atlas_techniques: [AML.T0047]
+d3fend_techniques: [D3-MA, D3-PSMD]
+nist_ai_rmf: [MEASURE-2.6]
+nist_csf: [DE.CM-01, RS.AN-03]
+version: "1.2"
 author: mukul975
 license: Apache-2.0
 ---
-
-## When to Use
-
-- Incident responder needs to analyze a memory dump from a compromised host
-- Investigating potential malware infection or lateral movement
-- Extracting indicators of compromise (IOCs) from volatile memory
-- Identifying injected code, hidden processes, or rootkit activity
-- Memory dump file (.raw, .mem, .dmp, .vmem) is available for analysis
-
-## Prerequisites
-
-- **Volatility3** installed (`pip install volatility3`)
-- Memory dump file acquired from target system
-- **Python 3.8+** runtime environment
-- Symbol tables for target OS (auto-downloaded by Volatility3)
-- Sufficient disk space for analysis output (~2x memory dump size)
-
-## Workflow
-
-### Step 1 — Identify the operating system profile
-
-Run the banner and `windows.info` (or `linux.info` / `mac.info`) plugin to
-auto-detect the OS version and confirm the dump is valid:
-
-```bash
-vol -f memory.raw windows.info
 ```
 
-### Step 2 — List running processes
+### Progressive disclosure — why 754 skills don't slow your agent down
 
-Extract the process tree to identify suspicious or unexpected processes:
+| Stage | Token cost | When |
+|-------|-----------|------|
+| Discovery scan | ~30 tokens | Always — agent reads YAML frontmatter |
+| Full skill load | 500–2000 tokens | Only when skill matches the task |
+| Deep reference pull | 1000–5000 tokens | Only when agent needs technical depth |
 
-```bash
-vol -f memory.raw windows.pslist
-vol -f memory.raw windows.pstree
-vol -f memory.raw windows.psscan    # Finds hidden/unlinked processes
+Irrelevant skills cost virtually nothing. Relevant skills provide complete expert-level guidance.
+
+## 🧠 How AI agents use these skills
+
+```
+User prompt: "Analyze this memory dump for signs of credential theft"
+
+Agent's internal process:
+1. Scans 754 skill frontmatters (~30 tokens each) → finds 12 relevant skills
+2. Loads top matches:
+   - performing-memory-forensics-with-volatility3
+   - hunting-for-credential-dumping-lsass
+   - analyzing-windows-event-logs-for-credential-access
+3. Follows structured workflow from SKILL.md
+4. References ATT&CK T1003 (Credential Dumping) mapping
+5. Maps findings to D3FEND D3-PSMD (Process Self-Modification Detection)
+6. Outputs structured findings with framework references
 ```
 
-Look for: unusual parent-child relationships, processes with suspicious names,
-processes running from temp directories, unsigned executables.
+## 📝 Example skills
 
-### Step 3 — Analyze network connections
+<details>
+<summary><strong>🔍 Hunting for C2 beaconing</strong></summary>
 
-Extract active and closed network connections:
+**Domain:** Threat Hunting · **ATT&CK:** T1071, T1573 · **D3FEND:** D3-NTA · **CSF:** DE.CM-01
 
-```bash
-vol -f memory.raw windows.netscan
-vol -f memory.raw windows.netstat
-```
-
-Flag: connections to known-bad IPs, unusual ports (4444, 8443, 1337),
-beaconing patterns, connections from non-browser processes.
-
-### Step 4 — Detect code injection
-
-Scan for injected code in process memory:
-
-```bash
-vol -f memory.raw windows.malfind
-```
-
-Review output for: PAGE_EXECUTE_READWRITE memory regions, MZ headers in
-non-image regions, shellcode signatures, hollow process indicators.
-
-### Step 5 — Extract artifacts
-
-Dump suspicious processes, DLLs, and drivers for further analysis:
-
-```bash
-vol -f memory.raw windows.dumpfiles --pid <PID>
-vol -f memory.raw windows.dlllist --pid <PID>
-vol -f memory.raw windows.handles --pid <PID>
-```
-
-### Step 6 — Check persistence mechanisms
-
-Examine registry hives and services loaded in memory:
-
-```bash
-vol -f memory.raw windows.registry.hivelist
-vol -f memory.raw windows.svcscan
-vol -f memory.raw windows.cmdline
-```
-
-## Verification
-
-- [ ] OS profile correctly identified and dump validated
-- [ ] Complete process tree exported and anomalies flagged
-- [ ] Network connections reviewed and suspicious IPs documented
-- [ ] Malfind output reviewed — injected code regions identified
-- [ ] Suspicious binaries dumped for downstream malware analysis
-- [ ] IOCs extracted (IPs, domains, file hashes, mutex names)
-- [ ] Findings documented in incident report with timestamps
-````
+Identifies command-and-control communication patterns in network traffic using beacon interval analysis, JA3/JA3S fingerprinting, and DNS request frequency modeling. Includes Zeek scripts for automated detection and SIEM correlation rules.
 
 </details>
 
 <details>
-<summary><b>🦠 Reverse engineering .NET malware with dnSpy</b> — Malware Analysis domain</summary>
+<summary><strong>🦠 Reverse engineering .NET malware with dnSpy</strong></summary>
 
-````yaml
----
-name: analyzing-dotnet-malware-with-dnspy
-description: >-
-  Decompile, analyze, and extract IOCs from .NET-based malware samples
-  using dnSpy for static analysis and behavioral understanding.
-domain: cybersecurity
-subdomain: malware-analysis
-tags: [malware, reverse-engineering, dotnet, dnspy, static-analysis]
-version: "1.0"
-author: mukul975
-license: Apache-2.0
----
+**Domain:** Malware Analysis · **ATT&CK:** T1027, T1059.001 · **ATLAS:** AML.T0016 · **CSF:** DE.AE-02
 
-## When to Use
-
-- Triaging a suspected .NET malware sample (.exe or .dll compiled with CLR)
-- Extracting hardcoded C2 URLs, encryption keys, or configuration data
-- Understanding malware behavior before dynamic analysis
-- Analyzing obfuscated .NET payloads (ConfuserEx, SmartAssembly, etc.)
-- Building detection signatures (YARA, Sigma) from decompiled source
-
-## Prerequisites
-
-- **dnSpy** (or dnSpyEx fork) installed on analysis workstation
-- Isolated malware analysis environment (VM with snapshots)
-- **PE analysis tool** (CFF Explorer, PE-bear, or pestudio) for initial triage
-- **de4dot** for automated .NET deobfuscation
-- Sample SHA256 hash documented before analysis begins
-- Network monitoring tools (Wireshark/FakeNet-NG) for dynamic validation
-
-## Workflow
-
-### Step 1 — Initial triage and environment setup
-
-Confirm the sample is a .NET assembly before opening in dnSpy:
-
-```bash
-# Check for CLR metadata
-file sample.exe
-# Look for .NET version string, mscoree.dll import
-pestudio sample.exe
-```
-
-Take a VM snapshot. Disable network adapters. Document sample hash.
-
-### Step 2 — Deobfuscate if protected
-
-Many .NET malware families use obfuscation. Run de4dot first:
-
-```bash
-de4dot sample.exe -o sample_clean.exe
-```
-
-Check output log for identified obfuscator (ConfuserEx, Dotfuscator,
-SmartAssembly, Babel, Eazfuscator). If de4dot fails, note the packer
-for manual unpacking in dnSpy.
-
-### Step 3 — Load and explore in dnSpy
-
-Open the cleaned binary in dnSpy. Start with high-level reconnaissance:
-
-1. **Assembly Explorer** — Review namespaces, classes, entry point
-2. **Entry point** (`Main()` or module initializer) — Trace execution flow
-3. **Resources** — Check for embedded payloads, encrypted configs
-4. **String references** — Search for URLs, IP addresses, registry keys
-5. **References** — Note any P/Invoke calls (Win32 API) indicating native interaction
-
-### Step 4 — Identify C2 infrastructure and configuration
-
-Search decompiled source for network indicators:
-
-- Hardcoded URLs, IP addresses, domain names
-- Base64-encoded strings (decode in CyberChef)
-- XOR / AES decryption routines with embedded keys
-- HTTP User-Agent strings, custom headers
-- Registry keys or file paths used for persistence
-
-Set breakpoints in dnSpy debugger at decryption functions to capture
-plaintext config at runtime if static extraction fails.
-
-### Step 5 — Map capabilities to MITRE ATT&CK
-
-Document each observed capability:
-
-- **Execution method** — Process injection, scheduled tasks, WMI
-- **Persistence** — Registry Run keys, startup folder, services
-- **Credential access** — Browser credential theft, keylogging
-- **Exfiltration** — HTTP POST, DNS tunneling, cloud storage APIs
-- **Evasion** — Anti-VM checks, sleep timers, sandbox detection
-
-### Step 6 — Extract IOCs and build detections
-
-Compile all indicators into a structured IOC list:
-
-```
-# Network IOCs
-C2: https://evil-domain[.]com/gate.php
-User-Agent: Mozilla/5.0 (compatible; MSIE 10.0)
-DNS: ns1.malware-c2[.]net
-
-# Host IOCs
-Mutex: Global\{GUID-HERE}
-Registry: HKCU\Software\Microsoft\Windows\CurrentVersion\Run\svchost
-File: %APPDATA%\svchost.exe (SHA256: abc123...)
-```
-
-Write YARA rule targeting unique strings or byte patterns.
-
-## Verification
-
-- [ ] Sample identified as .NET assembly and hash documented
-- [ ] Deobfuscation attempted — obfuscator identified and handled
-- [ ] Entry point traced — full execution flow mapped
-- [ ] C2 infrastructure extracted (URLs, IPs, domains, ports)
-- [ ] Encryption keys / decryption routines documented
-- [ ] Capabilities mapped to MITRE ATT&CK techniques
-- [ ] IOC list exported in structured format (STIX, OpenIOC, or CSV)
-- [ ] YARA detection rule written and tested against sample
-````
+Step-by-step decompilation workflow for .NET executables including de-obfuscation techniques, string decryption, C2 extraction, and behavioral analysis. Includes YARA rule templates for family classification.
 
 </details>
 
----
+<details>
+<summary><strong>☸️ Auditing Kubernetes RBAC configurations</strong></summary>
 
-## 👥 Contributors
+**Domain:** Container Security · **ATT&CK:** T1078.004 · **D3FEND:** D3-ACL · **CSF:** PR.AA-01 · **AI RMF:** GOVERN-1.2
 
-Thanks to these wonderful people for building the largest open-source cybersecurity skills collection:
+Systematic review of ClusterRoles, RoleBindings, and ServiceAccounts to identify overprivileged workloads, lateral movement paths, and secrets exposure. Includes kubectl audit scripts and remediation playbooks.
 
-<!-- ALL-CONTRIBUTORS-LIST:START -->
-<a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=mukul975/Anthropic-Cybersecurity-Skills" />
-</a>
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+</details>
 
-Want to see your name here? Check out the [contributing guide](#-contributing-to-cybersecurity-ai-skills) below.
+## 👥 Contributing
 
----
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-## 🤝 Contributing to cybersecurity AI skills
+**Ways to contribute:**
+- 🆕 Add new skills using the [New Skill template](https://github.com/mukul975/Anthropic-Cybersecurity-Skills/issues/new?template=new-skill.yml)
+- 🐛 Report issues with the [Bug Report template](https://github.com/mukul975/Anthropic-Cybersecurity-Skills/issues/new?template=bug-report.yml)
+- 💡 Request features via [Feature Request](https://github.com/mukul975/Anthropic-Cybersecurity-Skills/issues/new?template=feature-request.yml)
+- 📝 Improve documentation or fix typos
+- 🗺️ Add framework mappings to existing skills
 
-This project hit **3.5k stars in two weeks** — the community momentum is real. With **328 forks**, **9 open PRs**, and security professionals from around the world getting involved, now is the perfect time to contribute.
-
-We welcome four types of contributions:
-
-| Type | Description | Good for |
-|:-----|:------------|:---------|
-| 🆕 **New skills** | Add skills for uncovered techniques or domains | Security practitioners, pen testers, IR analysts |
-| 📖 **Improve existing skills** | Enhance workflows, add edge cases, fix errors | Anyone who uses the skills and spots improvements |
-| 🌍 **Translations & i18n** | Help make skills accessible to non-English speakers | Multilingual security professionals |
-| 🐛 **Bug reports & feedback** | Report issues, suggest improvements, review PRs | Everyone — all experience levels welcome |
-
-### How to get started
-
-1. **Browse [open issues](https://github.com/mukul975/Anthropic-Cybersecurity-Skills/issues)** — look for `good first issue` and `help wanted` labels
-2. **Read [`CONTRIBUTING.md`](CONTRIBUTING.md)** for the full skill template and submission guidelines
-3. **Fork the repo**, create your skill directory under `skills/`, and submit a PR
-4. **Title format:** `Add skill: your-skill-name-here`
-
-> Every PR gets reviewed for technical accuracy and consistency with the agentskills.io standard. We aim to review within 48 hours.
-
----
+Every PR gets reviewed for technical accuracy and consistency with the agentskills.io standard. We aim to review within 48 hours.
 
 ## ⭐ Star history
 
 [![Star History Chart](https://api.star-history.com/svg?repos=mukul975/Anthropic-Cybersecurity-Skills&type=Date)](https://star-history.com/#mukul975/Anthropic-Cybersecurity-Skills&Date)
 
----
-
 ## 🌐 Community
 
-<p align="center">
-  <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/stargazers">⭐ Star this repo</a> ·
-  <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/fork">🍴 Fork it</a> ·
-  <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/discussions">💬 Discuss</a> ·
-  <a href="https://github.com/mukul975/Anthropic-Cybersecurity-Skills/issues/new">📝 Open an issue</a>
-</p>
-
-If this project saves you time or makes your AI agent more capable, **give it a ⭐** — it helps others discover these skills and keeps the community growing.
-
----
+- 📋 Listed on [SkillsLLM](https://skillsllm.com/skill/anthropic-cybersecurity-skills)
+- 📚 Featured in [awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills)
+- 🔒 Featured in [awesome-ai-security](https://github.com/ottosulin/awesome-ai-security)
+- 🖥️ Featured in [awesome-codex-cli](https://github.com/RoggeOhta/awesome-codex-cli)
+- 📖 [Complete guide on Medium](https://fazal-sec.medium.com/claude-skills-ai-powered-cybersecurity-the-complete-guide-to-building-intelligent-security-7bb7e9d14c8e)
 
 ## 📄 License
 
-This project is licensed under the **Apache License 2.0** — see the [`LICENSE`](LICENSE) file for details.
-
-You are free to use, modify, and distribute these skills in both personal and commercial projects. Attribution is appreciated but not required.
+Apache License 2.0 — free for commercial and personal use. See [LICENSE](LICENSE) for details.
 
 ---
 
 <p align="center">
-  <sub>
-    <b>⚠️ Disclaimer:</b> This is an independent, community-created project. <b>Not affiliated with Anthropic PBC.</b><br/>
-    "Anthropic" in the repository name refers to compatibility with the <a href="https://agentskills.io">agentskills.io</a> open standard,<br/>
-    not official Anthropic endorsement or affiliation. All trademarks belong to their respective owners.
-  </sub>
+  <strong>If these skills help your AI agent defend better, consider giving this repo a ⭐</strong>
 </p>
