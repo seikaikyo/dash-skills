@@ -144,13 +144,14 @@ update_neon_skills() {
 # ui-agents (JakobStadler/claude-code-ui-agents) - 已移除 (repo 不存在)
 # claude-designer (joeseesun/claude-designer-skill) - 已移除 (repo 不存在)
 
-# 函數：更新 frontend-design (Anthropic 官方)
-update_frontend_design() {
-    local skill_dir="$EXTERNAL_DIR/frontend-design"
+# 通用函數：更新 anthropics/skills repo 中的 skill
+_update_anthropic_skill() {
+    local name="$1"
+    local skill_dir="$EXTERNAL_DIR/$name"
     local temp_dir=$(mktemp -d)
     local repo="anthropics/skills"
 
-    echo "更新: frontend-design (Anthropic 官方)"
+    echo "更新: $name (Anthropic 官方)"
     echo "  來源: https://github.com/$repo"
 
     cd "$temp_dir"
@@ -161,11 +162,11 @@ update_frontend_design() {
     fi
 
     cd repo
-    git sparse-checkout set skills/frontend-design 2>/dev/null
+    git sparse-checkout set "skills/$name" 2>/dev/null
 
-    if [ -d "skills/frontend-design" ]; then
+    if [ -d "skills/$name" ]; then
         rm -rf "$skill_dir"
-        cp -r skills/frontend-design "$skill_dir"
+        cp -r "skills/$name" "$skill_dir"
         echo "  狀態: 已更新"
     else
         echo "  狀態: 失敗"
@@ -173,6 +174,36 @@ update_frontend_design() {
 
     rm -rf "$temp_dir"
 }
+
+# 函數：更新 frontend-design (Anthropic 官方)
+update_frontend_design() { _update_anthropic_skill "frontend-design"; }
+
+# 函數：更新 canvas-design (Anthropic 官方 - 視覺設計/海報/藝術品)
+update_canvas_design() { _update_anthropic_skill "canvas-design"; }
+
+# 函數：更新 pdf (Anthropic 官方 - PDF 讀寫/合併/分割/OCR)
+update_pdf() { _update_anthropic_skill "pdf"; }
+
+# 函數：更新 docx (Anthropic 官方 - Word 文件讀寫編輯)
+update_docx() { _update_anthropic_skill "docx"; }
+
+# 函數：更新 xlsx (Anthropic 官方 - Excel 讀寫格式化)
+update_xlsx() { _update_anthropic_skill "xlsx"; }
+
+# 函數：更新 pptx (Anthropic 官方 - PowerPoint 簡報製作)
+update_pptx() { _update_anthropic_skill "pptx"; }
+
+# 函數：更新 mcp-builder (Anthropic 官方 - MCP server 建置指南)
+update_mcp_builder() { _update_anthropic_skill "mcp-builder"; }
+
+# 函數：更新 skill-creator (Anthropic 官方 - Skill 建置/測試/迭代)
+update_skill_creator() { _update_anthropic_skill "skill-creator"; }
+
+# 函數：更新 webapp-testing (Anthropic 官方 - Playwright 前端測試)
+update_webapp_testing() { _update_anthropic_skill "webapp-testing"; }
+
+# 函數：更新 theme-factory (Anthropic 官方 - 文件/簡報主題工廠)
+update_theme_factory() { _update_anthropic_skill "theme-factory"; }
 
 # 函數：更新 accessibility-agents
 update_accessibility_agents() {
@@ -370,34 +401,7 @@ update_content_research_writer() {
 }
 
 # 函數：更新 doc-coauthoring (Anthropic 官方)
-update_doc_coauthoring() {
-    local skill_dir="$EXTERNAL_DIR/doc-coauthoring"
-    local temp_dir=$(mktemp -d)
-    local repo="anthropics/skills"
-
-    echo "更新: doc-coauthoring (Anthropic 官方)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    cd repo
-    git sparse-checkout set skills/doc-coauthoring 2>/dev/null
-
-    if [ -d "skills/doc-coauthoring" ]; then
-        rm -rf "$skill_dir"
-        cp -r skills/doc-coauthoring "$skill_dir"
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
+update_doc_coauthoring() { _update_anthropic_skill "doc-coauthoring"; }
 
 # 函數：更新 storytelling (SCAR 框架)
 update_storytelling() {
@@ -799,6 +803,15 @@ show_available() {
     echo "  - web-design-guidelines   (Vercel Labs)"
     echo "  - neon-skills             (Neon Database, 6 skills)"
     echo "  - frontend-design         (Anthropic 官方, 前端設計)"
+    echo "  - canvas-design           (Anthropic 官方, 視覺設計/海報/藝術品)"
+    echo "  - pdf                     (Anthropic 官方, PDF 讀寫/合併/OCR)"
+    echo "  - docx                    (Anthropic 官方, Word 文件讀寫)"
+    echo "  - xlsx                    (Anthropic 官方, Excel 讀寫格式化)"
+    echo "  - pptx                    (Anthropic 官方, PowerPoint 簡報)"
+    echo "  - mcp-builder             (Anthropic 官方, MCP server 建置)"
+    echo "  - skill-creator           (Anthropic 官方, Skill 建置/測試)"
+    echo "  - webapp-testing          (Anthropic 官方, Playwright 前端測試)"
+    echo "  - theme-factory           (Anthropic 官方, 文件/簡報主題工廠)"
     echo "  - accessibility-agents    (Community-Access, 57 a11y agents)"
     echo "  - bencium-marketplace     (bencium, UX audit + typography)"
     echo "  - interface-design        (Dammyjay93, 儀表板/後台介面設計)"
@@ -860,6 +873,15 @@ if [ $# -eq 0 ]; then
         update_interface_design
         update_ui_ux_pro_max
         update_remotion_video
+        update_canvas_design
+        update_pdf
+        update_docx
+        update_xlsx
+        update_pptx
+        update_mcp_builder
+        update_skill_creator
+        update_webapp_testing
+        update_theme_factory
     )
 
     total=${#all_updates[@]}
@@ -1036,6 +1058,33 @@ else
                 ;;
             "ui-ux-pro-max"|"ux-pro-max")
                 update_ui_ux_pro_max
+                ;;
+            "canvas-design"|"canvas")
+                update_canvas_design
+                ;;
+            "pdf")
+                update_pdf
+                ;;
+            "docx"|"word")
+                update_docx
+                ;;
+            "xlsx"|"excel")
+                update_xlsx
+                ;;
+            "pptx"|"powerpoint"|"ppt")
+                update_pptx
+                ;;
+            "mcp-builder"|"mcp")
+                update_mcp_builder
+                ;;
+            "skill-creator"|"skill")
+                update_skill_creator
+                ;;
+            "webapp-testing"|"playwright")
+                update_webapp_testing
+                ;;
+            "theme-factory"|"theme")
+                update_theme_factory
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
