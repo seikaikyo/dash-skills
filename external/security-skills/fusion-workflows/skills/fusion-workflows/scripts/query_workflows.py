@@ -21,27 +21,26 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from cs_auth import load_env, api_get
+from cs_auth import get_client
 
 # Fix Windows console encoding
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-DEFINITIONS_COMBINED = "/workflows/combined/definitions/v1"
-
 
 def fetch_all_definitions():
     """Fetch all workflow definitions with pagination."""
-    load_env()
+    client = get_client()
     all_defs = []
     offset = 0
     limit = 100
     while True:
-        resp = api_get(DEFINITIONS_COMBINED, params={"limit": limit, "offset": offset})
-        resources = resp.get("resources", [])
+        resp = client.search_definitions(limit=limit, offset=offset)
+        body = resp["body"]
+        resources = body.get("resources", [])
         if not resources:
             break
         all_defs.extend(resources)
-        meta = resp.get("meta", {}).get("pagination", {})
+        meta = body.get("meta", {}).get("pagination", {})
         total = meta.get("total", 0)
         offset += len(resources)
         if offset >= total:
@@ -109,7 +108,78 @@ def format_json(defs):
     return json.dumps(out, indent=2)
 
 
+def _handle_check_name(args):
+    """Handle --check-name command."""
+    matches = find_by_exact_name(args.check_name)
+    if args.json:
+        print(json.dumps({
+            "name": args.check_name,
+            "exists": len(matches) > 0,
+            "count": len(matches),
+            "matches": [{"id": d.get("id", ""), "name": d.get("name", "")} for d in matches],
+        }, indent=2))
+    elif matches:
+        print(f"\n  DUPLICATE FOUND: '{args.check_name}' already exists ({len(matches)} match(es)):\n")
+        for d in matches:
+            print(f"    ID: {d.get('id', '?')}  Name: {d.get('name', '?')}")
+        print()
+    else:
+        print(f"\n  OK: No existing workflow named '{args.check_name}'\n")
+    sys.exit(0 if matches else 1)
+
+
+def _handle_check_yaml(args):
+    """Handle --check-yaml command."""
+    all_defs = fetch_all_definitions()
+    all_names = {d.get("name", "").lower(): d for d in all_defs}
+
+    duplicates = []
+    clean = []
+
+    for fp in args.check_yaml:
+        basename = os.path.basename(fp)
+        name = extract_name_from_yaml(fp)
+        if name is None:
+            print(f"  {basename}: Could not extract workflow name", file=sys.stderr)
+            continue
+
+        name_lower = name.lower()
+        if name_lower in all_names:
+            existing = all_names[name_lower]
+            duplicates.append((basename, name, existing.get("id", "?")))
+        else:
+            clean.append((basename, name))
+
+    if args.json:
+        print(json.dumps({
+            "duplicates": [
+                {"file": f, "name": n, "existing_id": eid}
+                for f, n, eid in duplicates
+            ],
+            "clean": [
+                {"file": f, "name": n}
+                for f, n in clean
+            ],
+        }, indent=2))
+    else:
+        if duplicates:
+            print(f"\n  DUPLICATES FOUND ({len(duplicates)}):\n")
+            for basename, name, eid in duplicates:
+                print(f"    {basename}")
+                print(f"      Name       : {name}")
+                print(f"      Existing ID: {eid}")
+                print()
+        if clean:
+            print(f"  No duplicates ({len(clean)}):\n")
+            for basename, name in clean:
+                print(f"    {basename} — '{name}'")
+            print()
+
+    sys.exit(0 if duplicates else 1)
+
+
 def main():
+    """CLI entry point for workflow queries."""
     parser = argparse.ArgumentParser(
         description="Query existing Fusion workflow definitions"
     )
@@ -160,76 +230,10 @@ def main():
                 print("  No workflows found matching that search term.\n")
 
     elif args.check_name:
-        matches = find_by_exact_name(args.check_name)
-        if args.json:
-            print(json.dumps({
-                "name": args.check_name,
-                "exists": len(matches) > 0,
-                "count": len(matches),
-                "matches": [{"id": d.get("id", ""), "name": d.get("name", "")} for d in matches],
-            }, indent=2))
-        else:
-            if matches:
-                print(f"\n  DUPLICATE FOUND: '{args.check_name}' already exists ({len(matches)} match(es)):\n")
-                for d in matches:
-                    print(f"    ID: {d.get('id', '?')}  Name: {d.get('name', '?')}")
-                print()
-            else:
-                print(f"\n  OK: No existing workflow named '{args.check_name}'\n")
-        # Exit 0 if exists (duplicate found), 1 if not found
-        sys.exit(0 if matches else 1)
+        _handle_check_name(args)
 
     elif args.check_yaml:
-        # Fetch all definitions once for all file checks
-        all_defs = fetch_all_definitions()
-        all_names = {d.get("name", "").lower(): d for d in all_defs}
-
-        duplicates = []
-        clean = []
-
-        for fp in args.check_yaml:
-            basename = os.path.basename(fp)
-            name = extract_name_from_yaml(fp)
-            if name is None:
-                print(f"  {basename}: Could not extract workflow name", file=sys.stderr)
-                continue
-
-            name_lower = name.lower()
-            if name_lower in all_names:
-                existing = all_names[name_lower]
-                duplicates.append((basename, name, existing.get("id", "?")))
-            else:
-                clean.append((basename, name))
-
-        if args.json:
-            print(json.dumps({
-                "duplicates": [
-                    {"file": f, "name": n, "existing_id": eid}
-                    for f, n, eid in duplicates
-                ],
-                "clean": [
-                    {"file": f, "name": n}
-                    for f, n in clean
-                ],
-            }, indent=2))
-        else:
-            if duplicates:
-                print(f"\n  DUPLICATES FOUND ({len(duplicates)}):\n")
-                for basename, name, eid in duplicates:
-                    print(f"    {basename}")
-                    print(f"      Name       : {name}")
-                    print(f"      Existing ID: {eid}")
-                    print()
-            if clean:
-                print(f"  No duplicates ({len(clean)}):\n")
-                for basename, name in clean:
-                    print(f"    {basename} — '{name}'")
-                print()
-
-        if duplicates:
-            sys.exit(0)  # Duplicates found
-        else:
-            sys.exit(1)  # No duplicates — safe to import
+        _handle_check_yaml(args)
 
 
 if __name__ == "__main__":

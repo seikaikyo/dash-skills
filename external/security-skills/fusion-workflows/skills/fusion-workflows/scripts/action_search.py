@@ -19,13 +19,10 @@ import os
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from cs_auth import load_env, api_get
+from cs_auth import get_client
 
 # Fix Windows console encoding
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-
-ACTIVITIES_COMBINED = "/workflows/combined/activities/v1"
-ACTIVITIES_ENTITIES = "/workflows/entities/activities/v1"
 
 # Cache settings — full catalog is cached locally to avoid repeated full scans.
 # The cache is only used for operations that must scan all actions (--vendors,
@@ -54,20 +51,23 @@ def _fql_search(query, vendor_filter=None, limit=200):
         parts.append(f"name:'{query}'")
     fql = "+".join(parts)
 
+    client = get_client()
     results = []
     offset = 0
     total = None
     while True:
-        params = {"limit": limit, "offset": offset, "filter": fql}
         try:
-            resp = api_get(ACTIVITIES_COMBINED, params=params)
-        except Exception:
+            resp = client.search_activities(filter=fql, limit=limit, offset=offset)
+            if resp["status_code"] != 200:
+                return None
+            body = resp["body"]
+        except (ConnectionError, RuntimeError, OSError):
             return None  # FQL not supported / transient error — caller retries
-        resources = resp.get("resources", [])
+        resources = body.get("resources", [])
         if not resources:
             break
         if total is None:
-            total = resp.get("meta", {}).get("pagination", {}).get("total", 0)
+            total = body.get("meta", {}).get("pagination", {}).get("total", 0)
         results.extend(resources)
         offset += len(resources)
         if offset >= total:
@@ -115,44 +115,49 @@ def _clear_cache():
         return False
 
 
-def _paginate_all(progress=False):
-    """Return the full action catalog, using cache when available.
+def _fetch_page_with_retry(client, offset, max_retries=3, progress=False):
+    """Fetch a single page of activities with retry logic. Returns body dict or None."""
+    for attempt in range(1, max_retries + 1):
+        try:
+            resp = client.search_activities(limit=200, offset=offset)
+            if resp["status_code"] != 200:
+                raise RuntimeError(f"API returned {resp['status_code']}")
+            return resp["body"]
+        except (ConnectionError, RuntimeError, OSError):
+            if attempt < max_retries:
+                if progress:
+                    print(f"\n  Connection error, retrying ({attempt}/{max_retries})...", flush=True)
+                time.sleep(2 * attempt)
+            else:
+                if progress:
+                    print(f"\n  Failed after {max_retries} retries at offset {offset}.")
+                return None
+    return None
 
-    Retries individual page fetches up to 3 times to handle transient
-    connection resets from the CrowdStrike API.
-    """
+
+def _paginate_all(progress=False):
+    """Return the full action catalog, using cache when available."""
     cached = _load_cache()
     if cached is not None:
         if progress:
             print(f"  Using cached catalog ({len(cached)} actions, < 1 hr old)")
         return cached
 
+    client = get_client()
     resources = []
     offset = 0
     total = None
-    max_retries = 3
     while True:
-        for attempt in range(1, max_retries + 1):
-            try:
-                resp = api_get(ACTIVITIES_COMBINED, params={"limit": 200, "offset": offset})
-                break
-            except Exception as e:
-                if attempt < max_retries:
-                    if progress:
-                        print(f"\n  Connection error, retrying ({attempt}/{max_retries})...", flush=True)
-                    time.sleep(2 * attempt)  # backoff: 2s, 4s
-                else:
-                    if progress:
-                        print(f"\n  Failed after {max_retries} retries at offset {offset}.")
-                    # Return what we have so far rather than crash
-                    if resources:
-                        _save_cache(resources)
-                    return resources
-        page = resp.get("resources", [])
+        body = _fetch_page_with_retry(client, offset, progress=progress)
+        if body is None:
+            if resources:
+                _save_cache(resources)
+            return resources
+        page = body.get("resources", [])
         if not page:
             break
         if total is None:
-            total = resp.get("meta", {}).get("pagination", {}).get("total", 0)
+            total = body.get("meta", {}).get("pagination", {}).get("total", 0)
         resources.extend(page)
         offset += len(page)
         if progress and total:
@@ -257,16 +262,20 @@ def list_actions(limit=25, offset=0, vendor_filter=None):
         all_for_vendor = search_by_vendor(vendor_filter)
         page = all_for_vendor[offset:offset + limit]
         return page, len(all_for_vendor)
-    resp = api_get(ACTIVITIES_COMBINED, params={"limit": limit, "offset": offset})
-    resources = resp.get("resources", [])
-    total = resp.get("meta", {}).get("pagination", {}).get("total", 0)
+    client = get_client()
+    resp = client.search_activities(limit=limit, offset=offset)
+    body = resp["body"]
+    resources = body.get("resources", [])
+    total = body.get("meta", {}).get("pagination", {}).get("total", 0)
     return resources, total
 
 
 def get_action_details(action_id):
     """Get full details for a specific action by ID."""
-    resp = api_get(ACTIVITIES_ENTITIES, params={"ids": action_id})
-    resources = resp.get("resources", [])
+    client = get_client()
+    resp = client.search_activities(filter=f"id:'{action_id}'")
+    body = resp["body"]
+    resources = body.get("resources", [])
     return resources[0] if resources else None
 
 
@@ -310,9 +319,9 @@ def format_action_details(action):
     if ns:
         lines.append(f"  Namespace   : {ns}")
     if not has_perm:
-        lines.append(f"  Permission  : NOT AVAILABLE (install app from CrowdStrike Store)")
+        lines.append("  Permission  : NOT AVAILABLE (install app from CrowdStrike Store)")
     if is_plugin:
-        lines.append(f"  Plugin      : Yes \u2014 requires config_id in workflow YAML")
+        lines.append("  Plugin      : Yes \u2014 requires config_id in workflow YAML")
 
     # Show input fields / properties schema
     props = action.get("properties", {})
@@ -331,7 +340,7 @@ def format_action_details(action):
     cls = action.get("class", "")
     if cls:
         lines.append(f"\n  Class              : {cls}")
-        lines.append(f"  version_constraint : ~1  (typically required for class-based actions)")
+        lines.append("  version_constraint : ~1  (typically required for class-based actions)")
 
     return "\n".join(lines)
 
@@ -357,10 +366,108 @@ def format_vendors_table(vendors):
     return "\n".join(lines)
 
 
+# ── CLI handlers ──────────────────────────────────────────────────────────
+
+
+def _print_results(results, label, as_json=False):
+    """Print a list of action results in summary or JSON format."""
+    if as_json:
+        print(json.dumps(results, indent=2))
+    elif not results:
+        print(f"No actions matching {label}.")
+    else:
+        print(f"\nFound {len(results)} action(s) matching {label}:\n")
+        for r in results:
+            print(format_action_summary(r))
+            print()
+
+
+def _print_paginated(items, total, offset, as_json=False):
+    """Print a paginated list of actions."""
+    if as_json:
+        print(json.dumps({"resources": items, "total": total}, indent=2))
+    else:
+        print(f"\nActions (showing {len(items)} of {total}):\n")
+        for a in items:
+            print(format_action_summary(a))
+            print()
+        if offset + len(items) < total:
+            print(f"  ... use --offset {offset + len(items)} to see more")
+
+
+def _handle_vendors(args):
+    """Handle --vendors command."""
+    vendors = list_vendors()
+    if args.use_case:
+        vendors = {
+            name: info for name, info in vendors.items()
+            if any(args.use_case.lower() in uc.lower() for uc in info["use_cases"])
+        }
+    if args.json:
+        out = {k: {"count": v["count"], "use_cases": sorted(v["use_cases"]),
+                    "has_permission": v["has_permission"]} for k, v in vendors.items()}
+        print(json.dumps(out, indent=2))
+    else:
+        print(format_vendors_table(vendors))
+
+
+def _handle_search(args):
+    """Handle --search command."""
+    results = search_actions(args.search, vendor_filter=args.vendor)
+    if args.use_case:
+        results = [r for r in results if any(
+            args.use_case.lower() in uc.lower() for uc in r.get("use_cases", [])
+        )]
+    _print_results(results, f"'{args.search}'", as_json=args.json)
+
+
+def _handle_details(args):
+    """Handle --details command."""
+    action = get_action_details(args.details)
+    if args.json:
+        print(json.dumps(action, indent=2))
+    elif not action:
+        print(f"Action '{args.details}' not found.")
+        sys.exit(1)
+    else:
+        print("\nAction details:\n")
+        print(format_action_details(action))
+        print()
+
+
+def _handle_list(args):
+    """Handle --list command."""
+    if args.use_case:
+        results = search_by_use_case(args.use_case)
+        if args.vendor:
+            results = [r for r in results if r.get("vendor", "").lower() == args.vendor.lower()]
+        page = results[args.offset:args.offset + args.limit]
+        _print_paginated(page, len(results), args.offset, as_json=args.json)
+    else:
+        actions, total = list_actions(limit=args.limit, offset=args.offset,
+                                      vendor_filter=args.vendor)
+        _print_paginated(actions, total, args.offset, as_json=args.json)
+
+
+def _handle_use_case(args):
+    """Handle --use-case (standalone) command."""
+    results = search_by_use_case(args.use_case)
+    if args.vendor:
+        results = [r for r in results if r.get("vendor", "").lower() == args.vendor.lower()]
+    _print_results(results, f"use case '{args.use_case}'", as_json=args.json)
+
+
+def _handle_vendor(args):
+    """Handle --vendor (standalone) command."""
+    results = search_by_vendor(args.vendor)
+    _print_results(results, f"vendor '{args.vendor}'", as_json=args.json)
+
+
 # ── CLI ────────────────────────────────────────────────────────────────────
 
 
 def main():
+    """CLI entry point for action search."""
     parser = argparse.ArgumentParser(description="Search CrowdStrike Fusion actions")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--search", "-s", metavar="QUERY", help="Search actions by name")
@@ -375,120 +482,25 @@ def main():
     parser.add_argument("--json", action="store_true", help="Machine-readable JSON output")
     args = parser.parse_args()
 
-    # Require at least one mode of operation
     if not any([args.search, args.details, args.list, args.vendors, args.vendor,
                 args.use_case, args.clear_cache]):
         parser.error("one of --search, --details, --list, --vendors, --vendor, "
                      "--use-case, or --clear-cache is required")
 
     if args.clear_cache:
-        if _clear_cache():
-            print("Cache cleared.")
-        else:
-            print("No cache file found.")
-        return
-
-    if args.vendors:
-        vendors = list_vendors()
-        if args.use_case:
-            # Filter vendors to those matching the use case
-            vendors = {
-                name: info for name, info in vendors.items()
-                if any(args.use_case.lower() in uc.lower() for uc in info["use_cases"])
-            }
-        if args.json:
-            # Convert sets to lists for JSON serialization
-            out = {k: {"count": v["count"], "use_cases": sorted(v["use_cases"]),
-                        "has_permission": v["has_permission"]} for k, v in vendors.items()}
-            print(json.dumps(out, indent=2))
-        else:
-            print(format_vendors_table(vendors))
-
+        print("Cache cleared." if _clear_cache() else "No cache file found.")
+    elif args.vendors:
+        _handle_vendors(args)
     elif args.use_case and not args.search and not args.list:
-        # --use-case without --vendors, --search, or --list: list matching actions
-        results = search_by_use_case(args.use_case)
-        if args.vendor:
-            results = [r for r in results if r.get("vendor", "").lower() == args.vendor.lower()]
-        if args.json:
-            print(json.dumps(results, indent=2))
-        elif not results:
-            print(f"No actions matching use case '{args.use_case}'.")
-        else:
-            print(f"\nFound {len(results)} action(s) for use case '{args.use_case}':\n")
-            for r in results:
-                print(format_action_summary(r))
-                print()
-
+        _handle_use_case(args)
     elif args.vendor and not args.search and not args.list:
-        # --vendor alone: list all actions for that vendor
-        results = search_by_vendor(args.vendor)
-        if args.json:
-            print(json.dumps(results, indent=2))
-        elif not results:
-            print(f"No actions found for vendor '{args.vendor}'.")
-        else:
-            print(f"\nFound {len(results)} action(s) for vendor '{args.vendor}':\n")
-            for r in results:
-                print(format_action_summary(r))
-                print()
-
+        _handle_vendor(args)
     elif args.search:
-        results = search_actions(args.search, vendor_filter=args.vendor)
-        if args.use_case:
-            results = [r for r in results if any(
-                args.use_case.lower() in uc.lower() for uc in r.get("use_cases", [])
-            )]
-        if args.json:
-            print(json.dumps(results, indent=2))
-        elif not results:
-            print(f"No actions matching '{args.search}'.")
-        else:
-            print(f"\nFound {len(results)} action(s) matching '{args.search}':\n")
-            for r in results:
-                print(format_action_summary(r))
-                print()
-
+        _handle_search(args)
     elif args.details:
-        action = get_action_details(args.details)
-        if args.json:
-            print(json.dumps(action, indent=2))
-        elif not action:
-            print(f"Action '{args.details}' not found.")
-            sys.exit(1)
-        else:
-            print(f"\nAction details:\n")
-            print(format_action_details(action))
-            print()
-
+        _handle_details(args)
     elif args.list:
-        if args.use_case:
-            # --list --use-case: filter by use case
-            results = search_by_use_case(args.use_case)
-            if args.vendor:
-                results = [r for r in results if r.get("vendor", "").lower() == args.vendor.lower()]
-            page = results[args.offset:args.offset + args.limit]
-            total = len(results)
-            if args.json:
-                print(json.dumps({"resources": page, "total": total}, indent=2))
-            else:
-                print(f"\nActions (showing {len(page)} of {total}):\n")
-                for a in page:
-                    print(format_action_summary(a))
-                    print()
-                if args.offset + len(page) < total:
-                    print(f"  ... use --offset {args.offset + len(page)} to see more")
-        else:
-            actions, total = list_actions(limit=args.limit, offset=args.offset,
-                                          vendor_filter=args.vendor)
-            if args.json:
-                print(json.dumps({"resources": actions, "total": total}, indent=2))
-            else:
-                print(f"\nActions (showing {len(actions)} of {total}):\n")
-                for a in actions:
-                    print(format_action_summary(a))
-                    print()
-                if args.offset + len(actions) < total:
-                    print(f"  ... use --offset {args.offset + len(actions)} to see more")
+        _handle_list(args)
 
 
 if __name__ == "__main__":

@@ -17,12 +17,10 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from cs_auth import load_env, api_post_multipart
+from cs_auth import get_client
 
 # Fix Windows console encoding
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-
-IMPORT_ENDPOINT = "/workflows/entities/definitions/import/v1"
 
 REQUIRED_KEYS = {"name", "trigger"}
 PLACEHOLDER_PATTERN = re.compile(r"PLACEHOLDER_[A-Z_]+")
@@ -68,24 +66,18 @@ def api_validate(file_path):
     Returns (success: bool, message: str).
     """
     try:
-        result = api_post_multipart(IMPORT_ENDPOINT, file_path, params={"validate_only": "true"})
-        errors = result.get("errors", [])
+        client = get_client()
+        resp = client.import_definition(data_file=file_path, validate_only=True)
+        body = resp["body"]
+        errors = body.get("errors", [])
         if errors:
             msg = "; ".join(e.get("message", str(e)) for e in errors)
             return False, msg
+        if resp["status_code"] not in (200, 201):
+            return False, f"API returned status {resp['status_code']}"
         return True, "OK"
-    except Exception as e:
-        error_text = str(e)
-        # Try to extract JSON error from requests HTTPError
-        if hasattr(e, "response") and e.response is not None:
-            try:
-                err_json = e.response.json()
-                errs = err_json.get("errors", [])
-                if errs:
-                    error_text = "; ".join(item.get("message", str(item)) for item in errs)
-            except Exception:
-                error_text = e.response.text[:500] if e.response.text else str(e)
-        return False, error_text
+    except (ConnectionError, RuntimeError, OSError) as exc:
+        return False, str(exc)
 
 
 def validate_file(file_path, preflight_only=False):
@@ -93,7 +85,6 @@ def validate_file(file_path, preflight_only=False):
     Validate a single file. Returns (passed: bool, messages: list[str]).
     """
     messages = []
-    basename = os.path.basename(file_path)
 
     # Pre-flight
     issues = preflight_check(file_path)
@@ -120,6 +111,7 @@ def validate_file(file_path, preflight_only=False):
 
 
 def main():
+    """CLI entry point for workflow validation."""
     parser = argparse.ArgumentParser(description="Validate Fusion workflow YAML files")
     parser.add_argument("files", nargs="+", metavar="FILE", help="YAML file(s) to validate")
     parser.add_argument("--preflight-only", action="store_true", help="Skip API validation")

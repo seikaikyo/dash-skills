@@ -14,55 +14,49 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from cs_auth import load_env, api_get
+from cs_auth import get_client
 
 # Fix Windows console encoding
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-
-EXPORT_ENDPOINT = "/workflows/entities/definitions/export/v1"
-DEFINITIONS_COMBINED = "/workflows/combined/definitions/v1"
 
 
 def export_workflow(workflow_id):
     """
     Export a workflow as YAML. Returns the raw YAML string.
-    Note: the export endpoint returns YAML directly, not JSON.
     """
-    import requests as req_lib
+    client = get_client()
+    resp = client.export_definition(id=workflow_id)
 
-    load_env()
-    from cs_auth import _base_url, _headers
+    # FalconPy returns raw bytes/str for YAML content-type responses
+    if isinstance(resp, bytes):
+        return resp.decode("utf-8")
+    if isinstance(resp, str):
+        return resp
 
-    url = f"{_base_url()}{EXPORT_ENDPOINT}"
-    resp = req_lib.get(url, headers=_headers(), params={"id": workflow_id})
-    resp.raise_for_status()
-
-    content_type = resp.headers.get("Content-Type", "")
-    if "yaml" in content_type or "text" in content_type:
-        return resp.text
-    # If JSON response, it might contain errors
-    try:
-        body = resp.json()
+    # Dict response means JSON (typically an error)
+    body = resp.get("body", resp) if isinstance(resp, dict) else resp
+    if isinstance(body, dict):
         errors = body.get("errors", [])
         if errors:
             msg = "; ".join(e.get("message", str(e)) for e in errors)
             print(f"  Export error: {msg}", file=sys.stderr)
             sys.exit(1)
-    except Exception:
-        pass
-    return resp.text
+
+    return str(resp)
 
 
 def list_definitions(limit=100, offset=0):
     """List all workflow definitions."""
+    client = get_client()
     all_defs = []
     while True:
-        resp = api_get(DEFINITIONS_COMBINED, params={"limit": limit, "offset": offset})
-        resources = resp.get("resources", [])
+        resp = client.search_definitions(limit=limit, offset=offset)
+        body = resp["body"]
+        resources = body.get("resources", [])
         if not resources:
             break
         all_defs.extend(resources)
-        meta = resp.get("meta", {}).get("pagination", {})
+        meta = body.get("meta", {}).get("pagination", {})
         total = meta.get("total", 0)
         offset += len(resources)
         if offset >= total:
@@ -81,6 +75,7 @@ def format_definition(d):
 
 
 def main():
+    """CLI entry point for workflow export."""
     parser = argparse.ArgumentParser(description="Export Fusion workflow definitions")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--id", metavar="WF_ID", help="Workflow definition ID to export")

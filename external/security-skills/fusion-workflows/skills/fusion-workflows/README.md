@@ -13,19 +13,37 @@ A Claude Code skill for building, validating, and deploying [CrowdStrike Falcon 
 
 ## Prerequisites
 
-- Python 3.8+ with `requests` installed
+- Python 3.10+ with `crowdstrike-falconpy` installed (`pip install crowdstrike-falconpy`)
 - CrowdStrike API credentials with Falcon Fusion SOAR permissions
-- Access to a CrowdStrike CID with Fusion SOAR enabled
+- Access to a CrowdStrike CID with Falcon Fusion SOAR enabled
 
-### Required API Scopes
+### Creating an API Client
 
-Your CrowdStrike API client needs these scopes:
+1. Log in to the [Falcon console](https://falcon.crowdstrike.com)
+2. Navigate to **Support and resources > API clients and keys**
+3. Click **Create API client**
+4. Give it a name (e.g., "Fusion SOAR Skills") and description
+5. Under **API scopes**, find **Workflow** and assign permissions based on your use case:
 
-| Scope | Permission | Used For |
-|-------|------------|----------|
-| Workflow | Read, Write | All operations (discover, validate, import, execute, export) |
+| Use Case | Workflow:Read | Workflow:Write | What It Enables |
+|----------|:---:|:---:|---|
+| Browse and export only | Yes | - | Discover actions/triggers, list/export workflows, query definitions |
+| Full skill usage | Yes | Yes | All of the above plus validate, import, execute workflows |
 
-You can minimise risk by creating a readonly key without execution, import, and export permissions.
+6. Click **Create** and copy the **Client ID** and **Client Secret** (the secret is only shown once)
+
+### Scope Details
+
+| Script | Operations | Minimum Scope |
+|--------|-----------|---------------|
+| `action_search.py` | Discover workflow actions and vendors | Workflow:Read |
+| `trigger_search.py` | List trigger types | Workflow:Read |
+| `query_workflows.py` | List and search workflow definitions | Workflow:Read |
+| `export.py` | Export workflows to YAML, list definitions | Workflow:Read |
+| `validate.py` (preflight only) | Local YAML structure checks | No API access needed |
+| `validate.py` (API validation) | Dry-run import to check for errors | Workflow:Write |
+| `import_workflow.py` | Import YAML workflows into CID | Workflow:Write |
+| `execute.py` | Run workflows and poll for results | Workflow:Write (execute), Workflow:Read (poll) |
 
 ## Setup
 

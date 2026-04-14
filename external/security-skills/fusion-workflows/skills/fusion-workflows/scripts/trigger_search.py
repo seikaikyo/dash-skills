@@ -16,7 +16,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from cs_auth import load_env, api_get
+from cs_auth import get_client
 
 # Fix Windows console encoding
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -92,11 +92,11 @@ trigger:
 def list_triggers_from_api():
     """Attempt to fetch trigger types from the API."""
     try:
-        resp = api_get("/workflows/combined/activities/v1", params={"limit": 500})
-        resources = resp.get("resources", [])
-        triggers = [r for r in resources if r.get("category", "").lower() == "trigger"]
-        return triggers
-    except Exception:
+        client = get_client()
+        resp = client.search_activities(limit=500)
+        resources = resp["body"].get("resources", [])
+        return [r for r in resources if r.get("category", "").lower() == "trigger"]
+    except (ConnectionError, RuntimeError, OSError):
         return []
 
 
@@ -121,6 +121,7 @@ def list_all_triggers(include_api=True):
 
 
 def main():
+    """CLI entry point for trigger search."""
     parser = argparse.ArgumentParser(description="List CrowdStrike Fusion trigger types")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--list", "-l", action="store_true", help="List all trigger types")

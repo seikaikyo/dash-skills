@@ -18,14 +18,13 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from cs_auth import load_env, api_post_multipart
+from cs_auth import get_client
 from validate import validate_file
 from query_workflows import fetch_all_definitions
 
 # Fix Windows console encoding
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-IMPORT_ENDPOINT = "/workflows/entities/definitions/import/v1"
 
 
 def extract_name_from_yaml(file_path):
@@ -44,9 +43,9 @@ def check_duplicate(name, existing_names):
     Returns the existing definition ID if found, None otherwise.
     """
     name_lower = name.lower()
-    match = existing_names.get(name_lower)
-    if match:
-        return match.get("id", "?")
+    found = existing_names.get(name_lower)
+    if found:
+        return found.get("id", "?")
     return None
 
 
@@ -55,83 +54,53 @@ def import_file(file_path):
     Import a single YAML file. Returns (success, message, workflow_id).
     """
     try:
-        result = api_post_multipart(IMPORT_ENDPOINT, file_path)
-        errors = result.get("errors", [])
+        client = get_client()
+        resp = client.import_definition(data_file=file_path)
+        body = resp["body"]
+        errors = body.get("errors", [])
         if errors:
             msg = "; ".join(e.get("message", str(e)) for e in errors)
             return False, msg, None
 
-        resources = result.get("resources", [])
+        resources = body.get("resources", [])
         wf_id = resources[0].get("id") if resources else None
         return True, "OK", wf_id
-    except Exception as e:
-        error_text = str(e)
-        if hasattr(e, "response") and e.response is not None:
-            try:
-                err_json = e.response.json()
-                errs = err_json.get("errors", [])
-                if errs:
-                    error_text = "; ".join(item.get("message", str(item)) for item in errs)
-            except Exception:
-                error_text = e.response.text[:500] if e.response.text else str(e)
-        return False, error_text, None
+    except (ConnectionError, RuntimeError, OSError) as exc:
+        return False, str(exc), None
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Import Fusion workflow YAML files")
-    parser.add_argument("files", nargs="+", metavar="FILE", help="YAML file(s) to import")
-    parser.add_argument("--skip-validate", action="store_true", help="Skip pre-import validation")
-    parser.add_argument("--skip-duplicate-check", action="store_true", help="Skip duplicate name check")
-    args = parser.parse_args()
+def _import_single_file(fp, existing_names, skip_validate):
+    """Import a single file with optional duplicate check and validation.
+    Returns (basename, status, wf_id)."""
+    basename = os.path.basename(fp)
+    print(f"\n  {basename}")
 
-    # Pre-fetch existing workflow names for duplicate checking
-    existing_names = {}
-    if not args.skip_duplicate_check:
-        print("\n  Checking for duplicate workflow names...")
-        try:
-            all_defs = fetch_all_definitions()
-            existing_names = {d.get("name", "").lower(): d for d in all_defs}
-            print(f"    Found {len(all_defs)} existing workflow(s)")
-        except Exception as e:
-            print(f"    WARNING: Could not fetch existing workflows: {e}", file=sys.stderr)
-            print("    Skipping duplicate check — use --skip-duplicate-check to suppress")
+    if existing_names:
+        wf_name = extract_name_from_yaml(fp)
+        if wf_name:
+            dup_id = check_duplicate(wf_name, existing_names)
+            if dup_id:
+                print(f"    DUPLICATE: '{wf_name}' already exists (ID: {dup_id})")
+                print("    Skipping — delete or rename the existing workflow first")
+                return basename, "DUPLICATE", None
 
-    results = []
+    if not skip_validate:
+        passed, messages = validate_file(fp)
+        for m in messages:
+            print(f"    {m}")
+        if not passed:
+            return basename, "VALIDATION FAILED", None
 
-    for fp in args.files:
-        basename = os.path.basename(fp)
-        print(f"\n  {basename}")
+    ok, msg, wf_id = import_file(fp)
+    if ok:
+        print(f"    Imported — ID: {wf_id}")
+        return basename, "IMPORTED", wf_id
+    print(f"    IMPORT FAILED: {msg}")
+    return basename, "IMPORT FAILED", None
 
-        # Check for duplicate name
-        if existing_names:
-            wf_name = extract_name_from_yaml(fp)
-            if wf_name:
-                dup_id = check_duplicate(wf_name, existing_names)
-                if dup_id:
-                    print(f"    DUPLICATE: '{wf_name}' already exists (ID: {dup_id})")
-                    print(f"    Skipping — delete or rename the existing workflow first")
-                    results.append((basename, "DUPLICATE", None))
-                    continue
 
-        # Validate first
-        if not args.skip_validate:
-            passed, messages = validate_file(fp)
-            for m in messages:
-                print(f"    {m}")
-            if not passed:
-                results.append((basename, "VALIDATION FAILED", None))
-                continue
-
-        # Import
-        ok, msg, wf_id = import_file(fp)
-        if ok:
-            print(f"    Imported — ID: {wf_id}")
-            results.append((basename, "IMPORTED", wf_id))
-        else:
-            print(f"    IMPORT FAILED: {msg}")
-            results.append((basename, "IMPORT FAILED", None))
-
-    # Summary
+def _print_summary(results):
+    """Print import summary and exit with appropriate code."""
     print(f"\n{'─' * 50}")
     imported = [r for r in results if r[1] == "IMPORTED"]
     duplicates = [r for r in results if r[1] == "DUPLICATE"]
@@ -154,6 +123,29 @@ def main():
 
     if failed or duplicates:
         sys.exit(1)
+
+
+def main():
+    """CLI entry point for workflow import."""
+    parser = argparse.ArgumentParser(description="Import Fusion workflow YAML files")
+    parser.add_argument("files", nargs="+", metavar="FILE", help="YAML file(s) to import")
+    parser.add_argument("--skip-validate", action="store_true", help="Skip pre-import validation")
+    parser.add_argument("--skip-duplicate-check", action="store_true", help="Skip duplicate name check")
+    args = parser.parse_args()
+
+    existing_names = {}
+    if not args.skip_duplicate_check:
+        print("\n  Checking for duplicate workflow names...")
+        try:
+            all_defs = fetch_all_definitions()
+            existing_names = {d.get("name", "").lower(): d for d in all_defs}
+            print(f"    Found {len(all_defs)} existing workflow(s)")
+        except (ConnectionError, RuntimeError, OSError) as exc:
+            print(f"    WARNING: Could not fetch existing workflows: {exc}", file=sys.stderr)
+            print("    Skipping duplicate check — use --skip-duplicate-check to suppress")
+
+    results = [_import_single_file(fp, existing_names, args.skip_validate) for fp in args.files]
+    _print_summary(results)
 
 
 if __name__ == "__main__":
