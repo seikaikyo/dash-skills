@@ -202,6 +202,39 @@ update_skill_creator() { _update_anthropic_skill "skill-creator"; }
 # 函數：更新 webapp-testing (Anthropic 官方 - Playwright 前端測試)
 update_webapp_testing() { _update_anthropic_skill "webapp-testing"; }
 
+# 函數：更新 webapp-uat (Playwright UAT workflow + i18n + a11y)
+update_webapp_uat() {
+    local skill_dir="$EXTERNAL_DIR/webapp-uat"
+    local temp_dir=$(mktemp -d)
+    local repo="tsilverberg/webapp-uat"
+
+    echo "更新: webapp-uat (UAT workflow)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/SKILL.md "$skill_dir/" 2>/dev/null || true
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        for sub in scripts templates references commands; do
+            [ -d "repo/$sub" ] && cp -r "repo/$sub" "$skill_dir/"
+        done
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
 # 函數：更新 theme-factory (Anthropic 官方 - 文件/簡報主題工廠)
 update_theme_factory() { _update_anthropic_skill "theme-factory"; }
 
@@ -811,6 +844,7 @@ show_available() {
     echo "  - mcp-builder             (Anthropic 官方, MCP server 建置)"
     echo "  - skill-creator           (Anthropic 官方, Skill 建置/測試)"
     echo "  - webapp-testing          (Anthropic 官方, Playwright 前端測試)"
+    echo "  - webapp-uat              (tsilverberg, UAT workflow + i18n + a11y)"
     echo "  - theme-factory           (Anthropic 官方, 文件/簡報主題工廠)"
     echo "  - accessibility-agents    (Community-Access, 57 a11y agents)"
     echo "  - bencium-marketplace     (bencium, UX audit + typography)"
@@ -881,6 +915,7 @@ if [ $# -eq 0 ]; then
         update_mcp_builder
         update_skill_creator
         update_webapp_testing
+        update_webapp_uat
         update_theme_factory
     )
 
@@ -1082,6 +1117,9 @@ else
                 ;;
             "webapp-testing"|"playwright")
                 update_webapp_testing
+                ;;
+            "webapp-uat"|"uat")
+                update_webapp_uat
                 ;;
             "theme-factory"|"theme")
                 update_theme_factory
