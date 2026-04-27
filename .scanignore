@@ -7,3 +7,6 @@ external/neon-skills/neon-drizzle/scripts/run-migration.ts
 
 # Anthropic Cybersecurity Skills - 安全教學範例中的假密碼/假 key
 external/anthropic-cybersecurity-skills/
+
+# Security Skills (eth0izzle/security-skills) - unit test fixture，假 secret (fake_secret_*, test, secret_file)
+external/security-skills/
