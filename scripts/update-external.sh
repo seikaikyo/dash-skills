@@ -238,6 +238,65 @@ update_webapp_uat() {
 # 函數：更新 theme-factory (Anthropic 官方 - 文件/簡報主題工廠)
 update_theme_factory() { _update_anthropic_skill "theme-factory"; }
 
+# 函數：更新 claude-api (Anthropic 官方 - Claude API/SDK 開發指南，含 7 種語言範例)
+update_claude_api() { _update_anthropic_skill "claude-api"; }
+
+# 函數：更新 brand-guidelines (Anthropic 官方 - 品牌指引)
+update_brand_guidelines() { _update_anthropic_skill "brand-guidelines"; }
+
+# 函數：更新 web-artifacts-builder (Anthropic 官方 - 單檔互動 demo 建置)
+update_web_artifacts_builder() { _update_anthropic_skill "web-artifacts-builder"; }
+
+# 通用函數：更新 vercel-labs/agent-skills 指定 branch + skills 子目錄
+_update_vercel_agent_skill() {
+    local name="$1"          # 來源子目錄名（skills/<name>）
+    local branch="$2"        # 來源 branch
+    local dest="${3:-$name}" # 本地目的目錄名（預設等於 name）
+    local skill_dir="$EXTERNAL_DIR/$dest"
+    local temp_dir=$(mktemp -d)
+    local repo="vercel-labs/agent-skills"
+
+    echo "更新: $dest (Vercel Labs $branch)"
+    echo "  來源: https://github.com/$repo/tree/$branch"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 --filter=blob:none --sparse \
+        "https://github.com/$repo.git" \
+        --branch "$branch" repo 2>/dev/null; then
+        echo "  狀態: 跳過（branch 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    cd repo
+    git sparse-checkout set "skills/$name" 2>/dev/null
+
+    if [ -d "skills/$name" ]; then
+        rm -rf "$skill_dir"
+        cp -r "skills/$name" "$skill_dir"
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 deploy-to-vercel (Vercel 部署 skill)
+update_deploy_to_vercel() {
+    _update_vercel_agent_skill "deploy-to-vercel" "deploy-to-vercel"
+}
+
+# 函數：更新 vercel-cost-optimization (Vercel Hobby 用量管理)
+update_vercel_cost_optimization() {
+    _update_vercel_agent_skill "vercel-cost-optimization" "mingchungx/vercel-cost-optimization"
+}
+
+# 函數：更新 vercel-react-best-practices (Vercel 維護的版本化 React 最佳實踐 v1.0.0，name 跟現有 react-best-practices 不同，獨立 skill)
+update_vercel_react_best_practices() {
+    _update_vercel_agent_skill "react-best-practices" "versioned-react-best-practices" "vercel-react-best-practices"
+}
+
 # 函數：更新 accessibility-agents
 update_accessibility_agents() {
     local skill_dir="$EXTERNAL_DIR/accessibility-agents"
@@ -846,6 +905,12 @@ show_available() {
     echo "  - webapp-testing          (Anthropic 官方, Playwright 前端測試)"
     echo "  - webapp-uat              (tsilverberg, UAT workflow + i18n + a11y)"
     echo "  - theme-factory           (Anthropic 官方, 文件/簡報主題工廠)"
+    echo "  - claude-api              (Anthropic 官方, Claude API/SDK 7 語言範例)"
+    echo "  - brand-guidelines        (Anthropic 官方, 品牌指引)"
+    echo "  - web-artifacts-builder   (Anthropic 官方, 單檔互動 demo)"
+    echo "  - deploy-to-vercel        (Vercel Labs, Vercel 部署)"
+    echo "  - vercel-cost-optimization (Vercel Labs, Hobby 用量管理)"
+    echo "  - vercel-react-best-practices (Vercel Labs, v1.0.0 版本化 45 rules)"
     echo "  - accessibility-agents    (Community-Access, 57 a11y agents)"
     echo "  - bencium-marketplace     (bencium, UX audit + typography)"
     echo "  - interface-design        (Dammyjay93, 儀表板/後台介面設計)"
@@ -917,6 +982,12 @@ if [ $# -eq 0 ]; then
         update_webapp_testing
         update_webapp_uat
         update_theme_factory
+        update_claude_api
+        update_brand_guidelines
+        update_web_artifacts_builder
+        update_deploy_to_vercel
+        update_vercel_cost_optimization
+        update_vercel_react_best_practices
     )
 
     total=${#all_updates[@]}
@@ -1123,6 +1194,24 @@ else
                 ;;
             "theme-factory"|"theme")
                 update_theme_factory
+                ;;
+            "claude-api"|"api")
+                update_claude_api
+                ;;
+            "brand-guidelines"|"brand")
+                update_brand_guidelines
+                ;;
+            "web-artifacts-builder"|"artifacts")
+                update_web_artifacts_builder
+                ;;
+            "deploy-to-vercel"|"deploy")
+                update_deploy_to_vercel
+                ;;
+            "vercel-cost-optimization"|"cost-opt"|"cost")
+                update_vercel_cost_optimization
+                ;;
+            "vercel-react-best-practices"|"vrbp")
+                update_vercel_react_best_practices
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
