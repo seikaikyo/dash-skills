@@ -31,7 +31,7 @@ echo "[dash-skills] 每日同步 ($(date '+%H:%M'))"
 cd "$SKILL_DIR"
 
 # [1/4] 同步外部 skills
-echo "[dash-skills] [1/4] 同步 25 個外部 skills..."
+echo "[dash-skills] [1/4] 同步外部 skills..."
 if ! DASH_SKILLS_NO_PUSH=1 perl -e 'alarm(120); exec @ARGV' ./scripts/update-external.sh > /dev/null 2>&1; then
     echo "[dash-skills] [1/4] 同步逾時或失敗，跳過"
 fi
