@@ -24,6 +24,7 @@ Location: `.claude/skills/owasp-security/SKILL.md`
 - **OWASP Top 10:2025** quick reference table
 - **Security code review checklists** for input handling, auth, access control, data protection, and error handling
 - **Secure code patterns** with unsafe/safe examples
+- **OWASP Top 10 for LLM Applications (2025)** - LLM01-LLM10 risks for chatbots, RAG, and tool-calling apps
 - **OWASP Agentic AI Security (2026)** - ASI01-ASI10 risks for AI agent systems
 - **ASVS 5.0** key requirements by verification level
 - **Language-specific security quirks** for 20+ languages with deep analysis guidance
@@ -58,6 +59,7 @@ Once installed, Claude Code automatically activates this skill when you:
 |----------|---------|-------|
 | OWASP Top 10 | 2025 | Web application vulnerabilities |
 | OWASP ASVS | 5.0.0 | Security verification requirements |
+| OWASP Top 10 for LLM Apps | 2025 | LLM/RAG/tool-calling app risks |
 | OWASP Agentic | 2026 | AI agent security risks |
 
 ## Language Coverage
@@ -92,6 +94,7 @@ Contributions welcome! Please:
 
 - [OWASP Top 10:2025](https://owasp.org/Top10/)
 - [OWASP ASVS 5.0](https://owasp.org/www-project-application-security-verification-standard/)
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/)
 - [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/)
 - [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
 

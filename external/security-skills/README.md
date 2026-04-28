@@ -9,8 +9,7 @@ Install individual skills to automate specific platforms, or combine several for
 | Skill | Platform | What It Does |
 |-------|----------|--------------|
 | [fusion-workflows](plugins/fusion-workflows/skills/fusion-workflows/) | CrowdStrike Falcon Fusion SOAR | Create, validate, import, execute, and export Fusion SOAR workflows. Discovers actions via the live API, authors YAML with correct schema and data references, handles CEL expressions, loop/conditional patterns, and manages the full workflow lifecycle. |
-
-*More skills coming soon.*
+| [lookup-files](plugins/fusion-workflows/skills/lookup-files/) | CrowdStrike Falcon Next-Gen SIEM | List, create, update, download, and delete lookup files for use with CQL `match()` queries. Supports CSV, JSON, and TXT formats with search domain management and FQL-based search. |
 
 ## Getting Started
 

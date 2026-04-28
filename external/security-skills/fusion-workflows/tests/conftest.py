@@ -8,7 +8,7 @@ import os
 import sys
 import pytest
 
-# Add scripts directory to path so tests can import the modules
+# Add scripts directories to path so tests can import the modules
 SCRIPTS_DIR = os.path.join(
     os.path.dirname(__file__),
     "..",
@@ -17,6 +17,15 @@ SCRIPTS_DIR = os.path.join(
     "scripts",
 )
 sys.path.insert(0, os.path.abspath(SCRIPTS_DIR))
+
+LOOKUP_SCRIPTS_DIR = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "skills",
+    "lookup-files",
+    "scripts",
+)
+sys.path.append(os.path.abspath(LOOKUP_SCRIPTS_DIR))
 
 import cs_auth  # noqa: E402  # must be after sys.path.insert
 
