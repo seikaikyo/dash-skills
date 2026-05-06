@@ -81,16 +81,13 @@ claude plugin marketplace add ./path/to/local/clone
 claude plugin install accessibility-agents@community-access
 ```
 
-### Alternative: install.sh
+### Alternative: GitHub Skill Setup
 
-For embedding agents directly into a project directory (self-contained, zero network dependency):
+For embedding agents directly into a project directory (self-contained, zero network dependency), use the skill installer and setup commands:
 
 ```bash
-# Install to your project
-bash install.sh --project
-
-# Install globally
-bash install.sh --global
+gh skill install Community-Access/accessibility-agents
+gh skill setup Community-Access/accessibility-agents
 ```
 
 The installer copies agents and skills to your `.claude/` directory:
@@ -226,7 +223,7 @@ Run `/agents` in Claude Code. The `accessibility-lead` agent should show tools: 
 - **Edit blocked even after review:** Check the session marker: `ls /tmp/a11y-reviewed-*`. If missing, verify `a11y-mark-reviewed.sh` is registered under `PostToolUse` with matcher `Agent`.
 - **Hooks not firing at all:** Verify `~/.claude/settings.json` has all three hooks registered. Run `cat ~/.claude/hooks/a11y-team-eval.sh` to verify scripts exist.
 - **Wrong agent invoked:** All agents use kebab-case names (e.g., `accessibility-lead`, not `Accessibility Lead`). Internal helpers are prefixed with "Internal helper agent." in their descriptions to prevent accidental routing.
-- **accessibility-lead writes code directly:** Verify its tools are `Task, Read, Glob, Grep`. If it has `Write` or `Edit`, the plugin cache may be stale. Reinstall with `bash install.sh --global`.
+- **accessibility-lead writes code directly:** Verify its tools are `Task, Read, Glob, Grep`. If it has `Write` or `Edit`, refresh the install with `gh skill repair Community-Access/accessibility-agents`.
 
 See the [Hooks Guide](docs/hooks-guide.md) for detailed testing commands and manual debugging steps.
 
@@ -236,17 +233,15 @@ See the [Hooks Guide](docs/hooks-guide.md) for detailed testing commands and man
 # Marketplace installs
 claude plugin update accessibility-agents@community-access
 
-# install.sh installs
-bash update.sh              # Update global install
-bash update.sh --project    # Update project install
+# Skill-based installs
+gh extension upgrade gh-skill
+gh skill setup Community-Access/accessibility-agents
 ```
 
 ## Uninstalling
 
 ```bash
-bash uninstall.sh              # Interactive
-bash uninstall.sh --global     # Remove global install
-bash uninstall.sh --project    # Remove project install
+gh skill uninstall Community-Access/accessibility-agents
 ```
 
 ## License
