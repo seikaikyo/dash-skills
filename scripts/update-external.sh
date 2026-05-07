@@ -247,6 +247,15 @@ update_brand_guidelines() { _update_anthropic_skill "brand-guidelines"; }
 # 函數：更新 web-artifacts-builder (Anthropic 官方 - 單檔互動 demo 建置)
 update_web_artifacts_builder() { _update_anthropic_skill "web-artifacts-builder"; }
 
+# 函數：更新 algorithmic-art (Anthropic 官方 - p5.js 演算法藝術)
+update_algorithmic_art() { _update_anthropic_skill "algorithmic-art"; }
+
+# 函數：更新 internal-comms (Anthropic 官方 - 內部溝通文件)
+update_internal_comms() { _update_anthropic_skill "internal-comms"; }
+
+# 函數：更新 slack-gif-creator (Anthropic 官方 - Slack 動畫 GIF 製作)
+update_slack_gif_creator() { _update_anthropic_skill "slack-gif-creator"; }
+
 # 通用函數：更新 vercel-labs/agent-skills 指定 branch + skills 子目錄
 _update_vercel_agent_skill() {
     local name="$1"          # 來源子目錄名（skills/<name>）
@@ -908,6 +917,9 @@ show_available() {
     echo "  - claude-api              (Anthropic 官方, Claude API/SDK 7 語言範例)"
     echo "  - brand-guidelines        (Anthropic 官方, 品牌指引)"
     echo "  - web-artifacts-builder   (Anthropic 官方, 單檔互動 demo)"
+    echo "  - algorithmic-art         (Anthropic 官方, p5.js 演算法藝術)"
+    echo "  - internal-comms          (Anthropic 官方, 內部溝通文件)"
+    echo "  - slack-gif-creator       (Anthropic 官方, Slack 動畫 GIF)"
     echo "  - deploy-to-vercel        (Vercel Labs, Vercel 部署)"
     echo "  - vercel-cost-optimization (Vercel Labs, Hobby 用量管理)"
     echo "  - vercel-react-best-practices (Vercel Labs, v1.0.0 版本化 45 rules)"
@@ -988,6 +1000,9 @@ if [ $# -eq 0 ]; then
         update_deploy_to_vercel
         update_vercel_cost_optimization
         update_vercel_react_best_practices
+        update_algorithmic_art
+        update_internal_comms
+        update_slack_gif_creator
     )
 
     total=${#all_updates[@]}
@@ -1212,6 +1227,15 @@ else
                 ;;
             "vercel-react-best-practices"|"vrbp")
                 update_vercel_react_best_practices
+                ;;
+            "algorithmic-art"|"algo-art")
+                update_algorithmic_art
+                ;;
+            "internal-comms"|"comms")
+                update_internal_comms
+                ;;
+            "slack-gif-creator"|"slack-gif"|"gif")
+                update_slack_gif_creator
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
