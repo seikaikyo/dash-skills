@@ -122,7 +122,7 @@ if [ -n "$(git status --porcelain)" ]; then
         echo "[dash-skills] [3/4] 無實質差異，跳過推送"
     else
         echo "[dash-skills] [3/4] 提交並推送..."
-        git commit -m "chore: 每日同步外部 skills ($TODAY)" > /dev/null 2>&1
+        git commit -m "chore: daily external skills sync ($TODAY)" > /dev/null 2>&1
 
         push_output=$(git push 2>&1)
         push_exit=$?

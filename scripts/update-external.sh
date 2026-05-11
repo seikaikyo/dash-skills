@@ -1283,7 +1283,7 @@ if [ -z "$DASH_SKILLS_NO_PUSH" ]; then
     if [ -n "$(git status --porcelain)" ]; then
         TODAY=$(date +%Y-%m-%d)
         git add -A
-        git commit -m "chore: 每日同步外部 skills ($TODAY)"
+        git commit -m "chore: daily external skills sync ($TODAY)"
         git push
         echo ""
         echo "已自動 commit 並推送 ($TODAY)"
