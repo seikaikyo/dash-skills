@@ -306,6 +306,11 @@ update_vercel_react_best_practices() {
     _update_vercel_agent_skill "react-best-practices" "versioned-react-best-practices" "vercel-react-best-practices"
 }
 
+# 函數：更新 vercel-python (Vercel Python 部署 / FastAPI / Flask / Django 診斷)
+update_vercel_python() {
+    _update_vercel_agent_skill "vercel-python" "gscho/PY-222-vercel-python-skill"
+}
+
 # 函數：更新 accessibility-agents
 update_accessibility_agents() {
     local skill_dir="$EXTERNAL_DIR/accessibility-agents"
@@ -923,6 +928,7 @@ show_available() {
     echo "  - deploy-to-vercel        (Vercel Labs, Vercel 部署)"
     echo "  - vercel-cost-optimization (Vercel Labs, Hobby 用量管理)"
     echo "  - vercel-react-best-practices (Vercel Labs, v1.0.0 版本化 45 rules)"
+    echo "  - vercel-python           (Vercel Labs, Python/FastAPI/Flask/Django 部署診斷)"
     echo "  - accessibility-agents    (Community-Access, 57 a11y agents)"
     echo "  - bencium-marketplace     (bencium, UX audit + typography)"
     echo "  - interface-design        (Dammyjay93, 儀表板/後台介面設計)"
@@ -1000,6 +1006,7 @@ if [ $# -eq 0 ]; then
         update_deploy_to_vercel
         update_vercel_cost_optimization
         update_vercel_react_best_practices
+        update_vercel_python
         update_algorithmic_art
         update_internal_comms
         update_slack_gif_creator
@@ -1227,6 +1234,9 @@ else
                 ;;
             "vercel-react-best-practices"|"vrbp")
                 update_vercel_react_best_practices
+                ;;
+            "vercel-python"|"py")
+                update_vercel_python
                 ;;
             "algorithmic-art"|"algo-art")
                 update_algorithmic_art
