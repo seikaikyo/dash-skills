@@ -36,6 +36,12 @@ if ! DASH_SKILLS_NO_PUSH=1 perl -e 'alarm(120); exec @ARGV' ./scripts/update-ext
     echo "[dash-skills] [1/4] 同步逾時或失敗，跳過"
 fi
 
+# 重建 ~/.claude/skills symlink，新增的 external skill 才會被 Claude Code 載入
+new_links=$(./scripts/link.sh 2>&1 | grep "建立連結" || true)
+if [ -n "$new_links" ]; then
+    echo "$new_links" | sed 's/^/[dash-skills]   /'
+fi
+
 # 掃描並自動 redact 機敏資料
 # GitHub Push Protection 會擋已知格式的 key，即使是文件中的範例
 # 用 grep -rlZ + while read -d '' 處理含空白的檔名
