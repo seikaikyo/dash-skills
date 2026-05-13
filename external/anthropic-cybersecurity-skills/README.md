@@ -8,6 +8,7 @@
 
 ### The largest open-source cybersecurity skills library for AI agents
 
+[![GARS-2026 Survey](https://img.shields.io/badge/GARS--2026-Take%20the%20Survey-E8B84B?style=for-the-badge&logo=googleforms&logoColor=black)](https://mahipal.engineer/survey?utm_source=github_badge&utm_medium=readme&utm_campaign=gars2026)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
 [![Skills](https://img.shields.io/badge/skills-754-brightgreen?style=flat-square)](#whats-inside--26-security-domains)
 [![Frameworks](https://img.shields.io/badge/frameworks-5-orange?style=flat-square)](#five-frameworks-one-skill-library)
@@ -68,6 +69,22 @@ cd Anthropic-Cybersecurity-Skills
 ```
 
 Works immediately with Claude Code, GitHub Copilot, OpenAI Codex CLI, Cursor, Gemini CLI, and any [agentskills.io](https://agentskills.io)-compatible platform. 
+
+## 🌍 GARS-2026 — Global Agentic AI Readiness Survey
+
+I'm running a global academic study measuring how ready security professionals,
+developers, and enterprise teams actually are for agentic AI — MCP servers,
+tool calling, governance, and human-in-the-loop workflows.
+
+**If you use this repo, your response would be a genuinely valuable data point.**
+
+📋 **Take the survey (10 min):**
+[Survey Link](https://mahipal.engineer/survey?utm_source=github_repo&utm_medium=readme&utm_campaign=gars2026)
+
+- 60 questions · Anonymous · Supervised by SRH Berlin
+- You get **50 Casky Tokens** for early access to [casky.ai](https://casky.ai)
+- Results published open access under CC-BY 4.0
+
 ## 🚀 Try it on the Playground
 
 Experience Casky.ai hands-on — no setup required.
