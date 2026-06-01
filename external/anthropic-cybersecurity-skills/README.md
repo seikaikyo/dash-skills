@@ -45,7 +45,7 @@ No other open-source skills library maps every skill to all five frameworks.  On
 
 | Framework | Version | Scope in this repo | What it maps |
 |---|---|---|---|
-| [MITRE ATT&CK](https://attack.mitre.org) | v18 | 14 tactics · 200+ techniques | Adversary behaviors and TTPs |
+| [MITRE ATT&CK](https://attack.mitre.org) | v19.1 | 15 tactics · 286 techniques | Adversary behaviors and TTPs |
 | [NIST CSF 2.0](https://www.nist.gov/cyberframework) | 2.0 | 6 functions · 22 categories | Organizational security posture |
 | [MITRE ATLAS](https://atlas.mitre.org) | v5.4 | 16 tactics · 84 techniques | AI/ML adversarial threats |
 | [MITRE D3FEND](https://d3fend.mitre.org) | v1.3 | 7 categories · 267 techniques | Defensive countermeasures |
@@ -56,6 +56,28 @@ No other open-source skills library maps every skill to all five frameworks.  On
 | Skill | ATT&CK | NIST CSF | ATLAS | D3FEND | AI RMF |
 |---|---|---|---|---|---|
 | `analyzing-network-traffic-of-malware` | T1071 | DE.CM | AML.T0047 | D3-NTA | MEASURE-2.6 |
+
+### MITRE ATT&CK v19.1 — 754/754 skills mapped
+
+Every skill carries a `mitre_attack` frontmatter list validated against **MITRE ATT&CK v19.1** (the latest release) using the official `mitreattack-python` library — 286 distinct techniques across all 15 Enterprise tactics, plus ICS and Mobile techniques where relevant. Zero revoked or deprecated IDs. v19.1's restructured Defense Evasion (now split into **Stealth** and **Defense Impairment**) is reflected below.
+
+| Tactic | ID | Skills |
+|--------|----|--------|
+| Reconnaissance | TA0043 | 103 |
+| Resource Development | TA0042 | 22 |
+| Initial Access | TA0001 | 467 |
+| Execution | TA0002 | 350 |
+| Persistence | TA0003 | 444 |
+| Privilege Escalation | TA0004 | 464 |
+| Stealth | TA0005 | 442 |
+| Defense Impairment | TA0112 | 92 |
+| Credential Access | TA0006 | 202 |
+| Discovery | TA0007 | 237 |
+| Lateral Movement | TA0008 | 68 |
+| Collection | TA0009 | 172 |
+| Command and Control | TA0011 | 123 |
+| Exfiltration | TA0010 | 82 |
+| Impact | TA0040 | 50 |
 
 ## Quick start
 
