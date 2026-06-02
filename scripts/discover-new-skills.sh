@@ -91,17 +91,88 @@ else
     out "  線上 branches 總數: $total_remote"
     out "  已抓 branches: $(echo "$local_vercel" | wc -l | tr -d ' ')"
     out ""
-    out "  缺漏 (已過濾雜訊 dev/v0/copilot branches):"
-    missing_count=0
+    # 收集通過 noise 過濾、且非精確命中的 candidate branches
+    candidates=""
     while IFS= read -r br; do
-        # 跳過雜訊
         echo "$br" | grep -qE "$VERCEL_NOISE_REGEX" && continue
-        # 已抓
         echo "$local_vercel" | grep -qx "$br" && continue
-        out "    - $br"
-        missing_count=$((missing_count + 1))
+        candidates+="$br"$'\n'
     done <<< "$remote_vercel_branches"
-    [ "$missing_count" = "0" ] && out "    (無，全部值得加的都已涵蓋)"
+
+    # 正規化 + 詞幹折疊：把對應到「已安裝 external skill」的開發分支折疊掉
+    # branch 名 strip owner/type 前綴 → 取前 2 個 dash-token 當 family
+    # → 各 token 取前 5 字粗詞幹，family 詞幹集 ⊆ 某已安裝 skill 詞幹集 = 該 skill 的開發分支
+    installed_skills=$(ls "$REPO_DIR/external" 2>/dev/null)
+    fold_result=$(INSTALLED="$installed_skills" CANDIDATES="$candidates" python3 <<'PYEOF'
+import os
+from collections import OrderedDict
+
+def stems(name):
+    toks = [t for t in name.replace('_', '-').lower().split('-') if t]
+    return set(t[:5] for t in toks)
+
+def norm(branch):
+    return branch.split('/')[-1]          # strip owner/ 或 type/ 前綴
+
+def family(n):
+    toks = [t for t in n.replace('_', '-').lower().split('-') if t]
+    return '-'.join(toks[:2]) if toks else n
+
+installed = [(s, stems(s)) for s in os.environ.get('INSTALLED', '').split('\n') if s.strip()]
+candidates = [c for c in os.environ.get('CANDIDATES', '').split('\n') if c.strip()]
+
+genuine = OrderedDict()   # family -> [branches]
+folded = OrderedDict()    # installed skill -> [branches]
+
+def fold_hit(n):
+    # 滑動 2-token 窗口：不假設 skill slug 在 branch 名開頭 (如 harden-vercel-optimize-scoping)
+    toks = [t[:5] for t in n.replace('_', '-').lower().split('-') if t]
+    for sk, sset in installed:
+        for i in range(len(toks) - 1):
+            if {toks[i], toks[i + 1]} <= sset:
+                return sk
+    if len(toks) == 1:        # 單 token branch 只折疊到同樣單 token 的已安裝 skill
+        for sk, sset in installed:
+            if len(sset) == 1 and toks[0] in sset:
+                return sk
+    return None
+
+for br in candidates:
+    hit = fold_hit(norm(br))
+    if hit:
+        folded.setdefault(hit, []).append(br)
+    else:
+        genuine.setdefault(family(norm(br)), []).append(br)
+
+if not genuine:
+    print("MISS:::(無，全部值得加的都已涵蓋或已折疊)")
+else:
+    for fam, brs in genuine.items():
+        if len(brs) == 1:
+            print(f"MISS:::{brs[0]}")
+        else:
+            print(f"MISS:::{fam} ({len(brs)} 個分支: {', '.join(brs)})")
+
+for sk, brs in folded.items():
+    print(f"FOLD:::{sk} ← {len(brs)} 個開發分支 ({', '.join(brs)})")
+PYEOF
+)
+
+    out "  缺漏 (已過濾雜訊 + 折疊已安裝 skill 的開發分支):"
+    while IFS= read -r line; do
+        [ -z "$line" ] && continue
+        out "    - ${line#MISS:::}"
+    done <<< "$(echo "$fold_result" | grep '^MISS:::')"
+
+    fold_lines=$(echo "$fold_result" | grep '^FOLD:::')
+    if [ -n "$fold_lines" ]; then
+        out ""
+        out "  已折疊 (對應已安裝 skill 的開發分支，免處理):"
+        while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            out "    - ${line#FOLD:::}"
+        done <<< "$fold_lines"
+    fi
 fi
 out ""
 
