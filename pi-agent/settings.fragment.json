@@ -1,0 +1,9 @@
+{
+  "skills": [
+    "CHANGE_ME/dash-skills/skills",
+    "CHANGE_ME/dash-skills/external"
+  ],
+  "extensions": [
+    "~/.pi/agent/extensions"
+  ]
+}
