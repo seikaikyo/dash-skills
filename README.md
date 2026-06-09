@@ -10,72 +10,134 @@
 
 ## 包含的 Skills
 
+> 自建 9 個 (`skills/`) + 外部收錄 45 個 (`external/`)。外部 skill 每日從上游自動同步。
+
 ### 自建 Skills (`skills/`)
 
-| Skill | 描述 | 適用場景 |
-|-------|------|---------|
-| **angular-primeng** | Angular 21 + PrimeNG 企業應用開發規範 | MES、ERP、後台管理系統 |
-| **fastapi-patterns** | FastAPI + SQLModel + Neon 後端開發 | Render 部署的 API 服務 |
-| **openspec** | OpenSpec 規格驅動開發 (SDD) 工作流程 | 功能規劃、變更管理 |
-| **security-reviewer** | 安全漏洞檢測 (OWASP Top 10) | 認證、用戶輸入、API、敏感資料處理 |
-| **build-error-resolver** | 建構/TypeScript 錯誤快速修復 | 建構失敗、類型錯誤 |
-| **refactor-cleaner** | 死代碼檢測與清理 | 程式碼健康檢查、依賴清理 |
-
-### 外部收錄 (`external/`)
-
-#### Vercel Labs
-
 | Skill | 描述 |
 |-------|------|
-| **react-best-practices** | React/Next.js 效能優化指南 (40+ 規則) |
-| **agent-browser** | 瀏覽器自動化 (200+ 指令) + CLI 工具自動更新 |
-| **web-design-guidelines** | UI 審查規則 (a11y, UX, 效能, 80+ 規則) |
+| **angular-primeng** | Angular 21 + PrimeNG 企業應用開發規範 (MES / ERP / 後台) |
+| **fastapi-patterns** | FastAPI + SQLModel + Neon 後端開發規範 |
+| **openspec** | 規格驅動開發 (SDD) 工作流程 |
+| **security-reviewer** | 安全漏洞檢測與修復 (OWASP Top 10) |
+| **build-error-resolver** | 建構與 TypeScript 錯誤快速修復 |
+| **refactor-cleaner** | 死代碼清理與重構整合 |
+| **architecture-audit** | 架構文件稽核，比對 CLAUDE.md 與實際程式碼結構 |
+| **cis-design-system** | CIS 企業識別設計規範建立與維護 |
+| **quality-gate** | 前端品質閘門 (SEO / 無障礙 / 效能 / UI-UX) |
 
-#### UI/UX 設計
-
-| Skill | 描述 | 來源 | 狀態 |
-|-------|------|------|------|
-| **frontend-design** | 反 AI 罐頭風格的前端設計 (277K+ 安裝) | Anthropic 官方 | 活躍 |
-| **interface-design** | 設計記憶系統，確保元件風格一致 | Dammyjay93 | 活躍 (3,973 stars) |
-| **ui-ux-pro-max** | 67 種 UI 風格、96 色彩方案、56 字型配對 | nextlevelbuilder | 活躍 (41,258 stars) |
-| **bencium-marketplace** | UX audit + typography + innovative UX | bencium | 活躍 |
-
-#### Accessibility
-
-| Skill | 描述 | 來源 | 狀態 |
-|-------|------|------|------|
-| **accessibility-agents** | 57 個 WCAG 2.2 AA 審查代理 | Community-Access | 活躍 (185 stars) |
-
-#### 資安 / 合規
+### 開發與部署
 
 | Skill | 描述 | 來源 |
 |-------|------|------|
-| **security-audit** | ISO 27001:2022 對映，850+ 安全檢查項 | afiqiqmal |
-| **ot-security-mcp** | IEC 62443 / NIST 800-82 OT Security MCP Server | Ansvar-Systems |
-| **trailofbits-security** | 35 個安全 plugin（CodeQL/Semgrep/變體分析） | Trail of Bits |
-| **sentry-security-review** | 低誤報率安全程式碼審查 | Sentry |
-| **cisco-skill-scanner** | Skill 供應鏈安全掃描器 | Cisco AI Defense |
+| **react-best-practices** | React / Next.js 效能優化指南 | vercel-labs/agent-skills |
+| **vercel-react-best-practices** | React / Next.js 效能優化 (TSX 審查版) | vercel-labs/agent-skills |
+| **vercel-python** | Python 專案 Vercel 部署診斷與修復 | vercel-labs/agent-skills |
+| **vercel-cost-optimization** | Vercel 帳單分析與成本優化 | vercel-labs/agent-skills |
+| **deploy-to-vercel** | 部署應用到 Vercel | vercel-labs/agent-skills |
+| **agent-browser** | 瀏覽器自動化 CLI (200+ 指令) | vercel-labs/agent-browser |
+| **mcp-builder** | 建立高品質 MCP server | anthropics/skills |
+| **skill-creator** | 建立 / 改進 / 評測 skill | anthropics/skills |
+| **claude-api** | Claude API 使用指南 | anthropics/skills |
 
-#### 寫作風格
+### UI/UX 與設計
 
 | Skill | 描述 | 來源 |
 |-------|------|------|
-| **humanizer-zh-tw** | 去除 AI 寫作痕跡 (強制套用) | kevintsai1202 |
+| **frontend-design** | 反 AI 罐頭風格的前端設計 | anthropics/skills |
+| **interface-design** | 設計記憶系統，確保元件風格一致 | Dammyjay93/interface-design |
+| **ui-ux-pro-max** | 50+ UI 風格 / 161 色彩 / 57 字型配對 | nextlevelbuilder/ui-ux-pro-max-skill |
+| **bencium-marketplace** | UX 審查 + typography + 創新 UX | bencium/bencium-marketplace |
+| **web-design-guidelines** | UI 程式碼審查 (a11y / UX / 效能) | vercel-labs/agent-skills |
+| **canvas-design** | 用設計哲學做 PNG / PDF 視覺作品 | anthropics/skills |
+| **brand-guidelines** | 套用 Anthropic 官方品牌色彩與字型 | anthropics/skills |
+| **theme-factory** | 用主題為 artifact 上樣式 (10 種預設) | anthropics/skills |
+| **web-artifacts-builder** | 建立多元件 claude.ai HTML artifact | anthropics/skills |
+| **algorithmic-art** | 用 p5.js 做演算法藝術 | anthropics/skills |
 
-#### Neon Database
+### 無障礙
 
-| Skill | 描述 |
-|-------|------|
-| **neon-ai-rules** | 完整 Neon 規則 + .mdc 文件 |
-| **neon-skills/** | 6 個獨立 skills (drizzle, serverless, toolkit, auth, js, docs) |
+| Skill | 描述 | 來源 |
+|-------|------|------|
+| **accessibility-agents** | WCAG AA 無障礙強制 (80 專家 agent + 25 指令) | Community-Access/accessibility-agents |
+
+### 測試
+
+| Skill | 描述 | 來源 |
+|-------|------|------|
+| **webapp-testing** | 用 Playwright 測試本地 web app | anthropics/skills |
+| **webapp-uat** | 瀏覽器全流程 UAT (console / network / a11y / i18n) | tsilverberg/webapp-uat |
+
+### 資安 / 合規
+
+| Skill | 描述 | 來源 |
+|-------|------|------|
+| **security-audit** | 白箱 / 灰箱安全稽核 (ISO 27001 對映) | afiqiqmal/claude-security-audit |
+| **security-skills** | 安全自動化 skill marketplace | eth0izzle/security-skills |
+| **claude-code-owasp** | OWASP Top 10 程式碼安全審查 | agamm/claude-code-owasp |
+| **ot-security-mcp** | IEC 62443 / NIST 800-82 OT 安全 MCP | Ansvar-Systems/ot-security-mcp |
+| **trailofbits-security** | 安全分析 plugin (CodeQL / Semgrep) | trailofbits/skills |
+| **trailofbits-skills-curated** | Trail of Bits 審核過的 plugin 精選 | trailofbits/skills-curated |
+| **sentry-security-review** | Sentry 慣例 commit + 安全審查 | getsentry/skills |
+| **anthropic-cybersecurity-skills** | 網路安全 skill 集 | mukul975/Anthropic-Cybersecurity-Skills |
+
+### 文件處理
+
+| Skill | 描述 | 來源 |
+|-------|------|------|
+| **docx** | 建立 / 讀取 / 編輯 Word 文件 | anthropics/skills |
+| **pdf** | 處理 PDF (讀取 / 合併 / 提取) | anthropics/skills |
+| **pptx** | 建立 / 編輯簡報 | anthropics/skills |
+| **xlsx** | 建立 / 編輯試算表 | anthropics/skills |
+
+### 寫作與內容
+
+| Skill | 描述 | 來源 |
+|-------|------|------|
+| **humanizer-zh-tw** | 去除中文 AI 寫作痕跡 (強制套用) | kevintsai1202/Humanizer-zh-TW |
+| **humanizer-en** | 去除英文 AI 寫作痕跡 | blader/humanizer |
+| **content-research-writer** | 研究 + 引用輔助的內容寫作 | ComposioHQ/awesome-claude-skills |
+| **creative-writing-skills** | 虛構世界觀 / 角色 wiki 寫作 | haowjy/creative-writing-skills |
+| **paper-writer-skill** | 醫學 / 科學論文寫作流程 | kgraph57/paper-writer-skill |
+| **storytelling** | 產品價值與痛點的敘事建構 | gtmagents/gtm-agents |
+| **doc-coauthoring** | 結構化文件協作流程 | anthropics/skills |
+| **internal-comms** | 內部溝通文件 (狀態報告 / 領導層更新) | anthropics/skills |
+
+### 影片 / 動畫
+
+| Skill | 描述 | 來源 |
+|-------|------|------|
+| **remotion-video-skill** | 用 Remotion 以程式碼產生影片 | wshuyi/remotion-video-skill |
+| **slack-gif-creator** | 製作 Slack 最佳化的動態 GIF | anthropics/skills |
+
+### 資料庫
+
+| Skill | 描述 | 來源 |
+|-------|------|------|
+| **neon-skills** | Neon serverless 驅動配置 (6 個子 skill) | neondatabase/ai-rules |
 
 ### 已移除
 
 | Skill | 原因 |
 |-------|------|
+| ~~cisco-skill-scanner~~ | 不再同步 |
+| ~~neon-ai-rules~~ | 併入 neon-skills |
 | ~~ux-designer~~ | bencium/design-skill repo 已不存在 |
 | ~~ui-agents~~ | JakobStadler/claude-code-ui-agents repo 已不存在 |
 | ~~claude-designer~~ | joeseesun/claude-designer-skill repo 已不存在 |
+
+## pi.dev 配置 (`pi-agent/`)
+
+除了 Claude Code skills，本 repo 也收錄 pi.dev coding agent 的個人工作配置,讀檔即生效。
+
+| 檔案 | 作用 |
+|------|------|
+| `AGENTS.md` | 工作風格與工程紀律 |
+| `APPEND_SYSTEM.md` | 核心行為約束(機密邊界 / 對外確認 / 誠實 / 簡潔) |
+| `extensions/guardrails.ts` | 危險 git / 機敏檔 / emoji 攔截 |
+| `settings.fragment.json` | 指向 skills 與 extensions |
+
+安裝與位置說明見 [`pi-agent/README.md`](./pi-agent/README.md)。
 
 ## 安裝
 
@@ -100,30 +162,6 @@ cp -r external/* ~/.claude/skills/
 ./scripts/link.sh
 ```
 
-## 使用
-
-安裝後在 Claude Code 中直接觸發：
-
-```bash
-# 自建
-/angular-primeng       # Angular + PrimeNG
-/fastapi-patterns      # FastAPI 後端
-/openspec              # 規格驅動開發
-
-# 程式碼品質
-/security-reviewer     # 安全漏洞檢測
-/build-error-resolver  # 建構錯誤修復
-/refactor-cleaner      # 死代碼清理
-
-# Vercel Labs
-/agent-browser         # 瀏覽器自動化
-/web-design-guidelines # UI 審查
-
-# UI/UX 設計
-/interface-design      # 設計記憶系統
-/ui-ux-pro-max         # 67 種 UI 風格
-```
-
 ## 自動同步
 
 將以下加入 `~/.zshrc`，每天第一次開 terminal 自動同步：
@@ -133,6 +171,7 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 ```
 
 每日自動：
+
 - 從官方來源更新外部 skills SKILL.md
 - 檢查 agent-browser CLI npm 版本，有新版自動更新
 - 有變更自動 commit + push
@@ -158,11 +197,19 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 ## 更新紀錄
 
+### 2026-06-09
+
+- README 全面同步：skills 清單從 22 補到 54（自建 9 + 外部 45），每個外部 skill 標上游來源
+- 移除已不存在的項目：cisco-skill-scanner、neon-ai-rules（併入 neon-skills）
+- 新增 `pi-agent/`：pi.dev coding agent 個人配置(AGENTS.md / APPEND_SYSTEM.md / guardrails extension / settings 片段)
+
 ### 2026-03-15
+
 - 移除 accessibility-agents 38 個已刪除的 agent 檔案（上游同步）
 - 機敏資料自動 redact 功能加入 auto-update
 
 ### 2026-03-14
+
 - 新增 5 個資安 skills（security-audit, ot-security-mcp, trailofbits, sentry, cisco）
 - 新增 3 個 UI/UX skills（frontend-design, accessibility-agents, bencium-marketplace）
 - 移除已消失的 repo（ux-designer, ui-agents, claude-designer）
@@ -171,10 +218,12 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 - 技術棧更新：Shoelace 改為 PrimeVue
 
 ### 2026-03-01
+
 - 新增 humanizer-zh-tw（強制套用）
 - 新增 neon-skills 6 個獨立 skills
 
 ### 2026-01-16
+
 - 初始版本：自建 Skills + 外部收錄
 
 ## 授權
@@ -188,9 +237,10 @@ SeiKai Kyo (許正解)
 
 ## 致謝
 
-- [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, web-design-guidelines
-- [Neon Database](https://github.com/neondatabase) -- neon-skills
-- [affaan-m](https://github.com/affaan-m) -- everything-claude-code (security-reviewer, build-error-resolver, refactor-cleaner)
-- [Dammyjay93](https://github.com/Dammyjay93) -- interface-design
-- [nextlevelbuilder](https://github.com/nextlevelbuilder) -- ui-ux-pro-max
-- [kevintsai1202](https://github.com/kevintsai1202) -- humanizer-zh-tw
+外部 skill 來自各開源社群,授權依各來源。主要來源:
+
+- [Anthropic](https://github.com/anthropics/skills) -- 官方 skills(文件處理 / 設計 / mcp-builder 等)
+- [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, web-design-guidelines, vercel 系列
+- [Neon](https://github.com/neondatabase) -- neon-skills
+- [Trail of Bits](https://github.com/trailofbits) -- 安全 plugin
+- 以及 Dammyjay93, nextlevelbuilder, bencium, Community-Access, kevintsai1202, blader, haowjy, kgraph57, ComposioHQ, gtmagents, agamm, mukul975, eth0izzle, afiqiqmal, getsentry, Ansvar-Systems, tsilverberg, wshuyi 等
