@@ -23,13 +23,14 @@
 
 ## What This Does
 
-When you build UI with Claude, design decisions get made: spacing values, colors, depth strategy, surface elevation. Without structure, those decisions drift across sessions.
+When you build UI with a coding agent, design decisions get made: spacing values, colors, depth strategy, surface elevation. Without structure, those decisions drift across sessions.
 
 **Interface Design helps you:**
 
 1. **Craft** — Principle-based design that produces professional, polished interfaces
-2. **Memory** — Save decisions to `.interface-design/system.md`, load automatically
-3. **Consistency** — Every component follows the same principles throughout the session
+2. **Visual direction** — In Codex, use native image generation for direction boards, UI references, and critique paintovers when useful
+3. **Memory** — Save decisions to `.interface-design/system.md`, then reload them when the skill runs
+4. **Consistency** — UI changes follow the same principles throughout the session
 
 Make choices once. Apply them consistently.
 
@@ -42,7 +43,8 @@ Make choices once. Apply them consistently.
 - No consistency across components
 
 **With interface-design:**
-- System loads automatically each session
+- System loads automatically when the skill runs
+- Codex can explore direction boards and paintovers with image generation
 - Patterns reused (Button: 36px, Card: 16px pad)
 - Spacing on grid (4px, 8px, 12px, 16px)
 - Consistent depth and surface treatment throughout
@@ -53,34 +55,103 @@ See the difference: **[interface-design.dev/examples.html](https://interface-des
 
 ## Installation
 
-### Plugin (Recommended)
+### Recommended: skills.sh
+
+Use the installer shown on the [interface-design skills.sh page](https://www.skills.sh/dammyjay93/interface-design/interface-design):
 
 ```bash
-# Add the marketplace
-/plugin marketplace add Dammyjay93/interface-design
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design
+```
 
-# Install the plugin
+The CLI detects supported agents and installs the skill in the right place. Useful variants:
+
+```bash
+# Install globally for the current detected agent
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design -g
+
+# Install for a specific agent
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design --agent claude-code -g
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design --agent codex -g
+
+# Install for all supported agents
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design --agent '*' -g -y
+
+# Preview available skills without installing
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design --list
+```
+
+Review installed skills before use. Skills run with the same permissions as your coding agent.
+
+### Agent Notes
+
+#### Claude Code
+
+Recommended install:
+
+```bash
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design --agent claude-code -g
+```
+
+This installs the core skill to `~/.claude/skills/interface-design`. Claude Code can auto-invoke it when relevant, and you can invoke it directly as `/interface-design`.
+
+Claude Code plugin install is still supported if you prefer Claude Code's marketplace/plugin flow:
+
+```bash
+/plugin marketplace add Dammyjay93/interface-design
 /plugin menu
 ```
 
-Select `interface-design` from the menu. Restart Claude Code after.
+Select `interface-design` from the menu, then restart Claude Code.
 
-Gets you:
-- Principle-based craft for every UI component
-- Automatic system.md loading every session
-- Per-component design checkpoint
-- Commands (/interface-design status, audit, extract)
+#### Codex
 
-### Manual (Advanced)
+Recommended install:
+
+```bash
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design --agent codex -g
+```
+
+The skills CLI installs Codex skills to `~/.agents/skills/interface-design`, which Codex scans. Restart Codex, or start a fresh Codex thread, if the skill does not appear immediately.
+
+Use the Codex slash command when available, invoke the skill explicitly in prompts, or let Codex invoke it when the request is clearly product UI work:
+- `/interface-design`
+- `/interface-design audit src/components`
+- `use interface-design critique on the dashboard`
+
+#### Other Skill-Compatible Agents
+
+Use the same CLI with an agent target:
+
+```bash
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design --agent <agent-name> -g
+```
+
+### Compatibility Matrix
+
+| Agent | Install | Skill support | Slash commands | Notes |
+|-------|---------|---------------|----------------|-------|
+| Claude Code | `npx skills add ... --agent claude-code -g` | Yes | `/interface-design` | Plugin marketplace remains supported |
+| Codex | `npx skills add ... --agent codex -g` | Yes | `/interface-design` | Slash command and natural language both work |
+| All supported agents | `npx skills add ... --agent '*' -g -y` | Depends on agent | Depends on agent | Good for multi-agent setups |
+
+### Manual Fallback
+
+If you cannot use `npx`, copy the core skill folder manually:
 
 ```bash
 git clone https://github.com/Dammyjay93/interface-design.git
 cd interface-design
-cp -r .claude/* ~/.claude/
-cp -r .claude-plugin/* ~/.claude-plugin/
+
+# Claude Code
+mkdir -p ~/.claude/skills
+cp -R .claude/skills/interface-design ~/.claude/skills/
+
+# Codex / shared agent-skills location
+mkdir -p ~/.agents/skills
+cp -R .claude/skills/interface-design ~/.agents/skills/
 ```
 
-Restart Claude Code.
+Restart the target agent after manual installation.
 
 ---
 
@@ -88,14 +159,14 @@ Restart Claude Code.
 
 ### The Flow
 
-When you build UI with interface-design:
+When an agent uses interface-design:
 
 **If system.md exists:**
 ```
 ✓ Reads skill files and principles
 ✓ Loads .interface-design/system.md
 ✓ Applies established patterns
-✓ States design choices before each component
+✓ Keeps design choices explicit
 ✓ Offers to save new patterns
 ```
 
@@ -104,7 +175,7 @@ When you build UI with interface-design:
 1. Reads skill files and principles
 2. Assesses project context
 3. Suggests direction, asks for confirmation
-4. States design choices before each component
+4. Keeps design choices explicit while building
 5. Builds with consistent principles
 6. Offers to save system
 ```
@@ -114,7 +185,7 @@ When you build UI with interface-design:
 ```
 You: "Build a user dashboard with metrics cards"
 
-Claude:
+Agent:
 This feels like a data-heavy dashboard — I'd suggest:
 - Depth: Borders-only (clean, technical)
 - Surfaces: Subtle elevation shifts
@@ -143,7 +214,7 @@ Want me to save these patterns to .interface-design/system.md?
 ```
 You: "Add a settings page"
 
-Claude:
+Agent:
 ✓ Loaded system.md
 
 Depth: borders-only
@@ -195,18 +266,50 @@ Scale: 4, 8, 12, 16, 24, 32
 - Radius: 8px
 ```
 
-This file loads automatically at session start. Claude sees it and maintains consistency.
+This file is loaded by the interface-design skill when relevant. Claude Code and Codex use it to maintain consistency.
 
 ---
 
-## Commands
+## Agent Usage
+
+### Claude Code
+
+With the skills.sh install, invoke the skill directly or let Claude Code auto-invoke it:
+
+```text
+/interface-design
+use interface-design to build this dashboard
+use interface-design to audit this settings page
+```
+
+If you installed through the Claude Code plugin flow, the legacy command files in `.claude/commands` also provide:
 
 ```bash
 /interface-design:init           # Start building with design principles
 /interface-design:status         # Show current system
 /interface-design:audit <path>   # Check code against system
 /interface-design:extract        # Extract patterns from existing code
+/interface-design:critique       # Critique the build for craft, then rebuild weak spots
 ```
+
+### Codex Invocation
+
+Codex uses the same skill content and can invoke it through the slash command or natural language:
+
+```text
+/interface-design
+/interface-design status
+/interface-design audit src/components
+/interface-design extract
+/interface-design critique
+
+use interface-design status
+use interface-design audit src/components
+use interface-design extract
+use interface-design critique
+```
+
+Claude Code also ships legacy command files such as `/interface-design:status`; Codex does not need those files to perform the same actions. For visual direction work, the skill can also invoke `$imagegen` for direction boards, UI reference mockups, screenshot paintovers, and project-bound raster assets.
 
 ---
 
@@ -247,12 +350,11 @@ All old URLs redirect automatically.
 # Uninstall old
 rm -rf ~/.claude/skills/design-principles
 
-# Install new plugin
-/plugin marketplace add Dammyjay93/interface-design
-/plugin menu
+# Install the current skill
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design --agent claude-code -g
 ```
 
-Your system.md files (if any) continue to work — just rename `.ds-engineer/` to `.interface-design/`.
+Your system.md files (if any) continue to work. Rename `.ds-engineer/` to `.interface-design/` if you have not already.
 
 ---
 
