@@ -4,37 +4,39 @@
 
 A Claude Code skill providing the latest OWASP security best practices (2025-2026) for developers building secure applications.
 
-## Quick Install (One Line)
+## Quick Install
 
-Add this skill to any project with a single command:
+The skill is a directory (`SKILL.md` plus on-demand `reference/` files), so install the whole
+folder. The easiest way is [`degit`](https://github.com/Rich-Harris/degit), which copies a
+GitHub subdirectory without the `.git` history:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/agamm/claude-code-owasp/main/.claude/skills/owasp-security/SKILL.md -o .claude/skills/owasp-security/SKILL.md --create-dirs
+npx degit agamm/claude-code-owasp/.claude/skills/owasp-security .claude/skills/owasp-security
 ```
 
 Or install globally for all projects:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/agamm/claude-code-owasp/main/.claude/skills/owasp-security/SKILL.md -o ~/.claude/skills/owasp-security/SKILL.md --create-dirs
+npx degit agamm/claude-code-owasp/.claude/skills/owasp-security ~/.claude/skills/owasp-security
 ```
 
 ## What's Included
 
 ### Claude Code Skill
-Location: `.claude/skills/owasp-security/SKILL.md`
+Location: `.claude/skills/owasp-security/`
 
+`SKILL.md` (the always-loaded core):
 - **OWASP Top 10:2025** quick reference table
 - **Security code review checklists** for input handling, auth, access control, data protection, and error handling
 - **Secure code patterns** with unsafe/safe examples
 - **OWASP Top 10 for LLM Applications (2025)** - LLM01-LLM10 risks for chatbots, RAG, and tool-calling apps
 - **OWASP Agentic AI Security (2026)** - ASI01-ASI10 risks for AI agent systems
 - **ASVS 5.0** key requirements by verification level
-- **Language-specific security quirks** for 20+ languages with deep analysis guidance
+- **Deep security analysis mindset** for any language
 
-### Research Report
-Location: `OWASP-2025-2026-Report.md`
-
-Comprehensive documentation covering all OWASP 2025-2026 standards.
+`reference/` (loaded on demand, following Claude Code progressive-disclosure best practices):
+- **`languages.md`** - language-specific security quirks for 20+ languages with unsafe/safe examples
+- **`owasp-report.md`** - comprehensive deep-dive on every OWASP 2025-2026 standard
 
 ## Usage
 
