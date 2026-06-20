@@ -27,8 +27,8 @@ When you build UI with a coding agent, design decisions get made: spacing values
 
 **Interface Design helps you:**
 
-1. **Craft** — Principle-based design that produces professional, polished interfaces
-2. **Visual direction** — In Codex, use native image generation for direction boards, UI references, and critique paintovers when useful
+1. **Craft** — Principle-based design that produces professional, polished interfaces with real visual hierarchy
+2. **Visual direction** — When an image-generation tool is available, explore direction boards, UI references, and critique paintovers
 3. **Memory** — Save decisions to `.interface-design/system.md`, then reload them when the skill runs
 4. **Consistency** — UI changes follow the same principles throughout the session
 
@@ -44,7 +44,7 @@ Make choices once. Apply them consistently.
 
 **With interface-design:**
 - System loads automatically when the skill runs
-- Codex can explore direction boards and paintovers with image generation
+- Direction boards and paintovers when an image-generation tool is available
 - Patterns reused (Button: 36px, Card: 16px pad)
 - Spacing on grid (4px, 8px, 12px, 16px)
 - Consistent depth and surface treatment throughout
@@ -115,8 +115,8 @@ The skills CLI installs Codex skills to `~/.agents/skills/interface-design`, whi
 
 Use the Codex slash command when available, invoke the skill explicitly in prompts, or let Codex invoke it when the request is clearly product UI work:
 - `/interface-design`
-- `/interface-design audit src/components`
-- `use interface-design critique on the dashboard`
+- `use interface-design to build this dashboard`
+- `use interface-design design-review on the settings page`
 
 #### Other Skill-Compatible Agents
 
@@ -282,15 +282,14 @@ use interface-design to build this dashboard
 use interface-design to audit this settings page
 ```
 
-If you installed through the Claude Code plugin flow, the legacy command files in `.claude/commands` also provide:
+If you installed through the Claude Code plugin flow, two command files in `.claude/commands` give you focused review passes:
 
 ```bash
-/interface-design:init           # Start building with design principles
-/interface-design:status         # Show current system
-/interface-design:audit <path>   # Check code against system
-/interface-design:extract        # Extract patterns from existing code
-/interface-design:critique       # Critique the build for craft, then rebuild weak spots
+/interface-design:design-review   # Strict craft + hierarchy review, with an approval bar
+/interface-design:design-deslop   # Fast, diff-scoped pass that strips visual slop from a branch
 ```
+
+`design-review` is the design counterpart to a deep code-quality review — it judges focal point, hierarchy, typography, color, surfaces, states, and motion against the bar of a top design team, then tells you what to fix. `design-deslop` is the counterpart to a code-deslop pass — it finds the obvious tells of generated UI (generic tokens, defaulted fonts, timid palettes, identical cards, missing states, harsh borders) and cleans them up in place.
 
 ### Codex Invocation
 
@@ -298,18 +297,12 @@ Codex uses the same skill content and can invoke it through the slash command or
 
 ```text
 /interface-design
-/interface-design status
-/interface-design audit src/components
-/interface-design extract
-/interface-design critique
-
-use interface-design status
-use interface-design audit src/components
-use interface-design extract
-use interface-design critique
+use interface-design to build this dashboard
+use interface-design design-review on the settings page
+use interface-design design-deslop on this branch
 ```
 
-Claude Code also ships legacy command files such as `/interface-design:status`; Codex does not need those files to perform the same actions. For visual direction work, the skill can also invoke `$imagegen` for direction boards, UI reference mockups, screenshot paintovers, and project-bound raster assets.
+For visual direction work, when an image-generation tool is available the skill can produce direction boards, UI reference mockups, screenshot paintovers, and project-bound raster assets.
 
 ---
 

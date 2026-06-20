@@ -504,6 +504,78 @@ gh pr create
 
 See [CLAUDE.md](CLAUDE.md) for detailed development guidelines.
 
+## Troubleshooting
+
+### `uipro: unknown command 'uninstall'` or `unknown command 'update'`
+
+Your installed version of `uipro-cli` is outdated. Update it and retry:
+
+```bash
+npm install -g uipro-cli@latest
+uipro uninstall
+```
+
+### `uipro uninstall` says "No installed AI skill directories detected"
+
+The skill was installed in a different directory than where you're running the command. Either:
+
+```bash
+# Option A — run from the project root where you originally installed it
+cd /path/to/your/project
+uipro uninstall
+
+# Option B — remove the global install
+uipro uninstall --global
+
+# Option C — remove manually
+rm -rf .claude/skills/ui-ux-pro-max   # Claude Code
+rm -rf .cursor/skills/ui-ux-pro-max   # Cursor
+rm -rf .windsurf/skills/ui-ux-pro-max # Windsurf
+rm -rf .agents/skills/ui-ux-pro-max   # Antigravity
+```
+
+### Claude Marketplace install fails with "Zip file contains a symbolic link"
+
+This is a known issue with versions prior to v2.5.1. The repository used symlinks internally which some installation tools can't handle. **Fix:** use the CLI installer instead:
+
+```bash
+npm install -g uipro-cli
+uipro init --ai claude
+```
+
+Or wait for the next release where this is resolved.
+
+### `npm install -g uipro-cli` fails with permission error
+
+```bash
+# macOS/Linux — use a Node version manager (recommended) or sudo
+sudo npm install -g uipro-cli
+
+# Or use npx without installing globally
+npx uipro-cli init --ai claude
+```
+
+### Python not found when running design system commands
+
+The search scripts require Python 3.x. Install it for your OS:
+
+```bash
+brew install python3        # macOS
+sudo apt install python3    # Ubuntu/Debian
+winget install Python.Python.3.12  # Windows
+```
+
+### Design system output is cut off / fields truncated
+
+Use the `--max-length` flag to increase (or remove) the truncation limit:
+
+```bash
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "SaaS" --domain style --max-length 0
+#                                                                               ^ 0 = unlimited
+```
+
+---
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=nextlevelbuilder/ui-ux-pro-max-skill&type=Date)](https://star-history.com/#nextlevelbuilder/ui-ux-pro-max-skill&Date)
