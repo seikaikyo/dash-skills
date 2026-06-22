@@ -89,6 +89,7 @@ STACK_CONFIG = {
     "threejs":          {"file": "stacks/threejs.csv"},
     "angular":          {"file": "stacks/angular.csv"},
     "laravel":          {"file": "stacks/laravel.csv"},
+    "javafx":           {"file": "stacks/javafx.csv"},
 }
 
 # Common columns for all stacks
