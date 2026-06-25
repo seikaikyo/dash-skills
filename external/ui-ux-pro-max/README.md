@@ -154,7 +154,7 @@ Each rule includes:
 - **161 Color Palettes** - Industry-specific palettes aligned 1:1 with the 161 product types
 - **57 Font Pairings** - Curated typography combinations with Google Fonts imports
 - **25 Chart Types** - Recommendations for dashboards and analytics
-- **16 Tech Stacks** - React, Next.js, Astro, Vue, Nuxt.js, Nuxt UI, Svelte, SwiftUI, React Native, Flutter, HTML+Tailwind, shadcn/ui, Jetpack Compose, Angular, Laravel, JavaFX
+- **17 Tech Stacks** - React, Next.js, Astro, Vue, Nuxt.js, Nuxt UI, Svelte, SwiftUI, React Native, Flutter, HTML+Tailwind, shadcn/ui, Jetpack Compose, Angular, Laravel, Three.js, JavaFX
 - **99 UX Guidelines** - Best practices, anti-patterns, and accessibility rules
 - **161 Reasoning Rules** - Industry-specific design system generation (NEW in v2.0)
 
@@ -304,8 +304,8 @@ uipro init --ai cursor --global   # Install to ~/.cursor/skills/
 
 ```bash
 uipro versions              # List available versions
-uipro update                # Update to latest version
-uipro init --offline        # Skip GitHub download, use bundled assets
+uipro update                # Refresh skill files from installed CLI package
+uipro init --offline        # Compatibility flag; installs bundled templates
 uipro uninstall             # Remove skill (auto-detect platform)
 uipro uninstall --ai claude # Remove specific platform
 uipro uninstall --global    # Remove from global install
@@ -386,7 +386,7 @@ The skill provides stack-specific guidelines for:
 | **Vue Ecosystem** | Vue, Nuxt.js, Nuxt UI |
 | **Angular** | Angular |
 | **PHP** | Laravel (Blade, Livewire, Inertia.js) |
-| **Other Web** | Svelte, Astro |
+| **Other Web** | Svelte, Astro, Three.js |
 | **Desktop** | JavaFX |
 | **iOS** | SwiftUI |
 | **Android** | Jetpack Compose |
@@ -468,7 +468,7 @@ npm install -g uipro-cli
 uipro init --ai <platform>
 ```
 
-This ensures you get the latest templates and correct file structure for your AI assistant.
+This ensures you get the latest templates bundled with the installed CLI package and the correct file structure for your AI assistant. Update the npm package first when a new release is published.
 
 ### For Contributors
 
@@ -491,12 +491,12 @@ cli/                         # CLI installer (generates files from templates)
 # - templates/              → Platform-specific templates
 
 # 4. Sync to CLI and test locally
-cp -r src/ui-ux-pro-max/data/* cli/assets/data/
-cp -r src/ui-ux-pro-max/scripts/* cli/assets/scripts/
-cp -r src/ui-ux-pro-max/templates/* cli/assets/templates/
+cd cli
+npm run sync:assets
+npm run check:assets
 
 # 5. Build and test CLI
-cd cli && bun run build
+bun run build
 node dist/index.js init --ai claude --offline  # Test in a temp folder
 
 # 6. Create PR (never push directly to main)
