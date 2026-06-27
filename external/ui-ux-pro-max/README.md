@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/uipro-cli"><img src="https://img.shields.io/npm/v/uipro-cli?style=flat-square&logo=npm&label=CLI" alt="npm"></a>
-  <a href="https://www.npmjs.com/package/uipro-cli"><img src="https://img.shields.io/npm/dm/uipro-cli?style=flat-square&label=downloads" alt="npm downloads"></a>
+  <a href="https://www.npmjs.com/package/ui-ux-pro-max-cli"><img src="https://img.shields.io/npm/v/ui-ux-pro-max-cli?style=flat-square&logo=npm&label=CLI" alt="npm"></a>
+  <a href="https://www.npmjs.com/package/ui-ux-pro-max-cli"><img src="https://img.shields.io/npm/dm/ui-ux-pro-max-cli?style=flat-square&label=downloads" alt="npm downloads"></a>
   <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/stargazers"><img src="https://img.shields.io/github/stars/nextlevelbuilder/ui-ux-pro-max-skill?style=flat-square&logo=github" alt="GitHub stars"></a>
   <a href="https://paypal.me/uiuxpromax"><img src="https://img.shields.io/badge/PayPal-Support%20Development-00457C?style=flat-square&logo=paypal&logoColor=white" alt="PayPal"></a>
 </p>
@@ -154,7 +154,7 @@ Each rule includes:
 - **161 Color Palettes** - Industry-specific palettes aligned 1:1 with the 161 product types
 - **57 Font Pairings** - Curated typography combinations with Google Fonts imports
 - **25 Chart Types** - Recommendations for dashboards and analytics
-- **17 Tech Stacks** - React, Next.js, Astro, Vue, Nuxt.js, Nuxt UI, Svelte, SwiftUI, React Native, Flutter, HTML+Tailwind, shadcn/ui, Jetpack Compose, Angular, Laravel, Three.js, JavaFX
+- **22 Tech Stacks** - React, Next.js, Astro, Vue, Nuxt.js, Nuxt UI, Svelte, SwiftUI, React Native, Flutter, HTML+Tailwind, shadcn/ui, Jetpack Compose, Angular, Laravel, Three.js, JavaFX, WPF, WinUI 3, UWP, Avalonia, Uno Platform
 - **99 UX Guidelines** - Best practices, anti-patterns, and accessibility rules
 - **161 Reasoning Rules** - Industry-specific design system generation (NEW in v2.0)
 
@@ -266,7 +266,7 @@ Install directly in Claude Code with two commands:
 
 ```bash
 # Install CLI globally
-npm install -g uipro-cli
+npm install -g ui-ux-pro-max-cli
 
 # Go to your project
 cd /path/to/your/project
@@ -292,6 +292,8 @@ uipro init --ai warp        # Warp
 uipro init --ai augment     # Augment
 uipro init --ai all         # All assistants
 ```
+
+The npm package is `ui-ux-pro-max-cli`; it still installs the `uipro` command. Older `uipro-cli` releases are stale and should not be used for current assets.
 
 ### Global Install (Available for All Projects)
 
@@ -464,7 +466,7 @@ The codebase has been restructured to use a **template-based generation system**
 **Always use the CLI to install:**
 
 ```bash
-npm install -g uipro-cli
+npm install -g ui-ux-pro-max-cli
 uipro init --ai <platform>
 ```
 
@@ -524,16 +526,16 @@ Use these commit types for correct version bumps:
 - `feat:` -> minor release
 - `feat!:` or `BREAKING CHANGE:` -> major release
 
-The release workflow only needs the default `GITHUB_TOKEN`; it does not publish to npm.
+The release workflow uses the default `GITHUB_TOKEN` for GitHub releases and the repository `NPM_TOKEN` secret to publish `ui-ux-pro-max-cli` to npm.
 
 ## Troubleshooting
 
 ### `uipro: unknown command 'uninstall'` or `unknown command 'update'`
 
-Your installed version of `uipro-cli` is outdated. Update it and retry:
+Your installed version of `ui-ux-pro-max-cli` is outdated. Update it and retry:
 
 ```bash
-npm install -g uipro-cli@latest
+npm install -g ui-ux-pro-max-cli@latest
 uipro uninstall
 ```
 
@@ -561,20 +563,20 @@ rm -rf .agents/skills/ui-ux-pro-max   # Antigravity
 This is a known issue with versions prior to v2.5.1. The repository used symlinks internally which some installation tools can't handle. **Fix:** use the CLI installer instead:
 
 ```bash
-npm install -g uipro-cli
+npm install -g ui-ux-pro-max-cli
 uipro init --ai claude
 ```
 
 Or wait for the next release where this is resolved.
 
-### `npm install -g uipro-cli` fails with permission error
+### `npm install -g ui-ux-pro-max-cli` fails with permission error
 
 ```bash
 # macOS/Linux — use a Node version manager (recommended) or sudo
-sudo npm install -g uipro-cli
+sudo npm install -g ui-ux-pro-max-cli
 
 # Or use npx without installing globally
-npx uipro-cli init --ai claude
+npx ui-ux-pro-max-cli init --ai claude
 ```
 
 ### Python not found when running design system commands

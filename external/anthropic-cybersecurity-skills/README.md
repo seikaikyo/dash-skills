@@ -32,7 +32,9 @@
 
 ---
 
-> ⚠️ **Community Project** — This is an independent, community-created project. Not affiliated with Anthropic PBC. 
+> ⚠️ **Community Project** — This is an independent, community-created project. Not affiliated with Anthropic PBC.
+>
+> 🔐 **Authorized & lawful use only.** This library includes offensive and dual-use techniques (e.g. red-team C2, phishing simulation, exploitation) intended for **authorized penetration testing, security research, defense, and education**. Only use them against systems you own or have **explicit written permission** to test, and comply with all applicable laws and rules of engagement. You are solely responsible for how you use these skills. See [SECURITY.md](SECURITY.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Give any AI agent the security skills of a senior analyst
 

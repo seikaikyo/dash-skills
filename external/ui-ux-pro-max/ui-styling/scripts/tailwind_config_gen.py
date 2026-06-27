@@ -213,7 +213,7 @@ class TailwindConfigGenerator:
         return f"""import type {{ Config }} from 'tailwindcss'
 
 const config: Config = {{
-{self._indent_json(config_json, 1)}
+{self._indent_json(config_json, 1)},
   plugins: [{plugins_str}],
 }}
 
@@ -230,7 +230,7 @@ export default config
 
         return f"""/** @type {{import('tailwindcss').Config}} */
 module.exports = {{
-{self._indent_json(config_json, 1)}
+{self._indent_json(config_json, 1)},
   plugins: [{plugins_str}],
 }}
 """
