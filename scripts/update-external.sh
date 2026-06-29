@@ -740,6 +740,45 @@ update_security_audit() {
     rm -rf "$temp_dir"
 }
 
+# 函數：更新 cloudflare-security-audit (Cloudflare 多 agent 編排式滲透審計)
+# 獨立目錄名，不覆蓋既有 external/security-audit (afiqiqmal)
+update_cloudflare_security_audit() {
+    local skill_dir="$EXTERNAL_DIR/cloudflare-security-audit"
+    local temp_dir=$(mktemp -d)
+    local repo="cloudflare/security-audit-skill"
+
+    echo "更新: cloudflare-security-audit (多 agent 編排式滲透審計)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -f "repo/SKILL.md" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp repo/SKILL.md "$skill_dir/" 2>/dev/null || true
+        cp repo/RECONNAISSANCE.md "$skill_dir/" 2>/dev/null || true
+        cp repo/HUNTING.md "$skill_dir/" 2>/dev/null || true
+        cp repo/ATTACK-CLASSES.md "$skill_dir/" 2>/dev/null || true
+        cp repo/VALIDATION-AND-REPORTING.md "$skill_dir/" 2>/dev/null || true
+        cp repo/report-schema.json "$skill_dir/" 2>/dev/null || true
+        cp repo/validate-findings.cjs "$skill_dir/" 2>/dev/null || true
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        # frontmatter name 對齊獨立目錄名，避免與既有 security-audit 撞名
+        sed -i '' 's/^name: security-audit$/name: cloudflare-security-audit/' "$skill_dir/SKILL.md"
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
 # 函數：更新 sentry-security-review (Sentry 官方 security review)
 update_sentry_security_review() {
     local skill_dir="$EXTERNAL_DIR/sentry-security-review"
@@ -941,6 +980,7 @@ show_available() {
     echo "  - anthropic-cybersecurity-skills (mukul975, MITRE ATT&CK 734+ skills)"
     echo "  - security-skills            (eth0izzle, SecOps/SOAR 自動化)"
     echo "  - security-audit             (afiqiqmal, OWASP/CWE/NIST 白箱審計)"
+    echo "  - cloudflare-security-audit  (Cloudflare, 多 agent 編排式滲透審計)"
     echo "  - sentry-security-review     (Sentry 官方, security code review)"
     echo "  - ot-security-mcp            (Ansvar, IEC 62443 OT 安全)"
     echo ""
@@ -985,6 +1025,7 @@ if [ $# -eq 0 ]; then
         update_anthropic_cybersecurity_skills
         update_security_skills
         update_security_audit
+        update_cloudflare_security_audit
         update_sentry_security_review
         update_ot_security_mcp
         update_interface_design
@@ -1174,6 +1215,9 @@ else
                 ;;
             "security-audit"|"audit")
                 update_security_audit
+                ;;
+            "cloudflare-security-audit"|"cf-audit"|"cloudflare-audit")
+                update_cloudflare_security_audit
                 ;;
             "sentry-security-review"|"sentry-review")
                 update_sentry_security_review
