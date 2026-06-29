@@ -1,7 +1,5 @@
 # OWASP Security Skill for Claude Code
 
-[![Sponsor](https://readme-cash--readme-cash.us-central1.hosted.app/i/y3cj0enb1k.svg)](https://readme-cash--readme-cash.us-central1.hosted.app/c/y3cj0enb1k)
-
 A Claude Code skill providing the latest OWASP security best practices (2025-2026) for developers building secure applications.
 
 ## Quick Install
