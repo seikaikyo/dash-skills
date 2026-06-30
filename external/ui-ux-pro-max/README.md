@@ -1,5 +1,10 @@
 # [UI UX Pro Max](https://uupm.cc)
- 
+
+<p align="center">
+  <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.zh.md">🇨🇳 简体中文</a> | 
+  <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.md">🇺🇸 English</a>
+</p>
+
 <p align="center">
   <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases"><img src="https://img.shields.io/github/v/release/nextlevelbuilder/ui-ux-pro-max-skill?style=for-the-badge&color=blue" alt="GitHub Release"></a>
   <img src="https://img.shields.io/badge/reasoning_rules-161-green?style=for-the-badge" alt="161 Reasoning Rules">
@@ -250,6 +255,25 @@ Each rule includes:
 | 10 | Sales Intelligence Dashboard | Sales teams, CRM |
 
 </details>
+
+## 💎 Basic vs. Premium Version Comparison
+
+Many users ask about the differences between the open-source and premium versions. Here is a detailed breakdown to help you choose the right fit for your workflow.
+
+### 🟢 Basic Version (This Repository)
+* **Fully Open Source:** Perfect for individual developers, hobbyists, and standard projects.
+* **Core UI/UX Intelligence:** Full access to 67 UI styles, 161 product types, color palettes, and curated font pairings.
+* **Smart Recommendations:** Built-in BM25 search engine for highly accurate design matching.
+* **Cross-Platform Support:** Stack-specific guidelines supporting 13+ major frameworks (React, Vue, Tailwind, iOS, Android, etc.).
+* **Design System Generation:** Instantly generate tailored UI rules, patterns, and logic via CLI.
+
+### 🟡 Premium Version
+* **Extended Brand Design Skills:** Goes beyond UI/UX to include Brand Identity generation, Logo Design, Corporate Identity Programs (CIP), Banners, Presentation Slides, and custom Iconography.
+* **Advanced Asset Creation:** Deep integration with AI-powered image generation to create real visual assets, not just placeholders.
+* **Enterprise Architecture:** A more comprehensive and scalable Design Token architecture, built for large-scale team deployments.
+* **Priority Support:** Dedicated technical assistance for teams and professionals who need an uninterrupted full design workflow.
+
+👉 *For more details on upgrading to the Premium tier, visit [uipm.cc](https://uipm.cc).*
 
 ## Installation
 
