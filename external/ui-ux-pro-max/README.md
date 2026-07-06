@@ -520,9 +520,14 @@ cli/                         # CLI installer (generates files from templates)
 cd cli
 npm run sync:assets
 npm run check:assets
+npm run validate:csv
+npm run smoke:domains
+npm run smoke:stacks
+npm run typecheck
 
 # 5. Build and test CLI
-bun run build
+# `npm run build` uses Bun when available and falls back to TypeScript compiler output after `npm ci`.
+npm run build
 node dist/index.js init --ai claude --offline  # Test in a temp folder
 
 # 6. Create PR (never push directly to main)
