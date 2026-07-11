@@ -339,21 +339,15 @@ uipro uninstall --global    # Remove from global install
 
 ## Prerequisites
 
-Python 3.x is required for the search script.
+Python 3.x is required for the search script (standard library only — the scripts install nothing and make no network calls).
+
+Check if Python is installed:
 
 ```bash
-# Check if Python is installed
 python3 --version
-
-# macOS
-brew install python3
-
-# Ubuntu/Debian
-sudo apt update && sudo apt install python3
-
-# Windows
-winget install Python.Python.3.12
 ```
+
+If it is missing, install it yourself from [python.org](https://www.python.org/downloads/) or with your OS package manager (Homebrew, apt, winget). These install steps are for **you, the human user** — AI agents using this skill should never install software on your machine; they are instructed to ask you instead.
 
 ## Usage
 
@@ -600,23 +594,16 @@ Or wait for the next release where this is resolved.
 
 ### `npm install -g ui-ux-pro-max-cli` fails with permission error
 
-```bash
-# macOS/Linux — use a Node version manager (recommended) or sudo
-sudo npm install -g ui-ux-pro-max-cli
+Use a Node version manager (recommended), or skip the global install entirely:
 
-# Or use npx without installing globally
+```bash
+# npx without installing globally
 npx ui-ux-pro-max-cli init --ai claude
 ```
 
 ### Python not found when running design system commands
 
-The search scripts require Python 3.x. Install it for your OS:
-
-```bash
-brew install python3        # macOS
-sudo apt install python3    # Ubuntu/Debian
-winget install Python.Python.3.12  # Windows
-```
+The search scripts require Python 3.x. Install it manually from [python.org](https://www.python.org/downloads/) or with your OS package manager (Homebrew, apt, winget). AI agents should not install it for you — they are instructed to ask you instead.
 
 ### Design system output is cut off / fields truncated
 
