@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 9 個 (`skills/`) + 外部收錄 45 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 12 個 (`skills/`) + 外部收錄 48 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -25,6 +25,9 @@
 | **architecture-audit** | 架構文件稽核，比對 CLAUDE.md 與實際程式碼結構 |
 | **cis-design-system** | CIS 企業識別設計規範建立與維護 |
 | **quality-gate** | 前端品質閘門 (SEO / 無障礙 / 效能 / UI-UX) |
+| **doubt-driven-development** | 非平凡決策的新鮮 context 對抗審查 (改寫自 tGD, Apache-2.0) |
+| **interview-me** | 需求不明時的意圖萃取訪談 (改寫自 tGD, Apache-2.0) |
+| **sketch** | 拋棄式 HTML mockup 比稿，2 到 3 個設計立場變體 (改寫自 tGD, Apache-2.0) |
 
 ### 開發與部署
 
