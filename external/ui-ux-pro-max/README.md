@@ -264,7 +264,7 @@ Many users ask about the differences between the open-source and premium version
 * **Fully Open Source:** Perfect for individual developers, hobbyists, and standard projects.
 * **Core UI/UX Intelligence:** Full access to 67 UI styles, 161 product types, color palettes, and curated font pairings.
 * **Smart Recommendations:** Built-in BM25 search engine for highly accurate design matching.
-* **Cross-Platform Support:** Stack-specific guidelines supporting 13+ major frameworks (React, Vue, Tailwind, iOS, Android, etc.).
+* **Cross-Platform Support:** Stack-specific guidelines supporting 22 major frameworks (React, Vue, Tailwind, iOS, Android, etc.).
 * **Design System Generation:** Instantly generate tailored UI rules, patterns, and logic via CLI.
 
 ### 🟡 Premium Version
@@ -314,6 +314,7 @@ uipro init --ai droid       # Droid (Factory)
 uipro init --ai kilocode    # KiloCode
 uipro init --ai warp        # Warp
 uipro init --ai augment     # Augment
+uipro init --ai codewhale   # CodeWhale
 uipro init --ai all         # All assistants
 ```
 
@@ -353,7 +354,7 @@ If it is missing, install it yourself from [python.org](https://www.python.org/d
 
 ### Skill Mode (Auto-activate)
 
-**Supported:** Claude Code, Cursor, Windsurf, Antigravity, Codex CLI, Continue, Gemini CLI, OpenCode, Qoder, CodeBuddy, Droid (Factory), KiloCode, Warp, Augment
+**Supported:** Claude Code, Cursor, Windsurf, Antigravity, Codex CLI, Continue, Gemini CLI, OpenCode, Qoder, CodeBuddy, Droid (Factory), KiloCode, Warp, Augment, CodeWhale
 
 The skill activates automatically when you request UI/UX work. Just chat naturally:
 
@@ -407,7 +408,7 @@ The skill provides stack-specific guidelines for:
 | **Angular** | Angular |
 | **PHP** | Laravel (Blade, Livewire, Inertia.js) |
 | **Other Web** | Svelte, Astro, Three.js |
-| **Desktop** | JavaFX |
+| **Desktop** | JavaFX, WPF, WinUI 3, Avalonia, Uno Platform, UWP |
 | **iOS** | SwiftUI |
 | **Android** | Jetpack Compose |
 | **Cross-Platform** | React Native, Flutter |
@@ -607,11 +608,10 @@ The search scripts require Python 3.x. Install it manually from [python.org](htt
 
 ### Design system output is cut off / fields truncated
 
-Use the `--max-length` flag to increase (or remove) the truncation limit:
+Human-readable output truncates long fields at 300 characters. Use `--json` to get the full, untruncated data:
 
 ```bash
-python3 .claude/skills/ui-ux-pro-max/scripts/search.py "SaaS" --domain style --max-length 0
-#                                                                               ^ 0 = unlimited
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py "SaaS" --domain style --json
 ```
 
 ---
