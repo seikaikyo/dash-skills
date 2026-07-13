@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tGD Wiki</title>
+<style>
+:root {
+  --bg: #ffffff; --bg2: #f6f7f9; --fg: #1a1d23; --fg2: #5c6370;
+  --border: #e4e7eb; --accent: #6d5ae0; --accent2: #8b7cf0;
+  --card: #ffffff; --code-bg: #f3f4f6; --hl: #fff3c4;
+  --sidebar-w: 260px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14161a; --bg2: #1c1f26; --fg: #e5e8ed; --fg2: #9aa2b1;
+    --border: #2a2e37; --accent: #8b7cf0; --accent2: #6d5ae0;
+    --card: #1c1f26; --code-bg: #23262e; --hl: #4a3f14;
+  }
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg); color: var(--fg); line-height: 1.6; font-size: 15px;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 0.88em; }
+pre { background: var(--code-bg); padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+
+#layout { display: flex; min-height: 100vh; }
+#sidebar {
+  width: var(--sidebar-w); flex-shrink: 0; background: var(--bg2);
+  border-right: 1px solid var(--border); padding: 16px 12px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+#main { flex: 1; min-width: 0; padding: 28px 40px 80px; max-width: 1080px; }
+.brand { font-weight: 700; font-size: 16px; padding: 4px 8px 14px; display: block; color: var(--fg); }
+.brand span { color: var(--accent); }
+.repo-switch { width: 100%; padding: 7px 8px; margin-bottom: 14px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--card); color: var(--fg); font-size: 13px; }
+.nav-sec { font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--fg2); margin: 14px 8px 4px; }
+.nav a { display: block; padding: 5px 8px; border-radius: 6px; color: var(--fg); font-size: 13.5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav a:hover { background: var(--border); text-decoration: none; }
+.nav a.active { background: var(--accent); color: #fff; }
+.searchbox { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--card); color: var(--fg); font-size: 13px; margin-bottom: 6px; }
+
+.hero { background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 14px; padding: 34px 34px; color: #fff; margin-bottom: 26px; }
+.hero h1 { font-size: 26px; margin-bottom: 6px; }
+.hero p { opacity: .92; max-width: 640px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px; margin: 20px 0 26px; }
+.kpi { background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 16px; text-align: center; }
+.kpi b { display: block; font-size: 22px; color: var(--accent); }
+.kpi span { font-size: 12px; color: var(--fg2); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin: 14px 0 26px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px; display: block; color: var(--fg); transition: border-color .15s, transform .15s; }
+.card:hover { border-color: var(--accent); transform: translateY(-2px); text-decoration: none; }
+.card h3 { font-size: 15px; margin-bottom: 4px; }
+.card p { font-size: 13px; color: var(--fg2); max-height: 3.2em; overflow: hidden; }
+.card .meta { font-size: 12px; color: var(--fg2); margin-top: 8px; }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px;
+  background: var(--accent); color: #fff; margin-right: 6px; }
+
+h1.page { font-size: 24px; margin-bottom: 4px; }
+h2 { font-size: 18px; margin: 26px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+h3 { font-size: 15px; margin: 18px 0 8px; }
+.sub { color: var(--fg2); margin-bottom: 18px; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0 18px; font-size: 13.5px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--fg2); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+.diagram { background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px; margin: 12px 0 20px; overflow-x: auto; text-align: center; }
+.diagram svg { max-width: 100%; height: auto; }
+.crumbs { font-size: 13px; color: var(--fg2); margin-bottom: 16px; }
+
+.prose { max-width: 74ch; font-size: 15.5px; line-height: 1.75; margin: 14px 0 22px; }
+.prose p { margin: 0 0 12px; }
+.prose h3 { font-size: 17px; margin: 22px 0 8px; }
+.prose h4 { font-size: 15px; margin: 18px 0 6px; }
+.prose ul, .prose ol { margin: 0 0 12px 22px; }
+.prose li { margin: 3px 0; }
+.prose blockquote { border-left: 3px solid var(--accent); padding: 2px 14px; margin: 12px 0;
+  color: var(--fg2); }
+.prose pre { margin: 12px 0; }
+.prose code { font-size: 0.86em; }
+
+.srcview { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px;
+  overflow-x: auto; margin: 12px 0; }
+.srcview .ln { display: flex; }
+.srcview .ln:target, .srcview .ln.hl { background: var(--hl); }
+.srcview .no { user-select: none; text-align: right; padding: 0 10px 0 14px; min-width: 54px;
+  color: var(--fg2); font-size: 12.5px; line-height: 1.55; font-family: ui-monospace, Menlo, monospace; }
+.srcview .no a { color: var(--fg2); }
+.srcview .tx { white-space: pre; font-size: 12.5px; line-height: 1.55;
+  font-family: ui-monospace, Menlo, monospace; padding-right: 16px; }
+.result { padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+  margin-bottom: 8px; display: block; color: var(--fg); }
+.result:hover { border-color: var(--accent); text-decoration: none; }
+.result .t { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+.empty { color: var(--fg2); font-style: italic; padding: 12px 0; }
+.tour-step { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; margin: 14px 0; }
+.footer { margin-top: 50px; padding-top: 16px; border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--fg2); }
+#menu-btn { display: none; }
+@media (max-width: 860px) {
+  #sidebar { position: fixed; z-index: 10; transform: translateX(-100%); transition: transform .2s; }
+  #sidebar.open { transform: none; }
+  #main { padding: 20px 16px 60px; }
+  #menu-btn { display: block; position: fixed; bottom: 18px; right: 18px; z-index: 11;
+    background: var(--accent); color: #fff; border: 0; border-radius: 50%;
+    width: 48px; height: 48px; font-size: 20px; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.3); }
+}
+</style>
+</head>
+<body>
+<div id="layout">
+  <nav id="sidebar"></nav>
+  <main id="main"></main>
+</div>
+<button id="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<script>/*__TGD_MERMAID__*/</script>
+<script id="tgd-data" type="application/json">__TGD_DATA__</script>
+<script>
+"use strict";
+/* Fail loud, never blank. A JS error on boot used to leave a white page with
+   no clue; instead render a visible message so the failure is diagnosable. */
+let _fatalShown = false;
+function fatal(title, detail) {
+  if (_fatalShown) return;  // first (most specific) message wins
+  _fatalShown = true;
+  var m = document.getElementById("main") || document.body;
+  if (!m) return;
+  m.innerHTML =
+    '<div style="max-width:660px;margin:60px auto;padding:24px;border:1px solid #e4474a;'
+    + 'border-radius:12px;font-family:system-ui,-apple-system,sans-serif">'
+    + '<h1 style="font-size:20px;margin:0 0 10px;color:#e4474a">⚠️ Wiki failed to render</h1>'
+    + '<p style="margin:0 0 10px">' + esc(title) + '</p>'
+    + (detail ? '<pre style="white-space:pre-wrap;font-size:12px;background:#f3f4f6;color:#1a1d23;'
+        + 'padding:10px;border-radius:6px;overflow:auto">' + esc(detail) + '</pre>' : '')
+    + '<p style="font-size:13px;color:#5c6370;margin-top:12px">This usually means the wiki was '
+    + 'generated incompletely. Regenerate: <code>python3 generate-wiki.py "$TGD_DIR"</code></p></div>';
+}
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g,
+  c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+window.addEventListener("error", e => fatal("A script error stopped the page.", (e && e.message) || String(e)));
+let DATA;
+try {
+  DATA = JSON.parse(document.getElementById("tgd-data").textContent);
+} catch (e) {
+  fatal("The embedded wiki data is not valid JSON — the generator likely wrote a truncated file.", e && e.message);
+  throw e;
+}
+const $side = document.getElementById("sidebar");
+const $main = document.getElementById("main");
+const repoBy = slug => DATA.repos.find(r => r.slug === slug);
+
+/* Minimal markdown renderer for agent-authored prose (wiki-prose.json values).
+   Escape-first, then transform — no raw HTML passes through. Supports:
+   paragraphs, ## headings (mapped one level down), **bold**, *italic*,
+   `code`, fenced code blocks, -/* and 1. lists, > quotes, and links limited
+   to #anchors and http(s) URLs. Deliberately tiny; no external dependency. */
+function mdInline(t) {
+  return esc(t)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, "$1<i>$2</i>")
+    .replace(/\[([^\]]+)\]\((#[^)\s]*|https?:\/\/[^)\s]+)\)/g, '<a href="$2">$1</a>');
+}
+function md(src) {
+  if (!src) return "";
+  const lines = String(src).split("\n");
+  let html = "", i = 0, para = [], list = null;
+  const flushP = () => { if (para.length) { html += `<p>${mdInline(para.join(" "))}</p>`; para = []; } };
+  const flushL = () => { if (list) { html += `<${list.tag}>` +
+    list.items.map(x => `<li>${mdInline(x)}</li>`).join("") + `</${list.tag}>`; list = null; } };
+  while (i < lines.length) {
+    const l = lines[i];
+    if (/^\s*```/.test(l)) { flushP(); flushL(); const buf = []; i++;
+      while (i < lines.length && !/^\s*```/.test(lines[i])) buf.push(lines[i++]);
+      i++; html += `<pre>${esc(buf.join("\n"))}</pre>`; continue; }
+    const h = l.match(/^(#{2,4})\s+(.*)/);
+    if (h) { flushP(); flushL();
+      const lvl = Math.min(h[1].length + 1, 5);
+      html += `<h${lvl}>${mdInline(h[2])}</h${lvl}>`; i++; continue; }
+    const q = l.match(/^>\s?(.*)/);
+    if (q) { flushP(); flushL(); const buf = [q[1]]; i++;
+      while (i < lines.length && /^>\s?/.test(lines[i])) buf.push(lines[i++].replace(/^>\s?/, ""));
+      html += `<blockquote>${mdInline(buf.join(" "))}</blockquote>`; continue; }
+    const ul = l.match(/^\s*[-*]\s+(.*)/), ol = l.match(/^\s*\d+[.)]\s+(.*)/);
+    if (ul || ol) { flushP(); const tag = ul ? "ul" : "ol";
+      if (!list || list.tag !== tag) { flushL(); list = { tag, items: [] }; }
+      list.items.push((ul || ol)[1]); i++; continue; }
+    if (/^\s*$/.test(l)) { flushP(); flushL(); i++; continue; }
+    para.push(l.trim()); i++;
+  }
+  flushP(); flushL();
+  return html;
+}
+const prose = t => t ? `<div class="prose">${md(t)}</div>` : "";
+
+const HAS_MERMAID = typeof mermaid !== "undefined";
+if (HAS_MERMAID) {
+  const dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default", securityLevel: "strict" });
+}
+let mmSeq = 0;
+function diagram(code) {
+  if (!code) return "";
+  if (!HAS_MERMAID) return `<pre>${esc(code)}</pre>`;
+  return `<div class="diagram"><pre class="mermaid">${esc(code)}</pre></div>`;
+}
+async function renderDiagrams() {
+  if (!HAS_MERMAID) return;
+  try { await mermaid.run({ nodes: $main.querySelectorAll(".mermaid") }); }
+  catch (e) { /* leave source text visible on parse errors */ }
+}
+
+/* ---------- routing ---------- */
+function parseHash() {
+  const h = (location.hash || "#/").slice(1);
+  const [path, query] = h.split("?");
+  return { seg: path.split("/").filter(Boolean), q: new URLSearchParams(query || "") };
+}
+window.addEventListener("hashchange", route);
+window.addEventListener("DOMContentLoaded", route);
+
+function route() {
+  try { routeInner(); }
+  catch (e) { fatal("Failed to render this page.", (e && e.stack) || String(e)); }
+}
+function routeInner() {
+  const { seg, q } = parseHash();
+  document.getElementById("sidebar").classList.remove("open");
+  if (seg.length === 0) return DATA.repos.length === 1
+    ? viewRepoHome(DATA.repos[0]) : viewHome();
+  if (seg[0] === "search") return viewSearch(q.get("q") || "");
+  if (seg[0] === "r") {
+    const repo = repoBy(seg[1]);
+    if (!repo) return viewHome();
+    const rest = seg.slice(2);
+    if (rest.length === 0) return viewRepoHome(repo);
+    switch (rest[0]) {
+      case "overview": return viewOverview(repo);
+      case "architecture": return viewArchitecture(repo);
+      case "onboarding": return viewOnboarding(repo);
+      case "module": return viewModule(repo, rest[1]);
+      case "flow": return viewFlow(repo, rest[1]);
+      case "source": return rest[1] ? viewSourceFile(repo, rest.slice(1).join("/")) : viewSourceIndex(repo);
+    }
+  }
+  viewHome();
+}
+
+/* ---------- sidebar ---------- */
+function sidebar(repo, activePath) {
+  const opts = DATA.repos.map(r =>
+    `<option value="${esc(r.slug)}" ${repo && r.slug === repo.slug ? "selected" : ""}>${esc(r.name)}</option>`).join("");
+  const link = (href, label) =>
+    `<a href="#${href}" class="${href === activePath ? "active" : ""}">${esc(label)}</a>`;
+  let nav = "";
+  if (repo) {
+    const b = `/r/${repo.slug}`;
+    nav = `
+      <div class="nav-sec">Wiki</div><div class="nav">
+        ${link(b, "🏠 Home")}
+        ${link(b + "/overview", "📋 Overview")}
+        ${link(b + "/architecture", "🏛️ Architecture")}
+        ${link(b + "/onboarding", "🧭 Onboarding")}
+        ${link(b + "/source", "📄 Source")}
+        ${repo.dashboardUrl ? `<a href="${esc(repo.dashboardUrl)}" target="_blank" rel="noopener" title="Live only while the dev server from /tgd-map is running">📊 Live Dashboard ↗</a>` : ""}
+      </div>
+      <div class="nav-sec">Modules</div><div class="nav">
+        ${repo.modules.map(m => link(`${b}/module/${m.slug}`, `${m.icon || "🧩"} ${m.title}`)).join("") || '<span class="empty">none</span>'}
+      </div>
+      <div class="nav-sec">Flows</div><div class="nav">
+        ${repo.flows.map(f => link(`${b}/flow/${f.slug}`, `🔀 ${f.title}`)).join("") || '<span class="empty">none</span>'}
+      </div>`;
+  }
+  $side.innerHTML = `
+    <a class="brand" href="#/">tGD <span>Wiki</span></a>
+    <input class="searchbox" id="sb" placeholder="Search…  (press /)" value="">
+    ${DATA.repos.length > 1 ? `<select class="repo-switch" onchange="location.hash='#/r/'+this.value">${opts}</select>` : ""}
+    ${nav}`;
+  const sb = document.getElementById("sb");
+  sb.addEventListener("keydown", e => {
+    if (e.key === "Enter") location.hash = "#/search?q=" + encodeURIComponent(sb.value);
+  });
+}
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement.tagName !== "INPUT") {
+    e.preventDefault(); const sb = document.getElementById("sb"); if (sb) sb.focus();
+  }
+});
+
+/* ---------- shared bits ---------- */
+const footer = () => `<div class="footer">Generated by tgd-wiki-generation v${esc(DATA.generator.version)}
+  · ${esc(DATA.generator.generatedAt)} · engine: ${esc(DATA.generator.engine)}</div>`;
+const crumbs = parts => `<div class="crumbs">${parts.map(([h, l]) =>
+  h ? `<a href="#${h}">${esc(l)}</a>` : esc(l)).join(" / ")}</div>`;
+const kpis = list => `<div class="kpis">${list.map(([v, l]) =>
+  `<div class="kpi"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join("")}</div>`;
+const srcHref = (repo, path, line) =>
+  `/r/${repo.slug}/source/${encodeURIComponent(path)}${line ? "?L=" + line : ""}`;
+
+/* ---------- views ---------- */
+function viewHome() {
+  sidebar(null, "/");
+  $main.innerHTML = `
+    <div class="hero"><h1>tGD Project Wiki</h1>
+      <p>${DATA.repos.length} scanned repositor${DATA.repos.length === 1 ? "y" : "ies"}. Uniform structure per repo: overview, architecture, modules, flows, and a source browser.</p></div>
+    <div class="grid">
+      ${DATA.repos.map(r => `
+        <a class="card" href="#/r/${esc(r.slug)}">
+          <h3>${r.slug === DATA.primary ? '<span class="badge">primary</span>' : ""}${esc(r.name)}</h3>
+          <p>${esc(r.description) || "<i>no description</i>"}</p>
+          <div class="meta">${r.modules.length} modules · ${r.flows.length} flows · ${r.kpi.files} files</div>
+        </a>`).join("")}
+    </div>${footer()}`;
+}
+
+function viewRepoHome(repo) {
+  sidebar(repo, `/r/${repo.slug}`);
+  $main.innerHTML = `
+    <div class="hero"><h1>${esc(repo.name)} — Project Wiki</h1>
+      <p>${esc(repo.description) || "Explore the architecture, modules, and flows of this codebase."}</p></div>
+    ${kpis([[repo.kpi.files, "Files"], [repo.modules.length, "Modules"], [repo.flows.length, "Flows"], [repo.kpi.edges, "Dependencies"]])}
+    ${repo.overview ? `<h2>📋 About</h2>${prose(repo.overview)}` : ""}
+    <h2>🧩 Modules</h2>
+    <div class="grid">${repo.modules.map(m => `
+      <a class="card" href="#/r/${esc(repo.slug)}/module/${esc(m.slug)}">
+        <h3>${m.icon || "🧩"} ${esc(m.title)}</h3><p>${esc(m.summary) || "<i>no summary</i>"}</p>
+        <div class="meta">${m.file_count} files · ${m.symbol_count} symbols</div>
+      </a>`).join("") || '<div class="empty">No modules detected.</div>'}</div>
+    <h2>🔀 Flows</h2>
+    <div class="grid">${repo.flows.map(f => `
+      <a class="card" href="#/r/${esc(repo.slug)}/flow/${esc(f.slug)}">
+        <h3>🔀 ${esc(f.title)}</h3><p>${esc(f.description) || "<i>no description</i>"}</p>
+      </a>`).join("") || '<div class="empty">No flows captured.</div>'}</div>
+    ${footer()}`;
+}
+
+function viewOverview(repo) {
+  sidebar(repo, `/r/${repo.slug}/overview`);
+  $main.innerHTML = `
+    ${crumbs([[`/r/${repo.slug}`, repo.name], [null, "Overview"]])}
+    <h1 class="page">📋 Overview</h1>
+    ${prose(repo.overview || repo.description)}
+    ${kpis([[repo.kpi.files, "Files"], [repo.modules.length, "Modules"], [repo.flows.length, "Flows"], [repo.kpi.edges, "Dependencies"]])}
+    <h2>Tech</h2>
+    <table><tr><th>Languages</th><td>${(repo.languages || []).map(esc).join(", ") || "—"}</td></tr>
+    <tr><th>Frameworks</th><td>${(repo.frameworks || []).map(esc).join(", ") || "—"}</td></tr>
+    <tr><th>Repo path</th><td><code>${esc(repo.path)}</code></td></tr></table>
+    <h2>Layers</h2>
+    <table><tr><th>Layer</th><th>Nodes</th><th>Description</th></tr>
+      ${repo.layers.map(l => `<tr><td><b>${esc(l.name)}</b></td><td>${l.node_count}</td><td>${esc(l.description)}</td></tr>`).join("")}
+    </table>
+    <h2>Entry Points</h2>
+    ${repo.entryPoints.length ? `<table><tr><th>File</th></tr>${repo.entryPoints.map(e =>
+      `<tr><td><a href="#${srcHref(repo, e.path)}"><code>${esc(e.path)}</code></a></td></tr>`).join("")}</table>`
+      : '<div class="empty">No entry points detected.</div>'}
+    ${footer()}`;
+}
+
+function viewArchitecture(repo) {
+  sidebar(repo, `/r/${repo.slug}/architecture`);
+  $main.innerHTML = `
+    ${crumbs([[`/r/${repo.slug}`, repo.name], [null, "Architecture"]])}
+    <h1 class="page">🏛️ Architecture</h1>
+    ${prose(repo.architecture)}
+    <h2>Layer Diagram</h2>${diagram(repo.architecture_mermaid)}
+    <h2>Dependency Graph (top nodes)</h2>${diagram(repo.dependency_mermaid)}
+    <h2>Layers</h2>
+    <table><tr><th>Layer</th><th>Nodes</th><th>Description</th></tr>
+      ${repo.layers.map(l => `<tr><td><b>${esc(l.name)}</b></td><td>${l.node_count}</td><td>${esc(l.description)}</td></tr>`).join("")}
+    </table>${footer()}`;
+  renderDiagrams();
+}
+
+function viewOnboarding(repo) {
+  sidebar(repo, `/r/${repo.slug}/onboarding`);
+  $main.innerHTML = `
+    ${crumbs([[`/r/${repo.slug}`, repo.name], [null, "Onboarding"]])}
+    <h1 class="page">🧭 Onboarding</h1>
+    ${prose(repo.onboarding || "Suggested reading path through the codebase.")}
+    ${repo.tour.length ? repo.tour.map((t, i) => `
+      <div class="tour-step"><h3>Step ${i + 1}: ${esc(t.title)}</h3>
+        <p>${esc(t.description)}</p>
+        ${(t.files || []).map(f => `<div><a href="#${srcHref(repo, f)}"><code>${esc(f)}</code></a></div>`).join("")}
+      </div>`).join("") : '<div class="empty">No tour steps captured.</div>'}
+    ${footer()}`;
+}
+
+function viewModule(repo, slug) {
+  const m = repo.modules.find(x => x.slug === slug);
+  if (!m) return viewRepoHome(repo);
+  sidebar(repo, `/r/${repo.slug}/module/${slug}`);
+  $main.innerHTML = `
+    ${crumbs([[`/r/${repo.slug}`, repo.name], [null, "Modules"], [null, m.title]])}
+    <h1 class="page">${m.icon || "🧩"} ${esc(m.title)} <span class="badge">${esc(m.accent)}</span></h1>
+    ${prose(m.summary)}
+    <h2>Key Files</h2>
+    ${m.files.length ? `<table><tr><th>File</th><th>Role</th></tr>${m.files.map(f =>
+      `<tr><td><a href="#${srcHref(repo, f.path)}"><code>${esc(f.path)}</code></a></td><td>${esc(f.summary) || "<i>(no summary)</i>"}</td></tr>`).join("")}</table>`
+      : '<div class="empty">No files mapped into this module.</div>'}
+    ${m.symbols.length ? `<h2>Important Symbols</h2>
+      <table><tr><th>Symbol</th><th>File</th><th>Line</th><th>Purpose</th></tr>${m.symbols.map(s => `
+        <tr><td><a href="#${srcHref(repo, s.file, s.line)}"><code>${esc(s.name)}</code></a></td>
+        <td>${s.file ? `<code>${esc(s.file)}</code>` : "—"}</td>
+        <td>${s.line || "—"}</td><td>${esc(s.summary) || "<i>(no summary)</i>"}</td></tr>`).join("")}</table>` : ""}
+    <h2>Dependencies</h2>${diagram(m.dependency_mermaid)}
+    ${footer()}`;
+  renderDiagrams();
+}
+
+function viewFlow(repo, slug) {
+  const f = repo.flows.find(x => x.slug === slug);
+  if (!f) return viewRepoHome(repo);
+  sidebar(repo, `/r/${repo.slug}/flow/${slug}`);
+  $main.innerHTML = `
+    ${crumbs([[`/r/${repo.slug}`, repo.name], [null, "Flows"], [null, f.title]])}
+    <h1 class="page">🔀 ${esc(f.title)}</h1>
+    ${prose(f.description)}
+    <h2>Sequence</h2>${diagram(f.mermaid)}
+    <h2>Files Involved</h2>
+    ${f.files.length ? `<table><tr><th>File</th></tr>${f.files.map(x =>
+      `<tr><td><a href="#${srcHref(repo, x.path)}"><code>${esc(x.path)}</code></a></td></tr>`).join("")}</table>`
+      : '<div class="empty">No files captured for this flow.</div>'}
+    ${footer()}`;
+  renderDiagrams();
+}
+
+function viewSourceIndex(repo) {
+  sidebar(repo, `/r/${repo.slug}/source`);
+  $main.innerHTML = `
+    ${crumbs([[`/r/${repo.slug}`, repo.name], [null, "Source"]])}
+    <h1 class="page">📄 Source Browser</h1>
+    <p class="sub">${repo.sources.length} files captured from the knowledge graph — each explained.</p>
+    <table><tr><th>File</th><th>Summary</th><th>Lang</th><th>Lines</th></tr>
+      ${repo.sources.map(s => `<tr>
+        <td>${s.available ? `<a href="#${srcHref(repo, s.path)}"><code>${esc(s.path)}</code></a>` : `<code>${esc(s.path)}</code>`}</td>
+        <td>${esc((repo.fileSummaries || {})[s.path] || "")}</td>
+        <td>${esc(s.language)}</td><td>${s.available ? s.line_count : "<i>unavailable</i>"}</td></tr>`).join("")}
+    </table>${footer()}`;
+}
+
+function viewSourceFile(repo, rawPath) {
+  const { q } = parseHash();
+  const path = decodeURIComponent(rawPath.split("?")[0]);
+  const s = repo.sources.find(x => x.path === path);
+  sidebar(repo, `/r/${repo.slug}/source`);
+  if (!s || !s.available) {
+    $main.innerHTML = `${crumbs([[`/r/${repo.slug}`, repo.name], [`/r/${repo.slug}/source`, "Source"], [null, path]])}
+      <h1 class="page">📄 ${esc(path)}</h1>
+      <div class="empty">Source not captured. Open the file directly in the repo: <code>${esc(repo.path)}/${esc(path)}</code></div>${footer()}`;
+    return;
+  }
+  const hlLine = parseInt(q.get("L") || "0", 10);
+  $main.innerHTML = `
+    ${crumbs([[`/r/${repo.slug}`, repo.name], [`/r/${repo.slug}/source`, "Source"], [null, path]])}
+    <h1 class="page">📄 ${esc(path)}</h1>
+    ${(repo.fileSummaries || {})[path] ? prose(repo.fileSummaries[path]) : ""}
+    <p class="sub">${s.line_count} lines · ${esc(s.language)}${s.truncated ? " · <b>truncated</b>" : ""}</p>
+    <div class="srcview">${s.lines.map((tx, i) => {
+      const n = i + 1;
+      return `<div class="ln${n === hlLine ? " hl" : ""}" id="L${n}">
+        <span class="no"><a href="#${srcHref(repo, path, n)}">${n}</a></span><span class="tx">${esc(tx) || " "}</span></div>`;
+    }).join("")}</div>${footer()}`;
+  if (hlLine) {
+    const el = document.getElementById("L" + hlLine);
+    if (el) el.scrollIntoView({ block: "center" });
+  }
+}
+
+function viewSearch(query) {
+  sidebar(null, "/search");
+  const sb = document.getElementById("sb"); if (sb) sb.value = query;
+  const q = query.trim().toLowerCase();
+  let hits = [];
+  if (q) {
+    hits = DATA.searchIndex.filter(it =>
+      it.title.toLowerCase().includes(q) ||
+      (it.summary || "").toLowerCase().includes(q) ||
+      (it.keywords || []).some(k => String(k).toLowerCase().includes(q))
+    ).slice(0, 100);
+  }
+  $main.innerHTML = `
+    <h1 class="page">🔍 Search</h1>
+    <p class="sub">${q ? `${hits.length} result(s) for “${esc(query)}”` : "Type in the sidebar box and press Enter."}</p>
+    ${hits.map(h => `<a class="result" href="#${esc(h.href)}">
+      <span class="t">${esc(h.type)} · ${esc(h.repo)}</span><br><b>${esc(h.title)}</b>
+      <span style="color:var(--fg2)"> — ${esc(h.summary || "")}</span></a>`).join("")}
+    ${footer()}`;
+}
+</script>
+</body>
+</html>
