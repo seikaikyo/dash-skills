@@ -171,10 +171,21 @@ if [ -d "$CLAUDE_CONFIG_DIR" ] && [ -x "$CLAUDE_CONFIG_DIR/sync.sh" ]; then
         echo "[dash-skills]   無變更"
     else
         if git commit -m "sync: $TODAY" > /dev/null 2>&1; then
-            if git push > /dev/null 2>&1; then
+            # 遠端有新 commit 時（另一台機器/網頁編輯）先 rebase 再推，避免 non-fast-forward 每日靜默失敗
+            push_ok=0
+            if push_output=$(git push 2>&1); then
+                push_ok=1
+            else
+                git pull --rebase origin main > /dev/null 2>&1
+                if push_output=$(git push 2>&1); then
+                    push_ok=1
+                fi
+            fi
+            if [ "$push_ok" -eq 1 ]; then
                 echo "[dash-skills]   已備份到 GitHub"
             else
                 echo "[dash-skills]   推送失敗，請手動 git push"
+                echo "$push_output" | tail -5 | sed 's/^/[dash-skills]   /'
             fi
         else
             echo "[dash-skills]   commit 失敗"
