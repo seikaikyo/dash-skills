@@ -10,3 +10,6 @@ external/anthropic-cybersecurity-skills/
 
 # Security Skills (eth0izzle/security-skills) - unit test fixture，假 secret (fake_secret_*, test, secret_file)
 external/security-skills/
+
+# samber cc-skills-golang - CI/範例文件中的假連線字串 (test:test@localhost)
+external/cc-skills-golang/

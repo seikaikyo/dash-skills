@@ -256,6 +256,66 @@ update_internal_comms() { _update_anthropic_skill "internal-comms"; }
 # 函數：更新 slack-gif-creator (Anthropic 官方 - Slack 動畫 GIF 製作)
 update_slack_gif_creator() { _update_anthropic_skill "slack-gif-creator"; }
 
+# 函數：更新 cc-skills-golang (samber - Go 開發 skills，lo/do/slog 作者)
+update_cc_skills_golang() {
+    local skill_dir="$EXTERNAL_DIR/cc-skills-golang"
+    local temp_dir=$(mktemp -d)
+    local repo="samber/cc-skills-golang"
+
+    echo "更新: cc-skills-golang (samber Go skills)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo/skills" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp -r repo/skills/* "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
+# 函數：更新 antfu-skills (Anthony Fu - Vue/Nuxt/Vite 生態 skills)
+update_antfu_skills() {
+    local skill_dir="$EXTERNAL_DIR/antfu-skills"
+    local temp_dir=$(mktemp -d)
+    local repo="antfu/skills"
+
+    echo "更新: antfu-skills (Anthony Fu Vue/Nuxt/Vite skills)"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
+        echo "  狀態: 跳過（repo 不可用）"
+        rm -rf "$temp_dir"
+        return 0
+    fi
+
+    if [ -d "repo/skills" ]; then
+        rm -rf "$skill_dir"
+        mkdir -p "$skill_dir"
+        cp -r repo/skills/* "$skill_dir/"
+        cp repo/README.md "$skill_dir/" 2>/dev/null || true
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
+}
+
 # 通用函數：更新 vercel-labs/agent-skills 指定 branch + skills 子目錄
 _update_vercel_agent_skill() {
     local name="$1"          # 來源子目錄名（skills/<name>）
@@ -972,6 +1032,8 @@ show_available() {
     echo "  - bencium-marketplace     (bencium, UX audit + typography)"
     echo "  - interface-design        (Dammyjay93, 儀表板/後台介面設計)"
     echo "  - ui-ux-pro-max           (nextlevelbuilder, 50 styles + 21 palettes)"
+    echo "  - cc-skills-golang        (samber, Go 開發 40+ skills)"
+    echo "  - antfu-skills            (Anthony Fu, Vue/Nuxt/Vite 生態 skills)"
     echo ""
     echo "  安全 / 資安類:"
     echo "  - trailofbits-security       (Trail of Bits, 35+ security plugins)"
@@ -1051,6 +1113,8 @@ if [ $# -eq 0 ]; then
         update_algorithmic_art
         update_internal_comms
         update_slack_gif_creator
+        update_cc_skills_golang
+        update_antfu_skills
     )
 
     total=${#all_updates[@]}
@@ -1290,6 +1354,12 @@ else
                 ;;
             "slack-gif-creator"|"slack-gif"|"gif")
                 update_slack_gif_creator
+                ;;
+            "cc-skills-golang"|"golang")
+                update_cc_skills_golang
+                ;;
+            "antfu-skills"|"antfu")
+                update_antfu_skills
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
