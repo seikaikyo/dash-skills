@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 9 custom (`skills/`) + 45 external (`external/`). External skills auto-sync daily from upstream.
+> 12 custom (`skills/`) + 48 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -25,6 +25,9 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **architecture-audit** | Audit docs vs actual code structure (CLAUDE.md drift) |
 | **cis-design-system** | CIS corporate identity design system |
 | **quality-gate** | Frontend quality gate (SEO / a11y / perf / UI-UX) |
+| **doubt-driven-development** | Fresh-context adversarial review for non-trivial decisions (adapted from tGD, Apache-2.0) |
+| **interview-me** | Intent-extraction interview for underspecified asks (adapted from tGD, Apache-2.0) |
+| **sketch** | Throwaway HTML mockups, 2-3 design-stance variants (adapted from tGD, Apache-2.0) |
 
 ### Development & Deployment
 
