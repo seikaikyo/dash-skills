@@ -151,7 +151,7 @@ These skills are designed as **atomic, cross-referencing units**. A skill may re
 │ structs-iface│ │ data-structs │ │ observability   │ │ stay-updated     │
 │ documentation│ │ database     │ │                 │ │ dep-management   │
 │ lint         │ │ modernize    │ │                 │ │ gopls            │
-│ security     │ │ refactoring  │ │                 │ │                  │
+│ security     │ │ refactoring  │ │                 │ │ pkg-go-dev       │
 └──────────────┘ └──────────────┘ └─────────────────┘ └──────────────────┘
 
     ┌─────────────────────────────────────────────────────────────────────────┐
@@ -188,58 +188,58 @@ These skills are designed as **atomic, cross-referencing units**. A skill may re
 
 |  | Skill | Flags | Error rate gap | Description (tok) | SKILL.md (tok) | Directory (tok) |
 | --- | --- | --- | --- | --- | --- | --- |
-| ⭐️ | ✅ `golang-code-style` | ⚡ 🤖 ⚙️ | -40% | 115 | 2,069 | 2,685 |
-| ⭐️ | ✅ `golang-data-structures` | ⚡ | -39% | 92 | 2,497 | 6,216 |
-| ⭐️ | ✅ `golang-database` | ⚡ ⚙️ | -38% | 97 | 2,725 | 7,248 |
-| ⭐️ | ✅ `golang-design-patterns` | ⚡ ⚙️ | -37% | 66 | 2,610 | 9,316 |
-| ⭐️ | ✅ `golang-documentation` | ⚡ 🤖 ⚙️ | -53% | 73 | 3,017 | 11,116 |
-| ⭐️ | ✅ `golang-error-handling` | ⚡ 🤖 ⚙️ | -26% | 139 | 1,520 | 4,394 |
-| ⭐️ | ✅ `golang-how-to` | ⚡ | — | 165 | 2,254 | 10,372 |
-| ⭐️ | ✅ `golang-modernize` | ⚡ 🤖 | -61% | 68 | 2,780 | 9,093 |
-| ⭐️ | ✅ `golang-naming` | ⚡ ⚙️ | -23% | 158 | 2,865 | 7,233 |
-| ⭐️ | ✅ `golang-refactoring` | ⚡ 🧠 🤖 ⚙️ | — | 246 | 3,639 | 19,840 |
-| ⭐️ | ✅ `golang-safety` | ⚡ | -58% | 78 | 2,457 | 5,227 |
-| ⭐️ | ✅ `golang-testing` | ⚡ 🧠 🤖 ⚙️ | -32% | 113 | 3,105 | 6,212 |
-| ⭐️ | ✅ `golang-troubleshooting` | ⚡ 🧠 🤖 | -32% | 126 | 2,735 | 15,901 |
+| ⭐️ | ✅ `golang-code-style` | ⚡ 🤖 ⚙️ | -40% | 115 | 2,341 | 2,957 |
+| ⭐️ | ✅ `golang-data-structures` | ⚡ | -39% | 93 | 2,599 | 6,318 |
+| ⭐️ | ✅ `golang-database` | ⚡ ⚙️ | -38% | 97 | 2,712 | 7,234 |
+| ⭐️ | ✅ `golang-design-patterns` | ⚡ ⚙️ | -37% | 80 | 2,685 | 9,391 |
+| ⭐️ | ✅ `golang-documentation` | ⚡ 🤖 ⚙️ | -53% | 75 | 3,078 | 11,177 |
+| ⭐️ | ✅ `golang-error-handling` | ⚡ 🤖 ⚙️ | -26% | 141 | 1,718 | 4,677 |
+| ⭐️ | ✅ `golang-how-to` | ⚡ | — | 165 | 4,017 | 13,853 |
+| ⭐️ | ✅ `golang-modernize` | ⚡ 🤖 | -61% | 68 | 2,920 | 9,233 |
+| ⭐️ | ✅ `golang-naming` | ⚡ ⚙️ | -23% | 159 | 3,022 | 7,390 |
+| ⭐️ | ✅ `golang-refactoring` | ⚡ 🧠 🤖 ⚙️ | — | 246 | 3,708 | 20,216 |
+| ⭐️ | ✅ `golang-safety` | ⚡ | -58% | 78 | 2,605 | 5,375 |
+| ⭐️ | ✅ `golang-testing` | ⚡ 🧠 🤖 ⚙️ | -32% | 115 | 4,234 | 7,341 |
+| ⭐️ | ✅ `golang-troubleshooting` | ⚡ 🧠 🤖 | -32% | 128 | 2,894 | 16,577 |
 | ⭐️ | ✅ `golang-security` | ⚡ 🧠 🤖 | -32% | 85 | 3,160 | 21,596 |
-|  | ✅ `golang-benchmark` | ⚡ 🧠 | -50% | 102 | 2,814 | 29,996 |
-|  | ✅ `golang-cli` | ⚡ | -43% | 122 | 2,274 | 6,089 |
-|  | ✅ `golang-concurrency` | ⚡ 🤖 ⚙️ | -39% | 71 | 1,873 | 6,338 |
-|  | ✅ `golang-context` | ⚡ ⚙️ | -34% | 80 | 1,144 | 3,940 |
-|  | ✅ `golang-continuous-integration` | ⚡ | -59% | 82 | 2,835 | 6,477 |
-|  | ✅ `golang-dependency-injection` | ⚡ 🤖 ⚙️ | -47% | 176 | 2,842 | 5,113 |
+|  | ✅ `golang-benchmark` | ⚡ 🧠 | -50% | 102 | 3,042 | 30,224 |
+|  | ✅ `golang-cli` | ⚡ | -43% | 125 | 2,329 | 6,144 |
+|  | ✅ `golang-concurrency` | ⚡ 🤖 ⚙️ | -39% | 72 | 2,180 | 6,810 |
+|  | ✅ `golang-context` | ⚡ ⚙️ | -34% | 82 | 1,202 | 4,012 |
+|  | ✅ `golang-continuous-integration` | ⚡ | -59% | 82 | 3,291 | 12,553 |
+|  | ✅ `golang-dependency-injection` | ⚡ 🤖 ⚙️ | -47% | 178 | 2,994 | 5,265 |
 |  | ✅ `golang-dependency-management` | ⚡ | -54% | 77 | 2,361 | 5,499 |
-|  | ✅ `golang-structs-interfaces` | ⚡ ⚙️ | -35% | 110 | 2,999 | 2,999 |
-|  | ✅ `golang-lint` | ⚡ 🤖 | -41% | 98 | 1,714 | 5,493 |
-|  | ✅ `golang-observability` | ⚡ 🤖 ⚙️ | -37% | 161 | 2,921 | 18,453 |
+|  | ✅ `golang-structs-interfaces` | ⚡ ⚙️ | -35% | 111 | 3,067 | 3,067 |
+|  | ✅ `golang-lint` | ⚡ 🤖 | -41% | 98 | 1,853 | 6,181 |
+|  | ✅ `golang-observability` | ⚡ 🤖 ⚙️ | -37% | 164 | 3,096 | 18,583 |
 |  | ✅ `golang-performance` | ⚡ 🧠 🤖 | -39% | 130 | 2,190 | 18,190 |
-|  | ✅ `golang-gopls` | ⚡ | — | 219 | 2,308 | 12,076 |
-|  | ✅ `golang-pkg-go-dev` | ⚡ | — | 185 | 2,693 | 4,302 |
-|  | ✅ `golang-popular-libraries` | ⚡ | -30% | 61 | 893 | 4,287 |
-|  | ✅ `golang-project-layout` | ⚡ | -38% | 69 | 1,510 | 5,718 |
-|  | ✅ `golang-stay-updated` | ⚡ | -56% | 43 | 1,801 | 1,801 |
+|  | ✅ `golang-gopls` | ⚡ | — | 219 | 2,308 | 12,188 |
+|  | ✅ `golang-pkg-go-dev` | ⚡ | — | 230 | 3,428 | 5,242 |
+|  | ✅ `golang-popular-libraries` | ⚡ | -30% | 51 | 1,044 | 4,438 |
+|  | ✅ `golang-project-layout` | ⚡ | -38% | 69 | 1,563 | 5,778 |
+|  | ✅ `golang-stay-updated` | ⚡ | -56% | 44 | 1,801 | 1,801 |
 
 **Tools:**
 
 | Skill | Flags | Error rate gap | Description (tok) | SKILL.md (tok) | Directory (tok) |
 | --- | --- | --- | --- | --- | --- |
-| ✅ `golang-google-wire` | ⚡ | -16% | 122 | 2,577 | 7,307 |
-| ✅ `golang-graphql` |  | -16% | 76 | 2,977 | 7,848 |
-| ✅ `golang-grpc` | ⚡ | -41% | 69 | 2,249 | 5,065 |
-| ✅ `golang-spf13-cobra` | ⚡ | — | 176 | 2,488 | 7,259 |
-| ✅ `golang-spf13-viper` | ⚡ | — | 170 | 2,459 | 7,006 |
-| ✅ `golang-swagger` | ⚡ | — | 144 | 2,250 | 3,255 |
-| ✅ `golang-uber-dig` | ⚡ | -10% | 107 | 2,493 | 6,165 |
-| ✅ `golang-uber-fx` | ⚡ | -5% | 118 | 2,733 | 6,968 |
-| ✅ `golang-samber-do` | ⚡ | -81% | 71 | 1,794 | 3,309 |
-| ✅ `golang-samber-hot` | ⚡ | -54% | 118 | 1,894 | 7,324 |
-| ✅ `golang-samber-lo` | ⚡ | -40% | 165 | 2,518 | 10,154 |
-| ✅ `golang-samber-mo` | ⚡ 🧠 | -48% | 81 | 2,860 | 11,275 |
-| ✅ `golang-samber-oops` | ⚡ | -59% | 69 | 2,452 | 2,764 |
-| ✅ `golang-samber-ro` | ⚡ 🧠 | -50% | 152 | 2,869 | 11,085 |
-| ✅ `golang-samber-slog` | ⚡ | -19% | 118 | 3,028 | 9,750 |
+| ✅ `golang-google-wire` | ⚡ | -16% | 122 | 2,661 | 7,391 |
+| ✅ `golang-graphql` |  | -16% | 76 | 3,061 | 7,932 |
+| ✅ `golang-grpc` | ⚡ | -41% | 70 | 2,332 | 5,148 |
+| ✅ `golang-spf13-cobra` | ⚡ | — | 176 | 2,571 | 7,342 |
+| ✅ `golang-spf13-viper` | ⚡ | — | 170 | 2,542 | 7,089 |
+| ✅ `golang-swagger` | ⚡ | — | 144 | 2,333 | 3,338 |
+| ✅ `golang-uber-dig` | ⚡ | -10% | 107 | 2,576 | 6,248 |
+| ✅ `golang-uber-fx` | ⚡ | -5% | 118 | 2,816 | 7,051 |
+| ✅ `golang-samber-do` | ⚡ | -81% | 71 | 1,877 | 3,392 |
+| ✅ `golang-samber-hot` | ⚡ | -54% | 119 | 1,977 | 7,407 |
+| ✅ `golang-samber-lo` | ⚡ | -40% | 167 | 2,601 | 10,279 |
+| ✅ `golang-samber-mo` | ⚡ 🧠 | -48% | 82 | 2,943 | 11,358 |
+| ✅ `golang-samber-oops` | ⚡ | -59% | 70 | 2,535 | 2,847 |
+| ✅ `golang-samber-ro` | ⚡ 🧠 | -50% | 154 | 2,952 | 11,168 |
+| ✅ `golang-samber-slog` | ⚡ | -19% | 119 | 3,111 | 9,833 |
 | ❌ `golang-temporal` |  | — | 0 | 0 | 0 |
-| ✅ `golang-stretchr-testify` | ⚡ | -47% | 90 | 1,766 | 2,585 |
+| ✅ `golang-stretchr-testify` | ⚡ | -47% | 92 | 1,849 | 2,668 |
 
 ## 🧪 Skill evaluations
 
