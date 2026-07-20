@@ -26,6 +26,8 @@ Use this skill when the user wants to **see a design direction before committing
 - User wants a quick mockup before committing to design
 - Early-stage design exploration where speed matters more than polish
 
+**Trigger phrases:** "sketch this screen", "show me what X could look like", "compare layout A vs B", "give me 2-3 takes on this UI", "let me see some variants", "mockup this before I build".
+
 ## Common Rationalizations
 
 - **"I'll just build one version"** — Without comparison, you're guessing at the best direction. Two variants take 2x effort but eliminate 80% of redesign risk.
@@ -47,8 +49,6 @@ Use this skill when the user wants to **see a design direction before committing
 - Verify basic interactivity works (clicks, hovers, state transitions)
 - Confirm the comparison table is opinionated — state which variant is strongest and why
 - Ensure READMEs explain the trade-offs, not just list features
-
-Load this when the user says things like "sketch this screen", "show me what X could look like", "compare layout A vs B", "give me 2-3 takes on this UI", "let me see some variants", "mockup this before I build".
 
 ## When NOT to use this
 
