@@ -23,6 +23,12 @@ if [ ! -d "$SKILL_DIR" ]; then
     return 0 2>/dev/null || exit 0
 fi
 
+# 立刻標記今天已跑，不等整趟結束
+# 2026-07-23 事故：標記寫在腳本尾端，同時間開第二個終端機會再觸發一次，
+# 兩個實例搶 .git/index.lock，git add -A 撞鎖失敗被誤判成「無實質差異」跳過推送；
+# 更壞的情況是一邊 redact 的 sed 還在改檔、另一邊已 git add -A，機敏資料被 commit 進去。
+echo "$TODAY" > "$LAST_UPDATE_FILE"
+
 # 保存原始目錄，結束時還原（sourced 時會影響 shell 工作目錄）
 _dash_original_dir="$PWD"
 
@@ -155,9 +161,6 @@ if [ -n "$(git status --porcelain)" ]; then
 else
     echo "[dash-skills] [3/4] 無變更，跳過推送"
 fi
-
-# 記錄更新日期
-echo "$TODAY" > "$LAST_UPDATE_FILE"
 
 # [4/4] claude-config 備份
 CLAUDE_CONFIG_DIR="$HOME/Documents/github/claude-config"
