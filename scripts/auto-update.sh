@@ -129,7 +129,9 @@ if [ -n "$(git status --porcelain)" ]; then
     fi
 
     # [3/4] 提交 + 推送
-    git add -A
+    # 指名 stage（2026-07-25）：本 repo 為 public，git add -A 與上面的 redact_secrets
+    # 之間存在 race condition，腳本開頭註解已載明風險。git add <path> 涵蓋新增/修改/刪除。
+    git add external openspec pi-agent scripts skills *.md 2>/dev/null || true
     if git diff --cached --quiet; then
         echo "[dash-skills] [3/4] 無實質差異，跳過推送"
     else
@@ -169,7 +171,8 @@ if [ -d "$CLAUDE_CONFIG_DIR" ] && [ -x "$CLAUDE_CONFIG_DIR/sync.sh" ]; then
     "$CLAUDE_CONFIG_DIR/sync.sh" > /dev/null 2>&1
 
     cd "$CLAUDE_CONFIG_DIR"
-    git add -A
+    # 指名 stage（2026-07-25），清單與 claude-config/sync.sh 內一致
+    git add CLAUDE.md settings.json sync.sh zshrc mcp-servers.json infra.md sora-prompt-skeleton.md hooks-index.md frontend-pitfalls.md backend-pitfalls.md commit-rules.md writing-style.md compliance.md design-system.md observability.md browser-tools.md profile-sync.md global-rule-incidents.md hooks commands rules skills scripts launchagents projects 2>/dev/null || true
     if git diff --cached --quiet; then
         echo "[dash-skills]   無變更"
     else
