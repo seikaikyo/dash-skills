@@ -1433,7 +1433,8 @@ if [ -z "$DASH_SKILLS_NO_PUSH" ]; then
     cd "$REPO_DIR"
     if [ -n "$(git status --porcelain)" ]; then
         TODAY=$(date +%Y-%m-%d)
-        git add -A
+        # 指名 stage（2026-07-25）：public repo 禁 git add -A
+        git add external openspec pi-agent scripts skills *.md 2>/dev/null || true
         git commit -m "chore: daily external skills sync ($TODAY)"
         git push
         echo ""
