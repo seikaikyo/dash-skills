@@ -141,18 +141,18 @@ These skills are designed as **atomic, cross-referencing units**. A skill may re
                                             │
    ┌─────────────────┬──────────────────────┼──────────────────────┐
    ▼                 ▼                      ▼                      ▼
-┌──────────────┐ ┌──────────────┐ ┌─────────────────┐ ┌──────────────────┐
-│ Code Quality │ │ Arch & Design│ │    QA & Perf    │ │  Project Start   │
-├──────────────┤ ├──────────────┤ ├─────────────────┤ ├──────────────────┤
-│ code-style   │ │ design-patt  │ │ testing         │ │ project-layout   │
-│ naming       │ │ concurrency  │ │ benchmark       │ │ popular-libs     │
-│ error-handl  │ │ context      │ │ performance     │ │ cli              │
-│ safety       │ │ dep-inject   │ │ troubleshoot    │ │ CI               │
-│ structs-iface│ │ data-structs │ │ observability   │ │ stay-updated     │
-│ documentation│ │ database     │ │                 │ │ dep-management   │
-│ lint         │ │ modernize    │ │                 │ │ gopls            │
-│ security     │ │ refactoring  │ │                 │ │ pkg-go-dev       │
-└──────────────┘ └──────────────┘ └─────────────────┘ └──────────────────┘
+┌──────────────┐ ┌──────────────┐ ┌─────────────────┐ ┌──────────────────────┐
+│ Code Quality │ │ Arch & Design│ │    QA & Perf    │ │    Project Start     │
+├──────────────┤ ├──────────────┤ ├─────────────────┤ ├──────────────────────┤
+│ code-style   │ │ design-patt  │ │ testing         │ │ project-layout       │
+│ naming       │ │ concurrency  │ │ benchmark       │ │ popular-libs         │
+│ error-handl  │ │ context      │ │ performance     │ │ cli                  │
+│ safety       │ │ dep-inject   │ │ troubleshoot    │ │ continuous-integ.    │
+│ structs-iface│ │ data-structs │ │ observability   │ │ stay-updated         │
+│ documentation│ │ database     │ │                 │ │ dep-management       │
+│ lint         │ │ modernize    │ │                 │ │ gopls                │
+│ security     │ │ refactoring  │ │                 │ │ pkg-go-dev           │
+└──────────────┘ └──────────────┘ └─────────────────┘ └──────────────────────┘
 
     ┌─────────────────────────────────────────────────────────────────────────┐
     │                      Framework / Library Skills                         │
