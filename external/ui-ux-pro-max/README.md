@@ -579,7 +579,7 @@ uipro uninstall --global
 rm -rf .claude/skills/ui-ux-pro-max   # Claude Code
 rm -rf .cursor/skills/ui-ux-pro-max   # Cursor
 rm -rf .windsurf/skills/ui-ux-pro-max # Windsurf
-rm -rf .agents/skills/ui-ux-pro-max   # Antigravity
+rm -rf .agents/skills/ui-ux-pro-max   # Antigravity / Codex
 ```
 
 ### Claude Marketplace install fails with "Zip file contains a symbolic link"
