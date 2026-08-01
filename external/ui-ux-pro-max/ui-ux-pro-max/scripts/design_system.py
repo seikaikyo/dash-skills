@@ -77,6 +77,108 @@ def _resolve_dial(dial_name: str, value) -> dict:
     return None
 
 
+# ============ COLOR MODE RESOLUTION ============
+# Style, palette and anti-patterns are resolved from separate CSVs. Without a
+# shared notion of "which mode did we land on", a dark-primary style can be
+# paired with a light palette and a "don't use dark mode" anti-pattern.
+
+# Phrases in styles.csv "Light Mode ✓" / "Dark Mode ✓" that mark a style as
+# dark-first rather than merely dark-capable ("✓ Full" means both work).
+_DARK_PRIMARY_MARKERS = (
+    "dark mode primary", "dark primary", "dark-only", "dark only",
+    "dark preferred", "dark focused", "dark-first", "dark rich",
+    "light mode only as exception",
+)
+
+# Query phrases that are an explicit request for a dark theme.
+_DARK_QUERY_MARKERS = (
+    "dark mode", "dark theme", "dark ui", "dark-mode", "darkmode",
+    "night mode", "midnight", "oled",
+)
+
+# Anti-pattern clauses that contradict a resolved dark mode.
+_DARK_ANTI_PATTERN_MARKERS = ("dark mode", "dark modes", "dark theme")
+
+# Relative luminance below which a Background hex counts as a dark surface.
+# #1F2937 (the lightest dark background in colors.csv) sits at ~0.026 and
+# #E8ECF1 (the darkest light background) at ~0.79, so the gap is wide.
+_DARK_BACKGROUND_MAX_LUMINANCE = 0.18
+
+
+def _relative_luminance(hex_color: str):
+    """WCAG relative luminance of a #RRGGBB string, or None if unparseable."""
+    if not hex_color:
+        return None
+    value = hex_color.strip().lstrip("#")
+    if len(value) == 3:
+        value = "".join(c * 2 for c in value)
+    if len(value) != 6:
+        return None
+    try:
+        channels = [int(value[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+    except ValueError:
+        return None
+    linear = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+              for c in channels]
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+
+def _palette_is_dark(palette: dict) -> bool:
+    """True when a colors.csv row's Background is a dark surface."""
+    luminance = _relative_luminance((palette or {}).get("Background", ""))
+    return luminance is not None and luminance < _DARK_BACKGROUND_MAX_LUMINANCE
+
+
+def _style_is_dark_primary(style: dict) -> bool:
+    """True when a styles.csv row describes itself as dark-first."""
+    if not style:
+        return False
+    declared = "{} {}".format(
+        style.get("Light Mode ✓", ""), style.get("Dark Mode ✓", "")
+    ).lower()
+    return any(marker in declared for marker in _DARK_PRIMARY_MARKERS)
+
+
+def _query_wants_dark(query: str) -> bool:
+    """True when the query explicitly asks for a dark theme."""
+    lowered = (query or "").lower()
+    return any(marker in lowered for marker in _DARK_QUERY_MARKERS)
+
+
+def _resolve_color_mode(query: str, style: dict) -> str:
+    """Resolve the mode the rest of the output has to agree with."""
+    if _query_wants_dark(query) or _style_is_dark_primary(style):
+        return "dark"
+    return "light"
+
+
+def _select_palette_for_mode(palettes: list, mode: str) -> dict:
+    """Pick the highest-ranked palette matching the resolved mode.
+
+    Only the dark case filters. Light is left on the existing "top hit wins"
+    behaviour so queries that never mention a mode keep their current palette.
+    Falls back to the top hit when the data has no matching ramp.
+    """
+    if not palettes:
+        return {}
+    if mode == "dark":
+        for palette in palettes:
+            if _palette_is_dark(palette):
+                return palette
+    return palettes[0]
+
+
+def _filter_anti_patterns_for_mode(anti_patterns: str, mode: str) -> str:
+    """Drop "avoid dark mode" advice once dark mode is the resolved answer."""
+    if mode != "dark" or not anti_patterns:
+        return anti_patterns
+    kept = [
+        clause for clause in anti_patterns.split("+")
+        if not any(marker in clause.lower() for marker in _DARK_ANTI_PATTERN_MARKERS)
+    ]
+    return " + ".join(clause.strip() for clause in kept if clause.strip())
+
+
 # ============ DESIGN SYSTEM GENERATOR ============
 class DesignSystemGenerator:
     """Generates design system recommendations from aggregated searches."""
@@ -244,7 +346,11 @@ class DesignSystemGenerator:
         landing_results = self._extract_results(search_results.get("landing", {}))
 
         best_style = self._select_best_match(style_results, effective_style_priority)
-        best_color = color_results[0] if color_results else {}
+        # Resolve the mode from the style + query first, then pick a palette that
+        # agrees with it. Ranking colors independently is what let a dark-primary
+        # style ship with a light background.
+        color_mode = _resolve_color_mode(query, best_style)
+        best_color = _select_palette_for_mode(color_results, color_mode)
         best_typography = typography_results[0] if typography_results else {}
         best_landing = landing_results[0] if landing_results else {}
 
@@ -313,7 +419,9 @@ class DesignSystemGenerator:
                 "css_import": best_typography.get("CSS Import", "")
             },
             "key_effects": combined_effects,
-            "anti_patterns": reasoning.get("anti_patterns", ""),
+            "anti_patterns": _filter_anti_patterns_for_mode(
+                reasoning.get("anti_patterns", ""), color_mode
+            ),
             "decision_rules": reasoning.get("decision_rules", {}),
             "severity": reasoning.get("severity", "MEDIUM"),
             "dials": {
