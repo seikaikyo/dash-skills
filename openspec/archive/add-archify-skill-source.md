@@ -1,7 +1,7 @@
 ---
 title: 新增 archify skill 同步來源
 type: feature
-status: in-progress
+status: completed
 spec: add-archify-skill-source
 created: 2026-08-27
 ---
@@ -33,7 +33,7 @@ created: 2026-08-27
 
 - [x] 建立 OpenSpec 提案
 - [x] update-external.sh 四處插入
-- [ ] 首次同步
-- [ ] 首掃判讀 + baseline
-- [ ] link 生效
-- [ ] 提交
+- [x] 首次同步（74d7f42f，update-external.sh 自帶 commit push）
+- [x] 首掃判讀 + baseline（114 項：AE1 覆蓋註記 / P2 模板 HTML 註解 / RA2 範例頁指令樣文字 / RP1 自家測試 npx 未釘版 / LP3 無權限 manifest，皆與用途相符；rules 16 條，重掃 score 0 通過）
+- [x] link 生效（session 技能清單實見 archify）
+- [x] 提交（歸檔 commit）
