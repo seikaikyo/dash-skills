@@ -30,3 +30,6 @@
 external/*-tmp/
 external/cisco-skill-scanner/evals/
 external/cisco-skill-scanner/skill_scanner/data/
+
+# SkillSpector 安檢報告（public repo 不對外發布第三方 skill 的漏洞判定）
+security-reports/
