@@ -1,9 +1,7 @@
 ---
 name: atheris
 type: fuzzer
-description: >
-  Atheris is a coverage-guided Python fuzzer based on libFuzzer.
-  Use for fuzzing pure Python code and Python C extensions.
+description: "Sets up and runs Atheris, the coverage-guided Python fuzzer built on libFuzzer. Covers TestOneInput harnesses, FuzzedDataProvider, instrumenting both pure Python and native C extensions, and running under AddressSanitizer. Use when fuzzing a Python package, hunting memory corruption in a Python C extension, or choosing between Atheris and Hypothesis for a Python target."
 ---
 
 # Atheris
@@ -31,7 +29,7 @@ import sys
 import atheris
 
 @atheris.instrument_func
-def test_one_input(data: bytes):
+def TestOneInput(data: bytes):
     if len(data) == 4:
         if data[0] == 0x46:  # "F"
             if data[1] == 0x55:  # "U"
@@ -40,7 +38,7 @@ def test_one_input(data: bytes):
                         raise RuntimeError("You caught me")
 
 def main():
-    atheris.Setup(sys.argv, test_one_input)
+    atheris.Setup(sys.argv, TestOneInput)
     atheris.Fuzz()
 
 if __name__ == "__main__":
@@ -49,7 +47,7 @@ if __name__ == "__main__":
 
 Run:
 ```bash
-python fuzz.py
+uv run python fuzz.py
 ```
 
 ## Installation
@@ -65,7 +63,8 @@ Atheris supports 32-bit and 64-bit Linux, and macOS. We recommend fuzzing on Lin
 ### Linux/macOS
 
 ```bash
-uv pip install atheris
+uv init --bare   # once, if the harness directory is not yet a uv project
+uv add atheris
 ```
 
 ### Docker Environment (Recommended)
@@ -151,7 +150,7 @@ import sys
 import atheris
 
 @atheris.instrument_func
-def test_one_input(data: bytes):
+def TestOneInput(data: bytes):
     """
     Fuzzing entry point. Called with random byte sequences.
 
@@ -171,12 +170,27 @@ def test_one_input(data: bytes):
     # Let unexpected exceptions crash (that's what we're looking for!)
 
 def main():
-    atheris.Setup(sys.argv, test_one_input)
+    atheris.Setup(sys.argv, TestOneInput)
     atheris.Fuzz()
 
 if __name__ == "__main__":
     main()
 ```
+
+### Structured Input with FuzzedDataProvider
+
+A target taking several typed arguments wastes most of the fuzzer's inputs if the harness
+slices `data` by hand, because every mutation shifts the byte offsets of everything after it.
+`atheris.FuzzedDataProvider` splits one `bytes` input into typed values instead:
+
+```python
+fdp = atheris.FuzzedDataProvider(data)
+name = fdp.ConsumeUnicodeNoSurrogates(fdp.ConsumeIntInRange(0, 64))
+strict = fdp.ConsumeBool()
+```
+
+See [structured-input.md](structured-input.md) for the full method reference, the fixed-draw-
+order rule, and what each method returns once the buffer runs dry.
 
 ### Harness Rules
 
@@ -200,10 +214,10 @@ with atheris.instrument_imports():
     import your_module
     from another_module import target_function
 
-def test_one_input(data: bytes):
+def TestOneInput(data: bytes):
     target_function(data)
 
-atheris.Setup(sys.argv, test_one_input)
+atheris.Setup(sys.argv, TestOneInput)
 atheris.Fuzz()
 ```
 
@@ -232,10 +246,13 @@ export LDSHARED="clang -shared"
 
 Install the extension from source:
 ```bash
-CBOR2_BUILD_C_EXTENSION=1 python -m pip install --no-binary cbor2 cbor2==5.6.4
+CBOR2_BUILD_C_EXTENSION=1 uv add --no-binary-package cbor2 'cbor2==5.6.4'
 ```
 
-The `--no-binary` flag ensures the C extension is compiled locally with instrumentation.
+The `--no-binary-package` flag ensures the C extension is compiled locally with
+instrumentation rather than pulled as a prebuilt wheel. Persist that choice with
+`no-binary-package = ["cbor2"]` under `[tool.uv]` in `pyproject.toml`, or a later
+`uv sync` can silently swap in an uninstrumented wheel.
 
 Create `cbor2-fuzz.py`:
 ```python
@@ -245,7 +262,7 @@ import atheris
 # _cbor2 ensures the C library is imported
 from _cbor2 import loads
 
-def test_one_input(data: bytes):
+def TestOneInput(data: bytes):
     try:
         loads(data)
     except Exception:
@@ -253,7 +270,7 @@ def test_one_input(data: bytes):
         pass
 
 def main():
-    atheris.Setup(sys.argv, test_one_input)
+    atheris.Setup(sys.argv, TestOneInput)
     atheris.Fuzz()
 
 if __name__ == "__main__":
@@ -262,7 +279,7 @@ if __name__ == "__main__":
 
 Run:
 ```bash
-python cbor2-fuzz.py
+uv run python cbor2-fuzz.py
 ```
 
 > **Important:** When running locally (not in Docker), you must [set `LD_PRELOAD` manually](https://github.com/google/atheris/blob/master/native_extension_fuzzing.md#option-a-sanitizerlibfuzzer-preloads).
@@ -280,14 +297,14 @@ echo '{"key": "value"}' > corpus/seed2
 
 Run with corpus:
 ```bash
-python fuzz.py corpus/
+uv run python fuzz.py corpus/
 ```
 
 ### Corpus Minimization
 
 Atheris inherits corpus minimization from libFuzzer:
 ```bash
-python fuzz.py -merge=1 new_corpus/ old_corpus/
+uv run python fuzz.py -merge=1 new_corpus/ old_corpus/
 ```
 
 > **See Also:** For corpus creation strategies, dictionaries, and seed selection,
@@ -298,26 +315,26 @@ python fuzz.py -merge=1 new_corpus/ old_corpus/
 ### Basic Run
 
 ```bash
-python fuzz.py
+uv run python fuzz.py
 ```
 
 ### With Corpus Directory
 
 ```bash
-python fuzz.py corpus/
+uv run python fuzz.py corpus/
 ```
 
 ### Common Options
 
 ```bash
 # Run for 10 minutes
-python fuzz.py -max_total_time=600
+uv run python fuzz.py -max_total_time=600
 
 # Limit input size
-python fuzz.py -max_len=1024
+uv run python fuzz.py -max_len=1024
 
 # Run with multiple workers
-python fuzz.py -workers=4 -jobs=4
+uv run python fuzz.py -workers=4 -jobs=4
 ```
 
 ### Interpreting Output
@@ -388,7 +405,7 @@ with atheris.instrument_imports():
     import target_module
 # Don't instrument test harness code
 
-def test_one_input(data: bytes):
+def TestOneInput(data: bytes):
     target_module.parse(data)
 ```
 
@@ -412,58 +429,8 @@ Note: Modify flags in Dockerfile if using containerized setup.
 
 ## Real-World Examples
 
-### Example: Pure Python Parser
-
-```python
-import sys
-import atheris
-import json
-
-@atheris.instrument_func
-def test_one_input(data: bytes):
-    try:
-        # Fuzz Python's JSON parser
-        json.loads(data.decode('utf-8', errors='ignore'))
-    except (ValueError, UnicodeDecodeError):
-        pass
-
-def main():
-    atheris.Setup(sys.argv, test_one_input)
-    atheris.Fuzz()
-
-if __name__ == "__main__":
-    main()
-```
-
-### Example: HTTP Request Parsing
-
-```python
-import sys
-import atheris
-
-with atheris.instrument_imports():
-    from urllib3 import HTTPResponse
-    from io import BytesIO
-
-def test_one_input(data: bytes):
-    try:
-        # Fuzz HTTP response parsing
-        fake_response = HTTPResponse(
-            body=BytesIO(data),
-            headers={},
-            preload_content=False
-        )
-        fake_response.read()
-    except Exception:
-        pass
-
-def main():
-    atheris.Setup(sys.argv, test_one_input)
-    atheris.Fuzz()
-
-if __name__ == "__main__":
-    main()
-```
+Two complete harnesses — a pure-Python parser and an HTTP response parser — are in
+[examples.md](examples.md).
 
 ## Troubleshooting
 

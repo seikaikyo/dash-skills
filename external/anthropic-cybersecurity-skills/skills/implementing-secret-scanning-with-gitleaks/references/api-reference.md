@@ -38,7 +38,7 @@ gitleaks dir --source=/path/to/code --report-format=json --report-path=results.j
 
 ### Scan from stdin
 ```bash
-echo "aws_secret_access_key=AKIA_REDACTED_KEY" | gitleaks stdin
+echo "aws_secret_access_key=AKIAIOSFODNN7EXAMPLE" | gitleaks stdin
 ```
 
 ### Key CLI Flags

@@ -45,7 +45,8 @@ gate v0.5 features on the version number, not `hasattr()`.
 [Trailmark](https://pypi.org/project/trailmark/) ([source](https://github.com/trailofbits/trailmark)) must be installed:
 
 ```bash
-uv pip install trailmark
+uv tool install trailmark
+# Python snippets: uv run --with trailmark python -   (a tool env is not importable)
 ```
 
 ## Skills
@@ -74,7 +75,8 @@ trailmark/
 ├── .claude-plugin/
 │   └── plugin.json
 ├── agents/
-│   └── code-slice-worker.md          # Repository-tool-free bounded worker
+│   └── code-slice-worker.md          # Bounded worker, no repository tools.
+│                                     # Dispatch as `trailmark:code-slice-worker`
 ├── README.md
 └── skills/
     ├── trailmark/                    # Core graph querying
