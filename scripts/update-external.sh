@@ -1090,7 +1090,35 @@ show_available() {
     echo "  - content-research-writer (ComposioHQ, 研究寫作夥伴)"
     echo "  - doc-coauthoring         (Anthropic 官方, 文件共筆)"
     echo "  - storytelling            (GTM Agents, SCAR 敘事框架)"
+    echo "  - archify                 (tt-a1i, 架構/時序/資料流互動圖產生器)"
     echo ""
+}
+
+# 函數：更新 archify（架構圖產生器，skill 本體在 repo 的 archify/ 子目錄）
+update_archify() {
+    local skill_dir="$EXTERNAL_DIR/archify"
+    local temp_dir=$(mktemp -d)
+    local repo="tt-a1i/archify"
+
+    echo "更新: archify"
+    echo "  來源: https://github.com/$repo"
+
+    cd "$temp_dir"
+    git clone --depth 1 --filter=blob:none --sparse \
+        "https://github.com/$repo.git" repo 2>/dev/null
+
+    cd repo
+    git sparse-checkout set archify 2>/dev/null
+
+    if [ -f "archify/SKILL.md" ]; then
+        rm -rf "$skill_dir"
+        cp -r archify "$skill_dir"
+        echo "  狀態: 已更新"
+    else
+        echo "  狀態: 失敗"
+    fi
+
+    rm -rf "$temp_dir"
 }
 
 # 主程式
@@ -1149,6 +1177,7 @@ if [ $# -eq 0 ]; then
         update_cc_skills_golang
         update_antfu_skills
         update_tgd_skills
+        update_archify
     )
 
     total=${#all_updates[@]}
@@ -1397,6 +1426,9 @@ else
                 ;;
             "tgd-skills"|"tgd")
                 update_tgd_skills
+                ;;
+            "archify")
+                update_archify
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
