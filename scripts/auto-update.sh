@@ -36,11 +36,16 @@ echo "[dash-skills] 每日同步 ($(date '+%H:%M'))"
 
 cd "$SKILL_DIR"
 
-# [1/4] 同步外部 skills
-echo "[dash-skills] [1/4] 同步外部 skills..."
+# [1/5] 同步外部 skills
+echo "[dash-skills] [1/5] 同步外部 skills..."
 if ! DASH_SKILLS_NO_PUSH=1 perl -e 'alarm(120); exec @ARGV' ./scripts/update-external.sh > /dev/null 2>&1; then
-    echo "[dash-skills] [1/4] 同步逾時或失敗，跳過"
+    echo "[dash-skills] [1/5] 同步逾時或失敗，跳過"
 fi
+
+# [2/5] SkillSpector 安檢：掃有變更的 external 目錄，趕在 symlink 重建（載入點）之前
+# 警報不阻斷；逾時與未安裝都會明講跳過。詳見 scripts/scan-skills.sh
+echo "[dash-skills] [2/5] 外部 skills 安檢..."
+./scripts/scan-skills.sh 2>&1 | sed 's/^/[dash-skills]   /'
 
 # 重建 ~/.claude/skills symlink，新增的 external skill 才會被 Claude Code 載入
 new_links=$(./scripts/link.sh 2>&1 | grep "建立連結" || true)
@@ -108,8 +113,8 @@ redact_secrets() {
     return 0
 }
 
-# [2/4] 清理 + 安全掃描
-echo "[dash-skills] [2/4] 清理 + 機敏資料掃描..."
+# [3/5] 清理 + 安全掃描
+echo "[dash-skills] [3/5] 清理 + 機敏資料掃描..."
 
 # 清理 iCloud sync 衝突副本
 icloud_dupes=$(find external/ -name "* [0-9]*" 2>/dev/null | wc -l | tr -d ' ')
@@ -128,14 +133,14 @@ if [ -n "$(git status --porcelain)" ]; then
         echo "[dash-skills]   已 redact 機敏資料"
     fi
 
-    # [3/4] 提交 + 推送
+    # [4/5] 提交 + 推送
     # 指名 stage（2026-07-25）：本 repo 為 public，git add -A 與上面的 redact_secrets
     # 之間存在 race condition，腳本開頭註解已載明風險。git add <path> 涵蓋新增/修改/刪除。
     git add external openspec pi-agent scripts skills *.md 2>/dev/null || true
     if git diff --cached --quiet; then
-        echo "[dash-skills] [3/4] 無實質差異，跳過推送"
+        echo "[dash-skills] [4/5] 無實質差異，跳過推送"
     else
-        echo "[dash-skills] [3/4] 提交並推送..."
+        echo "[dash-skills] [4/5] 提交並推送..."
         git commit -m "chore: daily external skills sync ($TODAY)" > /dev/null 2>&1
 
         push_output=$(git push 2>&1)
@@ -161,13 +166,13 @@ if [ -n "$(git status --porcelain)" ]; then
         fi
     fi
 else
-    echo "[dash-skills] [3/4] 無變更，跳過推送"
+    echo "[dash-skills] [4/5] 無變更，跳過推送"
 fi
 
-# [4/4] claude-config 備份
+# [5/5] claude-config 備份
 CLAUDE_CONFIG_DIR="$HOME/Documents/github/claude-config"
 if [ -d "$CLAUDE_CONFIG_DIR" ] && [ -x "$CLAUDE_CONFIG_DIR/sync.sh" ]; then
-    echo "[dash-skills] [4/4] claude-config 備份..."
+    echo "[dash-skills] [5/5] claude-config 備份..."
     "$CLAUDE_CONFIG_DIR/sync.sh" > /dev/null 2>&1
 
     cd "$CLAUDE_CONFIG_DIR"
@@ -198,7 +203,7 @@ if [ -d "$CLAUDE_CONFIG_DIR" ] && [ -x "$CLAUDE_CONFIG_DIR/sync.sh" ]; then
         fi
     fi
 else
-    echo "[dash-skills] [4/4] claude-config 目錄不存在，跳過"
+    echo "[dash-skills] [5/5] claude-config 目錄不存在，跳過"
 fi
 
 echo "[dash-skills] 完成"
