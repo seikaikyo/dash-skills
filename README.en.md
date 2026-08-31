@@ -28,6 +28,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **doubt-driven-development** | Fresh-context adversarial review for non-trivial decisions (adapted from tGD, Apache-2.0) |
 | **interview-me** | Intent-extraction interview for underspecified asks (adapted from tGD, Apache-2.0) |
 | **sketch** | Throwaway HTML mockups, 2-3 design-stance variants (adapted from tGD, Apache-2.0) |
+| **security-scan** | Three-layer external scan (deps / secrets / SAST) mapped to OWASP Top 10:2025 |
 
 ### Development & Deployment
 
