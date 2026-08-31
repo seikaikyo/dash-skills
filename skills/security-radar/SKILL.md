@@ -35,6 +35,9 @@ Vercel / Render、Logto JWT/JWKS）的資安選型依據。
   Go（安全 middleware、secrets 掃描、fuzzing）、
   通用（SAST、supply chain、secrets 偵測、容器/CI 安全）。
 - 有新收錄或狀態更新才 commit / 開 PR；當天無變化則不動 repo。
+- **自動 merge**（使用者已於 2026-08-31 授權）：PR 開**正式**（非 draft）；
+  確認無 merge conflict 且 CI（若有）全綠後，直接以 squash 合併並附合併說明，
+  不等人工審核。若 CI 紅燈或有衝突，先修到綠再合併；修不了才留著 PR 並說明原因。
 
 ## 安全狀態圖例
 
