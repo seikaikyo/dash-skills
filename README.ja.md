@@ -28,6 +28,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **doubt-driven-development** | 非自明な意思決定への新規コンテキスト敵対レビュー (tGD より改作, Apache-2.0) |
 | **interview-me** | 要件不明時の意図抽出インタビュー (tGD より改作, Apache-2.0) |
 | **sketch** | 使い捨て HTML モックアップ比較、2〜3 のデザイン方針バリアント (tGD より改作, Apache-2.0) |
+| **security-scan** | 依存脆弱性・シークレット・SAST の三層スキャン、OWASP Top 10:2025 に対応付け |
 
 ### 開発・デプロイ
 

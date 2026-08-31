@@ -28,6 +28,7 @@
 | **doubt-driven-development** | 非平凡決策的新鮮 context 對抗審查 (改寫自 tGD, Apache-2.0) |
 | **interview-me** | 需求不明時的意圖萃取訪談 (改寫自 tGD, Apache-2.0) |
 | **sketch** | 拋棄式 HTML mockup 比稿，2 到 3 個設計立場變體 (改寫自 tGD, Apache-2.0) |
+| **security-scan** | 相依漏洞 / 機密 / SAST 三層外部掃描，結果對回 OWASP Top 10:2025 |
 
 ### 開發與部署
 
