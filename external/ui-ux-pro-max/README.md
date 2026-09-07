@@ -1,6 +1,8 @@
 # [UI UX Pro Max](https://uupm.cc)
 
 <p align="center">
+  <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.id.md">🇮🇩 Bahasa Indonesia</a> |
+  <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.ko.md">🇰🇷 한국어</a> |
   <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.vi.md">🇻🇳 Tiếng Việt</a> |
   <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.zh.md">🇨🇳 简体中文</a> |
   <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.md">🇺🇸 English</a>
@@ -36,7 +38,7 @@ An AI skill that provides design intelligence for building professional UI/UX ac
 
 <p align="center">
   <i>Other projects</i><br>
-  <a href="https://nextlevelbuilder.io">NextLevelBuilder.io</a> | <a href="https://goclaw.sh">GoClaw.sh</a> | <a href="https://claudekit.cc">ClaudeKit.cc</a> | <a href="https://tose.sh">TOSE.sh</a>
+  <a href="https://nextlevelbuilder.io">NextLevelBuilder.io</a> | <a href="https://goclaw.sh">GoClaw.sh</a> | <a href="https://agentkit.best">AgentKit.best</a> | <a href="https://tose.sh">TOSE.sh</a>
 </p>
 
 ## What's New in v2.0
@@ -257,7 +259,6 @@ uipro init --ai kilocode    # KiloCode
 uipro init --ai warp        # Warp
 uipro init --ai augment     # Augment
 uipro init --ai codewhale   # CodeWhale
-uipro init --ai openclaw    # OpenClaw
 uipro init --ai universal   # Universal / Agent Standard (.agents/skills/)
 uipro init --ai all         # All assistants
 ```
@@ -279,6 +280,7 @@ uipro versions              # List available versions
 uipro update                # Refresh skill files from installed CLI package
 uipro update --global       # Refresh global skill files from installed CLI package
 uipro init --offline        # Compatibility flag; installs bundled templates
+uipro init --dry-run        # Preview install actions without writing files
 uipro uninstall             # Remove skill (auto-detect platform)
 uipro uninstall --ai claude # Remove specific platform
 uipro uninstall --global    # Remove from global install
@@ -405,7 +407,7 @@ results instead of mixing framework generations.
 Save your design system to files for **hierarchical retrieval across sessions**:
 
 ```bash
-# Generate and persist to design-system/MASTER.md
+# Generate and persist to design-system/myapp/MASTER.md
 python3 .claude/skills/ui-ux-pro-max/scripts/search.py "SaaS dashboard" --design-system --persist -p "MyApp"
 
 # Also create a page-specific override file
@@ -416,20 +418,21 @@ This creates a `design-system/` folder structure:
 
 ```
 design-system/
-├── MASTER.md           # Global Source of Truth (colors, typography, spacing, components)
-└── pages/
-    └── dashboard.md    # Page-specific overrides (only deviations from Master)
+└── myapp/                  # One folder per project (slug of -p "MyApp")
+    ├── MASTER.md           # Global Source of Truth (colors, typography, spacing, components)
+    └── pages/
+        └── dashboard.md    # Page-specific overrides (only deviations from Master)
 ```
 
 **How hierarchical retrieval works:**
-1. When building a specific page (e.g., "Checkout"), first check `design-system/pages/checkout.md`
+1. When building a specific page (e.g., "Checkout"), first check `design-system/[project-slug]/pages/checkout.md`
 2. If the page file exists, its rules **override** the Master file
-3. If not, use `design-system/MASTER.md` exclusively
+3. If not, use `design-system/[project-slug]/MASTER.md` exclusively
 
 **Context-aware retrieval prompt:**
 ```
-I am building the [Page Name] page. Please read design-system/MASTER.md.
-Also check if design-system/pages/[page-name].md exists.
+I am building the [Page Name] page. Please read design-system/[project-slug]/MASTER.md.
+Also check if design-system/[project-slug]/pages/[page-name].md exists.
 If the page file exists, prioritize its rules.
 If not, use the Master rules exclusively.
 Now, generate the code...
@@ -481,6 +484,7 @@ npm run typecheck
 # `npm run build` uses Bun when available and falls back to TypeScript compiler output after `npm ci`.
 npm run build
 node dist/index.js init --ai claude --offline  # Test in a temp folder
+node dist/index.js init --ai claude --dry-run  # Preview install actions (no writes)
 
 # 6. Create PR (never push directly to main)
 git checkout -b feat/your-feature

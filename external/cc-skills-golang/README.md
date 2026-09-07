@@ -107,13 +107,19 @@ OpenCode auto-discovers skills from `.agents/skills/`, `.opencode/skills/`, and 
 <details>
 <summary>Codex (OpenAI)</summary>
 
-Clone into the cross-client discovery path:
+Install the plugin via the Codex CLI:
 
 ```bash
-git clone https://github.com/samber/cc-skills-golang.git ~/.agents/skills/cc-skills-golang
+codex plugin add github:samber/cc-skills
 ```
 
-Codex auto-discovers skills from `~/.agents/skills/` and `.agents/skills/`. Update with `cd ~/.agents/skills/cc-skills-golang && git pull`.
+Update with `codex plugin update cc-skills`. Falls back to a manual clone if the marketplace path is unavailable:
+
+```bash
+git clone https://github.com/samber/cc-skills.git ~/.agents/skills/cc-skills
+```
+
+Codex auto-discovers skills from `~/.agents/skills/` and `.agents/skills/`.
 
 </details>
 
@@ -194,31 +200,31 @@ These skills are designed as **atomic, cross-referencing units**. A skill may re
 | ⭐️ | ✅ `golang-data-structures` | ⚡ | -39% | 93 | 2,608 | 6,327 |
 | ⭐️ | ✅ `golang-database` | ⚡ ⚙️ | -38% | 97 | 2,721 | 7,243 |
 | ⭐️ | ✅ `golang-design-patterns` | ⚡ ⚙️ | -37% | 80 | 2,694 | 9,400 |
-| ⭐️ | ✅ `golang-documentation` | ⚡ 🤖 ⚙️ | -53% | 75 | 3,094 | 11,193 |
+| ⭐️ | ✅ `golang-documentation` | ⚡ 🤖 ⚙️ | -53% | 75 | 3,163 | 11,876 |
 | ⭐️ | ✅ `golang-error-handling` | ⚡ 🤖 ⚙️ | -26% | 141 | 1,734 | 4,693 |
-| ⭐️ | ✅ `golang-how-to` | ⚡ | — | 183 | 4,196 | 15,197 |
-| ⭐️ | ✅ `golang-modernize` | ⚡ 🤖 | -61% | 68 | 2,899 | 9,212 |
+| ⭐️ | ✅ `golang-how-to` | ⚡ | — | 184 | 4,210 | 17,583 |
+| ⭐️ | ✅ `golang-modernize` | ⚡ 🤖 | -43% | 104 | 3,486 | 15,145 |
 | ⭐️ | ✅ `golang-naming` | ⚡ ⚙️ | -23% | 159 | 3,031 | 7,399 |
-| ⭐️ | ✅ `golang-refactoring` | ⚡ 🧠 🤖 ⚙️ | — | 245 | 3,835 | 20,330 |
+| ⭐️ | ✅ `golang-refactoring` | ⚡ 🧠 🤖 ⚙️ | — | 245 | 3,835 | 20,392 |
 | ⭐️ | ✅ `golang-safety` | ⚡ | -58% | 78 | 2,614 | 5,384 |
-| ⭐️ | ✅ `golang-testing` | ⚡ 🧠 🤖 ⚙️ | -32% | 115 | 4,270 | 7,377 |
-| ⭐️ | ✅ `golang-troubleshooting` | ⚡ 🧠 🤖 | -32% | 127 | 2,929 | 16,612 |
+| ⭐️ | ✅ `golang-testing` | ⚡ 🧠 🤖 ⚙️ | -32% | 115 | 4,270 | 8,822 |
+| ⭐️ | ✅ `golang-troubleshooting` | ⚡ 🧠 🤖 | -32% | 173 | 2,993 | 18,035 |
 | ⭐️ | ✅ `golang-security` | ⚡ 🧠 🤖 | -32% | 85 | 3,187 | 21,623 |
-|  | ✅ `golang-benchmark` | ⚡ 🧠 | -50% | 102 | 3,061 | 30,243 |
+|  | ✅ `golang-benchmark` | ⚡ 🧠 | -50% | 102 | 3,153 | 33,396 |
 |  | ✅ `golang-cli` | ⚡ | -43% | 125 | 2,338 | 6,153 |
-|  | ✅ `golang-concurrency` | ⚡ 🤖 ⚙️ | -39% | 72 | 2,199 | 6,829 |
+|  | ✅ `golang-concurrency` | ⚡ 🤖 ⚙️ | -39% | 72 | 2,196 | 6,826 |
 |  | ✅ `golang-context` | ⚡ ⚙️ | -34% | 82 | 1,211 | 4,021 |
-|  | ✅ `golang-continuous-integration` | ⚡ | -59% | 82 | 3,336 | 12,598 |
+|  | ✅ `golang-continuous-integration` | ⚡ | -59% | 177 | 3,542 | 12,804 |
 |  | ✅ `golang-dependency-injection` | ⚡ 🤖 ⚙️ | -47% | 178 | 3,016 | 5,287 |
-|  | ✅ `golang-dependency-management` | ⚡ | -54% | 77 | 2,362 | 5,500 |
+|  | ✅ `golang-dependency-management` | ⚡ | -54% | 77 | 2,407 | 5,545 |
 |  | ✅ `golang-structs-interfaces` | ⚡ ⚙️ | -35% | 111 | 3,076 | 3,076 |
 |  | ✅ `golang-lint` | ⚡ 🤖 | -41% | 98 | 1,877 | 6,295 |
-|  | ✅ `golang-observability` | ⚡ 🤖 ⚙️ | -37% | 163 | 3,118 | 18,605 |
-|  | ✅ `golang-performance` | ⚡ 🧠 🤖 | -39% | 129 | 2,226 | 18,226 |
-|  | ✅ `golang-gopls` | ⚡ | — | 219 | 2,317 | 12,299 |
-|  | ✅ `golang-pkg-go-dev` | ⚡ | — | 230 | 3,423 | 5,237 |
-|  | ✅ `golang-popular-libraries` | ⚡ | -30% | 51 | 1,074 | 4,543 |
-|  | ✅ `golang-project-layout` | ⚡ | -38% | 69 | 1,692 | 5,907 |
+|  | ✅ `golang-observability` | ⚡ 🤖 ⚙️ | -37% | 164 | 3,128 | 19,583 |
+|  | ✅ `golang-performance` | ⚡ 🧠 🤖 | -39% | 130 | 2,226 | 19,820 |
+|  | ✅ `golang-gopls` | ⚡ | — | 219 | 2,317 | 12,312 |
+|  | ✅ `golang-pkg-go-dev` | ⚡ | — | 170 | 3,442 | 5,386 |
+|  | ✅ `golang-popular-libraries` | ⚡ | -30% | 156 | 1,181 | 5,093 |
+|  | ✅ `golang-project-layout` | ⚡ | -38% | 105 | 1,761 | 6,257 |
 |  | ✅ `golang-stay-updated` | ⚡ | -56% | 44 | 1,802 | 1,802 |
 
 **Tools:**
@@ -247,7 +253,7 @@ These skills are designed as **atomic, cross-referencing units**. A skill may re
 
 |             | With Skill          | Without Skill       | Delta     |
 | ----------- | ------------------- | ------------------- | --------- |
-| **Overall** | **3315/3395 (98%)** | **1915/3395 (56%)** | **+41pp** |
+| **Overall** | **3348/3439 (97%)** | **1957/3439 (57%)** | **+40pp** |
 
 See [EVALUATIONS.md](./EVALUATIONS.md) for the full per-skill breakdown.
 

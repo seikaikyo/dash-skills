@@ -1,6 +1,6 @@
 ---
 name: design
-description: "Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity program (50 deliverables, CIP mockups), HTML presentations (Chart.js), banner design (22 styles, social/ads/web/print), icon design (15 styles, SVG, Gemini 3.1 Pro), social photos (HTML→screenshot, multi-platform). Actions: design logo, create CIP, generate mockups, build slides, design banner, generate icon, create social photos, social media images, brand identity, design system. Platforms: Facebook, Twitter, LinkedIn, YouTube, Instagram, Pinterest, TikTok, Threads, Google Ads."
+description: "Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini, Atlas Cloud, or MuAPI AI), corporate identity program (50 deliverables, CIP mockups), HTML presentations (Chart.js), banner design (22 styles, social/ads/web/print), icon design (15 styles, SVG, Gemini 3.1 Pro), social photos (HTML→screenshot, multi-platform). Actions: design logo, create CIP, generate mockups, build slides, design banner, generate icon, create social photos, social media images, brand identity, design system. Platforms: Facebook, Twitter, LinkedIn, YouTube, Instagram, Pinterest, TikTok, Threads, Google Ads."
 argument-hint: "[design-type] [context]"
 license: MIT
 metadata:
@@ -37,22 +37,27 @@ Unified design skill: brand, tokens, UI, logo, CIP, slides, banners, social phot
 | Social media images/photos | Social Photos (built-in) | `references/social-photos-design.md` |
 | SVG icons, icon sets | Icon (built-in) | `references/icon-design.md` |
 
+## Script Paths
+
+Script paths in this skill and its `references/` are relative to the directory that contains this SKILL.md, not to the project: `scripts/<file>` is this skill's own `scripts/` folder, and `../<skill>/scripts/<file>` is a sibling sub-skill installed alongside it. Build the full path from that directory (Claude Code reports it as the skill's base directory when the skill loads) and keep the working directory at the project root — the scripts read and write project files such as `docs/brand-guidelines.md`, `assets/design-tokens.json` or `src/` relative to it.
+
 ## Logo Design (Built-in)
 
-55+ styles, 30 color palettes, 25 industry guides. Gemini Nano Banana models.
+55+ styles, 30 color palettes, 25 industry guides. Gemini Nano Banana, Atlas
+Cloud, and MuAPI image generation.
 
 ### Logo: Generate Design Brief
 
 ```bash
-python3 ~/.claude/skills/design/scripts/logo/search.py "tech startup modern" --design-brief -p "BrandName"
+python3 scripts/logo/search.py "tech startup modern" --design-brief -p "BrandName"
 ```
 
 ### Logo: Search Styles/Colors/Industries
 
 ```bash
-python3 ~/.claude/skills/design/scripts/logo/search.py "minimalist clean" --domain style
-python3 ~/.claude/skills/design/scripts/logo/search.py "tech professional" --domain color
-python3 ~/.claude/skills/design/scripts/logo/search.py "healthcare medical" --domain industry
+python3 scripts/logo/search.py "minimalist clean" --domain style
+python3 scripts/logo/search.py "tech professional" --domain color
+python3 scripts/logo/search.py "healthcare medical" --domain industry
 ```
 
 ### Logo: Generate with AI
@@ -60,8 +65,11 @@ python3 ~/.claude/skills/design/scripts/logo/search.py "healthcare medical" --do
 **ALWAYS** generate output logo images with white background.
 
 ```bash
-python3 ~/.claude/skills/design/scripts/logo/generate.py --brand "TechFlow" --style minimalist --industry tech
-python3 ~/.claude/skills/design/scripts/logo/generate.py --prompt "coffee shop vintage badge" --style vintage
+python3 scripts/logo/generate.py --brand "TechFlow" --style minimalist --industry tech
+python3 scripts/logo/generate.py --prompt "coffee shop vintage badge" --style vintage
+python3 scripts/logo/generate.py --brand "TechFlow" --provider atlas
+python3 scripts/logo/generate.py --brand "TechFlow" --provider muapi
+python3 scripts/logo/generate.py --brand "TechFlow" --provider muapi --muapi-model nano-banana-pro
 ```
 
 **IMPORTANT:** When scripts fail, try to fix them directly.
@@ -75,32 +83,32 @@ After generation, **ALWAYS** ask user about HTML preview via `AskUserQuestion`. 
 ### CIP: Generate Brief
 
 ```bash
-python3 ~/.claude/skills/design/scripts/cip/search.py "tech startup" --cip-brief -b "BrandName"
+python3 scripts/cip/search.py "tech startup" --cip-brief -b "BrandName"
 ```
 
 ### CIP: Search Domains
 
 ```bash
-python3 ~/.claude/skills/design/scripts/cip/search.py "business card letterhead" --domain deliverable
-python3 ~/.claude/skills/design/scripts/cip/search.py "luxury premium elegant" --domain style
-python3 ~/.claude/skills/design/scripts/cip/search.py "hospitality hotel" --domain industry
-python3 ~/.claude/skills/design/scripts/cip/search.py "office reception" --domain mockup
+python3 scripts/cip/search.py "business card letterhead" --domain deliverable
+python3 scripts/cip/search.py "luxury premium elegant" --domain style
+python3 scripts/cip/search.py "hospitality hotel" --domain industry
+python3 scripts/cip/search.py "office reception" --domain mockup
 ```
 
 ### CIP: Generate Mockups
 
 ```bash
 # With logo (RECOMMENDED)
-python3 ~/.claude/skills/design/scripts/cip/generate.py --brand "TopGroup" --logo /path/to/logo.png --deliverable "business card" --industry "consulting"
+python3 scripts/cip/generate.py --brand "TopGroup" --logo /path/to/logo.png --deliverable "business card" --industry "consulting"
 
 # Full CIP set
-python3 ~/.claude/skills/design/scripts/cip/generate.py --brand "TopGroup" --logo /path/to/logo.png --industry "consulting" --set
+python3 scripts/cip/generate.py --brand "TopGroup" --logo /path/to/logo.png --industry "consulting" --set
 
 # Pro model (4K text)
-python3 ~/.claude/skills/design/scripts/cip/generate.py --brand "TopGroup" --logo logo.png --deliverable "business card" --model pro
+python3 scripts/cip/generate.py --brand "TopGroup" --logo logo.png --deliverable "business card" --model pro
 
 # Without logo
-python3 ~/.claude/skills/design/scripts/cip/generate.py --brand "TechFlow" --deliverable "business card" --no-logo-prompt
+python3 scripts/cip/generate.py --brand "TechFlow" --deliverable "business card" --no-logo-prompt
 ```
 
 Models: `flash` (default, `gemini-2.5-flash-image`), `pro` (`gemini-3-pro-image-preview`)
@@ -108,7 +116,7 @@ Models: `flash` (default, `gemini-2.5-flash-image`), `pro` (`gemini-3-pro-image-
 ### CIP: Render HTML Presentation
 
 ```bash
-python3 ~/.claude/skills/design/scripts/cip/render-html.py --brand "TopGroup" --industry "consulting" --images /path/to/cip-output
+python3 scripts/cip/render-html.py --brand "TopGroup" --industry "consulting" --images /path/to/cip-output
 ```
 
 **Tip:** If no logo exists, use Logo Design section above first.
@@ -183,21 +191,21 @@ Load `references/banner-sizes-and-styles.md` for complete sizes and styles refer
 ### Icon: Generate Single Icon
 
 ```bash
-python3 ~/.claude/skills/design/scripts/icon/generate.py --prompt "settings gear" --style outlined
-python3 ~/.claude/skills/design/scripts/icon/generate.py --prompt "shopping cart" --style filled --color "#6366F1"
-python3 ~/.claude/skills/design/scripts/icon/generate.py --name "dashboard" --category navigation --style duotone
+python3 scripts/icon/generate.py --prompt "settings gear" --style outlined
+python3 scripts/icon/generate.py --prompt "shopping cart" --style filled --color "#6366F1"
+python3 scripts/icon/generate.py --name "dashboard" --category navigation --style duotone
 ```
 
 ### Icon: Generate Batch Variations
 
 ```bash
-python3 ~/.claude/skills/design/scripts/icon/generate.py --prompt "cloud upload" --batch 4 --output-dir ./icons
+python3 scripts/icon/generate.py --prompt "cloud upload" --batch 4 --output-dir ./icons
 ```
 
 ### Icon: Multi-size Export
 
 ```bash
-python3 ~/.claude/skills/design/scripts/icon/generate.py --prompt "user profile" --sizes "16,24,32,48" --output-dir ./icons
+python3 scripts/icon/generate.py --prompt "user profile" --sizes "16,24,32,48" --output-dir ./icons
 ```
 
 ### Icon: Top Styles
@@ -303,7 +311,19 @@ python3 --version || python --version
 ```bash
 export GEMINI_API_KEY="your-key"  # https://aistudio.google.com/apikey
 pip install google-genai pillow
+
+# Optional MuAPI provider (no extra Python package required)
+export MUAPI_API_KEY="your-key"
 ```
+
+MuAPI uses the asynchronous model endpoint and prediction result API. See the
+[MuAPI API reference](https://muapi.ai/docs/api-reference) for authentication
+and the [nano-banana model contract](https://api.muapi.ai/api/v1/models/nano-banana)
+or [nano-banana-pro model contract](https://api.muapi.ai/api/v1/models/nano-banana-pro)
+for the current model-specific schemas. The logo generator supports both documented
+model slugs and sends their shared required `prompt` plus optional `aspect_ratio`
+fields; the Pro model also accepts an optional `resolution` field that this focused
+logo workflow leaves at the provider default.
 
 > **Note for Windows:** Use `python` instead of `pip` where needed (e.g., `python -m pip install ...`).
 

@@ -78,6 +78,7 @@ test('cli: help lists commands and diagram types', () => {
   assert.match(result.stdout, /archify preview <type>/);
   assert.match(result.stdout, /archify visual-check <output\.html>/);
   assert.match(result.stdout, /--open/);
+  assert.match(result.stdout, /--repo-root path \(architecture only\)/);
   assert.match(result.stdout, /archify guide \[scenario or question\]/);
   assert.match(result.stdout, /archify doctor/);
   assert.match(result.stdout, /archify demo \[output-directory\]/);
@@ -242,9 +243,33 @@ test('cli: visual-check returns a skipped receipt with exit 2 when Chrome is una
   assert.equal(result.status, 2, result.stderr);
   const receipt = JSON.parse(result.stdout);
   assert.equal(receipt.status, 'skipped');
+  assert.equal(receipt.evidenceKind, 'automated-browser');
   assert.equal(receipt.visualReview, 'pending');
   assert.equal(receipt.chrome.status, 'unavailable');
   assert.equal(fs.existsSync(out.replace(/\.html$/, '.visual-check.json')), true);
+});
+
+test('cli: visual-check describes human output as automated browser evidence, not visual approval', () => {
+  const out = path.join(tmp, 'visual-check-browser-evidence.html');
+  fs.writeFileSync(out, '<!doctype html><html><body>delivered</body></html>');
+  const missingChrome = path.join(tmp, 'missing-browser-evidence-chrome');
+  const result = run(['visual-check', out], {
+    env: { ...process.env, ARCHIFY_CHROME: missingChrome },
+  });
+
+  assert.equal(result.status, 2, result.stderr);
+  assert.match(result.stdout, /automated browser evidence skipped:/i);
+  assert.match(result.stdout, /perceptual visual review pending/i);
+  assert.doesNotMatch(result.stdout, /^visual-check skipped:/m);
+});
+
+test('cli: visual-check keeps automated and perceptual claims separate on input failure', () => {
+  const result = run(['visual-check', path.join(tmp, 'missing-browser-evidence.html')]);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /automated browser evidence failed:/i);
+  assert.match(result.stderr, /perceptual visual review pending/i);
+  assert.doesNotMatch(result.stderr, /^visual-check failed:/m);
 });
 
 test('cli: deliver atomically writes a checked artifact and structured receipt', () => {
@@ -559,7 +584,7 @@ test('cli: invalid source output metadata still fails inside the renderer', () =
 
 test('cli: deliver reports commit failure without a false success receipt', () => {
   const input = path.join(skillRoot, 'examples/web-app.architecture.json');
-  const outputDirectory = path.join(tmp, 'commit-target-is-a-directory');
+  const outputDirectory = path.join(tmp, 'commit-target-is-a-directory.html');
   fs.mkdirSync(outputDirectory, { recursive: true });
 
   const result = run(['deliver', 'architecture', input, outputDirectory, '--json']);
@@ -613,6 +638,54 @@ test('cli: validate emits structured json without keeping html output', () => {
   assert.deepEqual(new Set(fs.readdirSync(tmp)), before);
 });
 
+test('cli: validate JSON exposes only the primary v1 column-capacity diagnostic', () => {
+  const input = path.join(tmp, 'pinned-column-capacity.workflow.json');
+  fs.writeFileSync(input, `${JSON.stringify({
+    schema_version: 1,
+    diagram_type: 'workflow',
+    meta: {
+      title: 'Pinned issue 126 diagnostic boundary',
+      viewBox: [720, 400],
+      legend: { mode: 'hidden' },
+    },
+    lanes: [{ id: 'main', label: 'Main' }],
+    nodes: [
+      { id: 'a', lane: 'main', col: 1, type: 'backend', label: 'A' },
+      { id: 'b', lane: 'main', col: 2, type: 'backend', label: 'B' },
+    ],
+    edges: [{
+      id: 'ab',
+      from: 'a',
+      to: 'b',
+      fromSide: 'top',
+      toSide: 'top',
+      via: [[220, 60], [300, 60]],
+    }],
+  }, null, 2)}\n`);
+
+  const result = run(['validate', 'workflow', input, '--json'], {
+    env: { ...process.env, ARCHIFY_DIAGNOSTIC_FORMAT: 'json' },
+  });
+
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+  assert.equal(result.stderr, '');
+  const failure = JSON.parse(result.stdout);
+  assert.equal(failure.ok, false);
+  assert.equal(failure.command, 'validate');
+  assert.equal(failure.stage, 'render');
+  assert.equal(failure.type, 'workflow');
+  assert.equal(failure.diagnostics.length, 1, JSON.stringify(failure.diagnostics, null, 2));
+  const [primary] = failure.diagnostics;
+  assert.equal(primary.code, 'workflow/column-capacity');
+  assert.equal(primary.subject.edge, 'ab');
+  assert.equal(primary.subject.fromCol, 1);
+  assert.equal(primary.subject.toCol, 2);
+  assert.ok(primary.supportedFixes.length > 0);
+  assert.ok(failure.diagnostics.every(({ code }) => (
+    code !== 'workflow/explicit-pin-conflict' && code !== 'workflow/viewbox-capacity'
+  )));
+});
+
 test('cli: --quality overrides the source profile for render, validate, and deliver', () => {
   const input = path.join(skillRoot, 'examples/agent-tool-call.workflow.json');
   const out = path.join(tmp, 'workflow-standard.html');
@@ -650,6 +723,35 @@ test('cli: rejects a quality flag without a value', () => {
   }
 });
 
+test('cli: validate rejects unknown flags, layout-json assignment typos, and extra positionals', () => {
+  const input = path.join(skillRoot, 'examples/agent-tool-call.workflow.json');
+  const cases = [
+    {
+      args: ['validate', 'workflow', input, '--layout-json', '--bogus'],
+      pattern: /Unknown validate option "--bogus"/,
+    },
+    {
+      args: ['validate', 'workflow', input, '--layout-json=true'],
+      pattern: /Unknown validate option "--layout-json=true"/,
+    },
+    {
+      args: ['validate', 'workflow', input, '--layout-json=true', '--json'],
+      pattern: /Unknown validate option "--layout-json=true"/,
+    },
+    {
+      args: ['validate', 'workflow', input, 'unexpected-output.html', '--layout-json'],
+      pattern: /Usage:/,
+    },
+  ];
+
+  for (const { args, pattern } of cases) {
+    const result = run(args);
+    assert.equal(result.status, 2, `${args.join(' ')}\n${result.stderr}\n${result.stdout}`);
+    assert.equal(result.stdout, '');
+    assert.match(result.stderr, pattern);
+  }
+});
+
 test('cli: inspect emits architecture layout json', () => {
   const input = path.resolve(skillRoot, '../examples/archify-repo-grid.architecture.json');
   const result = run(['inspect', 'architecture', input]);
@@ -660,6 +762,14 @@ test('cli: inspect emits architecture layout json', () => {
   assert.equal(parsed.layout.mode, 'grid');
   assert.ok(parsed.components.length >= 5);
   assert.ok(parsed.connections.length >= 1);
+});
+
+test('cli: inspect remains architecture-only while workflow uses validate --layout-json', () => {
+  const input = path.join(skillRoot, 'examples', 'agent-tool-call.workflow.json');
+  const result = run(['inspect', 'workflow', input]);
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /inspect is currently supported for architecture diagrams only/);
+  assert.equal(result.stdout, '');
 });
 
 test('cli: validate returns renderer errors for bad input', () => {
@@ -697,3 +807,28 @@ test('cli: validate rejects an unknown type without leaking a temp directory', (
 });
 
 process.on('exit', () => fs.rmSync(tmp, { recursive: true, force: true }));
+
+test('render rejects a mistyped option instead of writing a file named after it', () => {
+  const dir = fs.mkdtempSync(path.join(tmp, 'render-guard-'));
+  const spec = path.join(dir, 'spec.json');
+  fs.copyFileSync(path.join(skillRoot, '../examples/archify-repo.architecture.json'), spec);
+
+  // Without the guard this wrote a 600KB file literally named `--json` and
+  // never wrote out.html, exiting 0.
+  const result = run(['render', 'architecture', spec, '--json', 'out.html'], { cwd: dir });
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Unknown render option/);
+  assert.deepEqual(fs.readdirSync(dir), ['spec.json']);
+});
+
+test('render rejects an extra positional argument', () => {
+  const dir = fs.mkdtempSync(path.join(tmp, 'render-arity-'));
+  const spec = path.join(dir, 'spec.json');
+  fs.copyFileSync(path.join(skillRoot, '../examples/archify-repo.architecture.json'), spec);
+
+  const result = run(['render', 'architecture', spec, 'out.html', 'extra.html'], { cwd: dir });
+
+  assert.notEqual(result.status, 0);
+  assert.deepEqual(fs.readdirSync(dir), ['spec.json']);
+});

@@ -10,13 +10,24 @@ Hardcoded secrets, credentials, and sensitive data in source code is a major sec
 
 ---
 
+## Table of Contents
+
+- [Hardcoded Secrets and Credentials — Critical](#hardcoded-secrets-and-credentials--critical)
+- [Hardcoded Database Passwords — Critical](#hardcoded-database-passwords--critical)
+- [Secrets Storage Best Practices](#secrets-storage-best-practices)
+  - [Environment Variables](#environment-variables)
+  - [Secret Managers](#secret-managers)
+  - [.gitignore Patterns](#gitignore-patterns)
+- [Secret Detection Patterns](#secret-detection-patterns)
+- [CWE References](#cwe-references)
+
 ## Hardcoded Secrets and Credentials — Critical
 
 **Bad:**
 
 ```go
 const (
-    AWS_ACCESS_KEY    = "AKIAIOSFODNN7EXAMPLE"  // DON'T
+    AWS_ACCESS_KEY    = "AKIA_REDACTED_KEY"  // DON'T
     AWS_SECRET_KEY    = "wJalrXUtnFEMI/K7MDENG"  // DON'T
     DATABASE_PASSWORD = "SuperSecret123!"         // DON'T
     JWT_SECRET        = "my-super-secret-jwt-key" // DON'T

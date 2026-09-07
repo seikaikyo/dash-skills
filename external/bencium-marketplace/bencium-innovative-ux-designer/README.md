@@ -1,54 +1,319 @@
-# Innovative UX Designer Skill
+# Innovative UX Designer V3
 
-Create distinctive, production-grade frontend interfaces that avoid generic AI aesthetics.
+## A closed studio for independent visual languages
 
-## Philosophy
+Innovative UX Designer V3 is a ground-up rebuild made to escape the statistical middle produced by generative AI. Contemporary design had already converged through global platforms, shared references, and standardized tools; large language and image models turn that convergence into probability, then generate its most likely combinations at enormous scale. V3 does not begin with style names, moodboards, galleries, templates, design tokens, or a catalogue of fashionable effects. It begins with the subject itself, temporarily closes the door on contemporary visual culture, and develops ten independent typography-led HTML design directions made only from typography, color, and space before a human locks one.
 
-**Bold creativity meets production rigor.** This skill generates unique, memorable interfaces while maintaining accessibility and responsive patterns. No "AI slop" - every design should feel intentionally crafted.
+V3 is for identity, graphic design, campaigns, publications, digital experiences, and interfaces whose value depends on having a voice of their own. It is not a machine for decorating ordinary layouts.
 
-## Structure
+> My generation still remembers the almost complete isolation of the 1980s and 1990s, when Hungary, Switzerland, Poland, and other places had their own distinctive styles. Then, around 2007, Facebook and Behance arrived.
 
+That memory is the premise of V3.
+
+The island-biogeography argument was sharpened by [Eliott Earls's Instagram reel](https://www.instagram.com/reels/DbXA0j3MwzC/): graphic design did not lose its talent; it lost the informational isolation that once allowed local accents to evolve independently.
+
+## Graphic design lost its accents
+
+Graphic design did not suddenly become less talented. It became less isolated.
+
+Before the internet, ideas moved slowly between cities, schools, studios, industries, and cultural scenes. Hungarian, Polish, Swiss, Dutch, Japanese, British, American, and other design biomes developed under different material conditions, languages, politics, technologies, and local habits. Their visual languages evolved independently because they were not continuously exposed to the same stream of work.
+
+The internet removed those barriers:
+
+```text
+Geographic isolation       -> Informational isolation
+Reduced gene flow          -> Reduced idea flow
+Independent evolution      -> Independent formal evolution
+Distinct species           -> Distinct visual languages
+Secondary contact          -> Internet and global media
 ```
-bencium-innovative-ux-designer/
-├── SKILL.md              # Main skill (Design Thinking, anti-patterns, implementation)
-├── ACCESSIBILITY.md      # WCAG 2.1 AA essentials (progressive disclosure)
-├── MOTION-SPEC.md        # Animation timing and easing (progressive disclosure)
-├── RESPONSIVE-DESIGN.md  # Breakpoints and mobile-first (progressive disclosure)
-└── README.md             # This file
+
+Today, designers see the same references, follow the same accounts, use the same software, install the same fonts, pull from the same icon libraries, and consume the same visual culture. Skill remains abundant, but independent evolution has collapsed. Work from different places increasingly speaks with the same accent.
+
+V3 does not attempt to recreate a nostalgic pre-internet style. It restores some of the conditions that once allowed unfamiliar visual languages to emerge.
+
+## Big Tech made its house style feel neutral
+
+Google and Facebook/Meta did not distribute visually neutral infrastructure. They distributed their own ideas about typography, icons, spacing, hierarchy, interaction, motion, components, and acceptable behavior at enormous scale.
+
+They made those systems free, convenient, documented, reusable, and difficult to resist. Free icon sets and UI kits acted as distribution channels for the platform's visual language. A company could adopt a complete visual grammar without making a visual decision. A designer could build faster by accepting the defaults. A generation of products gradually inherited the same shapes, gestures, proportions, symbols, and assumptions.
+
+The standardization was deliberate. Google describes Material as a shared language created to unite style, branding, interaction, and motion, and later as a comprehensive system intended to unify web and Android ecosystems. Its open tools and code have been used across millions of applications. [Google's account of Material as a shared language](https://design.google/library/streamlining-the-process-material-guidelines), [Google's account of Material's reach](https://design.google/library/making-more-with-material), [Google's history of Material](https://design.google/library/material-design-eras)
+
+Facebook/Meta used the same platform logic: make the platform's conventions ubiquitous, make participation easier through ready-made systems, and let repetition turn a corporate visual language into an apparent universal default.
+
+Companies, agencies, and many less-experienced designers reinforced that spread. They assumed that systems made by Google or Meta must represent design quality in every context, then copied the systems without asking who the audience was, what industry they were serving, which culture the work belonged to, or what the organization needed to communicate. “Let’s use Material Design; it is from Google” replaced judgement with borrowed authority.
+
+Google and Meta employ capable designers. That does not make their answers universally correct. Their systems were created for their own products, scale, business models, engineering structures, audiences, and institutional interests. A useful solution inside Google can be culturally false, emotionally empty, commercially weak, or simply inappropriate somewhere else. Design quality is contextual; prestige cannot remove context.
+
+V3's position is explicit: distributing a corporate house language as globally convenient default infrastructure was deliberate **visual colonization**. Google and Meta did not need every designer to admire the style; they made adopting it cheaper, faster, safer inside organizations, and easier to defend than developing a contextual language. A small number of American technology companies exported their local corporate taste as if it were culture-free infrastructure. “Consistency,” “efficiency,” and “best practice” made the process sound harmless while local accents were displaced by the platform accent.
+
+Generative AI now compounds the damage. Models learn from the already-converged visual world, then reproduce its most statistically probable relationships. Each plausible output adds more weight to the center. Without an explicit source boundary, asking AI to be creative often produces a polished summary of what the internet has already repeated.
+
+V3 takes a side against that process. During creative development, Google Fonts, Material Design, Meta/Facebook kits, mass icon sets, template ecosystems, and platform component libraries are not inspiration. They are part of the convergence machinery the skill is designed to resist.
+
+## Production is abundant; judgement is scarce
+
+The part of design that is disappearing is production as a scarce skill. A competent logo, campaign image, landing page, icon set, presentation, packaging mockup, or illustration is becoming close to free.
+
+The designer remains responsible for the decisions that generation cannot settle:
+
+- **Taste and selection:** Generating hundreds of options is trivial. Recognizing which one has character, which one is derivative, which one is culturally wrong, and which one will age badly is valuable.
+
+- **Creative direction:** Production systems can create assets, but somebody must define the visual world: its tensions, compositional logic, type behavior, material character, imperfection, imagery, motion, and boundaries.
+
+- **Differentiation:** When every organization can obtain beautiful typography, images, websites, presentations, and branding, beauty stops distinguishing anyone. The useful question becomes: “Why does this look unmistakably like itself?”
+
+- **Context and cultural intelligence:** Models converge toward statistically plausible answers. Knowledge of language, place, ritual, history, subcultures, materials, emerging social signals, and obscure human practices creates routes away from that center.
+
+- **Commitment:** Infinite alternatives make organizations afraid to decide. Designers crystallize a choice, align the organization around it, and earn authority by saying: “This is it. Stop generating.”
+
+Designers increasingly manage fleets of creative agents, but V3 deliberately uses one author during visual invention. A committee of agents would cross-pollinate too early, average disagreements, and turn authorship into consensus. One direction must be allowed to become stubborn before production expands.
+
+## The source law
+
+### Creative development happens behind a hard firewall
+
+During the first creative round, the author must not look at:
+
+- other designers, studios, visual artists, or named visual movements;
+- design galleries, portfolios, awards sites, social feeds, moodboards, or trend reports;
+- Behance, Dribbble, Awwwards, FWA, Pinterest, Instagram design feeds, Figma Community, Framer galleries, or “best landing page” collections;
+- existing brand systems, design systems, component demonstrations, design tokens, templates, or UI kits;
+- icon libraries or fonts used as visual inspiration;
+- Google Fonts, Material Design, or Meta/Facebook visual systems;
+- AI-generated images offered as inspiration;
+- unrelated concepts previously generated by V3.
+
+This is not a claim that influence can be erased from a human or a model. It is a working barrier that prevents active imitation, reference averaging, and fashionable convergence during authorship.
+
+### Inspiration must come from the subject's world
+
+The closed studio can use:
+
+- the user's own words, memories, sketches, images, stories, voice, and existing materials;
+- the subject's facts, contradictions, relationships, chronology, data, taxonomy, and language;
+- real workflows, tools, rituals, mistakes, frictions, and physical constraints;
+- place, climate, light, sound, materials, local speech, and lived habits;
+- natural systems, mathematics, scientific structures, and observable behavior;
+- music as rhythm and structure, literature as voice and sequence, and oral history as memory, without copying their visual packaging;
+- the constraints of the final medium: scale, duration, distance, printing process, screen behavior, available materials, and budget.
+
+The translation rule is simple: **borrow a relationship, rhythm, mechanism, pressure, or behavior; never borrow another person's visual solution.**
+
+## The font exception
+
+V3 does not pretend that every project can draw a new typeface, icon family, or printing convention from scratch. Fonts may enter the first visual round only after the author has derived the concept's formal requirements without looking at type catalogues.
+
+The search begins from a written need such as width, rhythm, language coverage, texture, historical tension, or behavior. It must not begin with “show me interesting fonts.”
+
+Google Fonts is excluded. Search independent open-source and paid foundries in Spain, Greece, Central and Eastern Europe, Latin America, the Netherlands, Scandinavia, Switzerland, the United Kingdom, and independent United States studios. These regions are discovery routes, not aesthetic stereotypes.
+
+V3 records each font's source, designer or foundry, license, price, formats, language coverage, and usage restrictions in the direction capsule, then reveals those facts after the first visual response. Clearly licensed open-source fonts may be used reversibly without interrupting Round 1. A paid font, trial agreement, account, license acceptance, or acquisition requires explicit human approval before it is bought, downloaded, embedded, or distributed.
+
+Icons may be sourced after explicit commitment. An existing icon family can implement the committed character, but it cannot determine that character.
+
+## The V3 journey
+
+### 1. Establish the minimum evidence
+
+V3 defaults to zero preliminary questions. When the existing brief names the subject and its intended effect, audience, tension, or proposition, the user's own language is enough to begin.
+
+Give your goal before Round 1. Give it as purpose, not aesthetic direction:
+
+> This is for [subject and audience]. It should help them understand, feel, or do [goal].
+
+The same goal influences all ten directions by affecting language dominance, hierarchy, rhythm, and which subject evidence each direction translates. It must not make the ten directions visually similar. You don’t need to provide final dimensions, every channel, all assets, budget, or finished campaign copy before Round 1.
+
+Only a fundamentally unclear or risky brief can trigger questions, and then V3 asks no more than two short questions once. It makes reversible assumptions for anything else and proceeds. Final copy, complete biographies, permissions, dimensions, channel lists, schedules, budgets, legal details, and production specifications wait until the human has reacted to the typography. The evidence capsule is a seed, not an intake form or a moodboard.
+
+### 2. Seal the studio
+
+The author records the allowed sources and closes the visual-reference firewall. Any necessary functional inspection is separated from creative influence. Existing technology may reveal what the work must support, but it may not supply the visual answer.
+
+### 3. Create ten genuinely different design directions
+
+V3 creates A through J as ten ultra-minimal typography-led HTML design directions. They share the same working copy and may share an optional browser viewport for fair comparison, but they do not share a fixed canvas, artifact ratio, layout, or palette. Every direction owns its complete flat background and letterform palette, typography, scale, case, hierarchy, composition, margins, padding, alignment, density, rhythm, reading path, language behavior, and empty space.
+
+“Typography-only” describes what can appear on the page: letterforms and one flat canvas background. It does not mean ten typography samples. The ten outputs must be ten genuinely different designs, and every one must differ materially in color as well as type and space.
+
+The set must demonstrate real palette depth rather than repeating two-color ideas. Across A through J, at least one direction uses one active letterform color, one uses two, one uses three, and one uses four. The flat canvas is the ground and is counted separately. A two-color direction establishes primary and secondary text roles; a three-color direction adds a meaningful tertiary or accent role; a four-color direction gives primary, secondary, tertiary, and accent colors different jobs. The remaining directions use whichever depth their own premises require. This is set-level coverage rather than a mechanical matrix: colors must change hierarchy, rhythm, or language behavior, and may not appear as swatches, labels, dummy copy, or arbitrary highlights.
+
+V3 does not use a divergence matrix, parameter quotas, dice rolls, style menus, or mechanical rotation of formal properties. Each design begins from its own subject-derived premise and a blank HTML file. If two directions become equivalent after changing the font or colors, share a page skeleton, or read in the same order, one of them is rebuilt.
+
+Round one explores typography:
+
+- font choice and font combinations;
+- serif, sans, slab, script, display, monospaced, or hybrid relationships selected from subject-derived requirements, never style categories;
+- weight, width, grade, optical size, italic or slant through genuine font variants or variable-font axes;
+- uppercase, lowercase, title case, sentence case, small capitals, and deliberate mixed case;
+- primary, secondary, supporting, caption, date, number, and attribution relationships;
+- type-size scales and the amount of contrast between levels;
+- letter spacing, word spacing, line height, line length, kerning, ligatures, hyphenation, and punctuation behavior;
+- numerals, diacritics, abbreviations, and multilingual text.
+
+It explores space and placement:
+
+- outer margins, internal padding, gaps, and gutters;
+- text-block widths, maximum widths, column count, and column proportions;
+- indents, hanging punctuation, and baseline offsets;
+- horizontal, centered, right, justified, or mixed alignment;
+- vertical placement and relationships to canvas edges;
+- dense or quiet composition, symmetrical or asymmetrical distribution, and large uninterrupted areas of whitespace;
+- intentional line breaks and text wrapping;
+- controlled overlap, cropping, or vertical type when it remains readable and professionally typeset.
+
+It explores color only through one flat canvas background and one to four active letterform colors with deliberate primary, secondary, tertiary, and accent roles where present. There are no colored panels, bands, boxes, circles, or decorative background areas.
+
+When a direction uses primary, secondary, tertiary, or accent colors, their different roles should be visible during the first visual encounter. A color does not count merely because it exists in the CSS or appears on one insignificant fragment. Each role should govern enough meaningful supplied text to affect hierarchy, rhythm, language, or reading order—without arbitrary highlighting.
+
+It explores language behavior through sequencing, dominance, non-semantic repetition of supplied words, and line rhythm. Type and space may make the voice continuous, interrupted, compressed, ceremonial, conversational, forceful, restrained, or quiet without rewriting the user's words.
+
+### 4. Keep Round 1 typographic and visual-first
+
+Every visible pixel in a Round 1 direction must be either a letterform or the single flat background. Invisible HTML and CSS layout may position and space the type.
+
+Round one has hard exclusions:
+
+- no shapes, lines, rules, borders, frames, panels, bands, blobs, or circles;
+- no illustration, imagery, photography, icons, symbols, or logo marks;
+- no gradients, textures, grain, shadows, glow, blur, filters, or decorative effects;
+- no pseudo-elements or punctuation used to imitate shapes;
+- no animation or motion;
+- no artificial stretching, warping, skewing, or distortion of letterforms;
+- no simulated poster, campaign, website, packaging, or social-media artifact;
+- no SVG or HTML `<canvas>` element.
+
+The ten directions are built as dependency-free `A.html` through `J.html`, with a neutral `index.html` linking to them. The actual HTML files are the Round 1 deliverables. Round 1 does not create PNG, WebP, JPEG, PDF, screenshots, contact sheets, or image previews. The human may use a consistent browser viewport for fair comparison, but it is an evaluation condition rather than a fixed canvas or shared layout.
+
+Claude source-checks the files, then stops. It does not open, render, screenshot, inspect, compare, or judge them through Claude in Chrome, Chrome, browser automation, Computer Use, Playwright, Puppeteer, image analysis, or another rendering tool. The first presentation links the ten HTML designs with neutral labels A through J for the human to open. No code, concept names, explanations, font prestige, swatches, or persuasive rationale appears before the human reacts.
+
+Round one must look professionally resolved in typography, alignment, spacing, cropping, optical balance, and rendering. Controlled overlap, ordinary cropping, vertical text, and repetition are allowed because they remain typographic, but they must never turn letterforms into abstract illustration.
+
+Each direction also creates a concise written concept capsule. It records the subject-derived premise, fonts and license status, size and case logic, detailed type behavior, colors, margins, padding, gaps, columns, alignment, whitespace, signature relationship, invariants, assumptions, risks, and instructions for translating the direction into concrete artifacts. The capsule is saved during Round 1 but withheld from the first visual encounter.
+
+### 5. Let the human judge
+
+The human can shortlist a direction, identify a specific living quality worth preserving, ask for one bounded typography-only change, lock one, or reject all ten. V3 tells the human explicitly that they do not have to choose from the first set and may ask for another ten whenever none deserves commitment.
+
+After the unprimed visual response, V3 reveals the neutral concept capsules only for the directions the human wants to consider. If all ten are rejected, V3 returns to the premise and evidence capsule before creating another set of ten. There is no fixed limit to the number of rounds, but each batch stays at ten so human judgement remains manageable. The skill never pressures the human to select a weak direction merely to advance the workflow.
+
+### 6. Lock one direction
+
+Interest, praise, and a shortlist are not a lock. V3 waits for an explicit instruction such as “commit,” “lock this,” or “this is it.”
+
+After the lock, V3 ends the other nine directions and stops proposing alternatives. It preserves the selected HTML and capsule, adds the human's corrections, and writes `ROUND-2-CONTEXT.md`. That document becomes the authority for later work.
+
+### 7. Create concrete Round 2 artifacts
+
+Round 2 injects the locked concept capsule as governing context and builds what the project actually needs. This can include a working component library and representative screens, campaign formats, publication pages, packaging, environmental pieces, presentations, motion, or another concrete artifact family.
+
+Shapes, lines, imagery, icons, material effects, and motion may enter only after the lock and only when the artifact requires or the human approves them. They must grow from the locked typography-led HTML design direction rather than importing another style.
+
+For interfaces, a Round 2 component library must contain real usable components, content, states, responsive behavior, keyboard access, visible focus, and recoverability. It is not a decorative component sheet. For graphic work, Round 2 uses real dimensions, content, and medium constraints.
+
+The original prompt controls the artifact set. If it asked for three items, V3 rebuilds those same three with the real copy rather than inventing extra variants. The human inspects the rebuilt outputs and decides whether the locked direction's character survived. Rendering success alone is not approval.
+
+After explicit approval, V3 freezes the approved artifacts and their generation rules as the production baseline. It explains the next steps and creates a self-contained `STYLEGUIDE.html` in the chosen visual direction. The guide includes every applicable rule for typography, font sources and licensing, color, hierarchy, composition, spacing, margins, padding, rhythm, whitespace, language, responsive variation, shapes, imagery, icons, motion, interaction, accessibility, invariants, permitted variation, prohibited normalization, generation, assets, proof status, and reopening. It also includes copyable prompt examples for creating another artifact, adapting an approved artifact, revising without reopening the direction, extending the system, and continuing safely in a new thread. V3 links the guide to the human and states that further artifacts may now be requested from the approved visual language; it creates those additional artifacts only when requested.
+
+The direction can reopen only through an explicit human decision based on new evidence, a cultural concern, an accessibility or implementation failure, a changed business need, or a direct override.
+
+### 8. Turn Round 2 into a production system
+
+After the lock, V3 formalizes only what the concrete artifacts need for repeated production. Depending on the project and available environment, the package can include:
+
+- the visual constitution and its source boundary;
+- master and supporting artifacts;
+- color, typography, space, shape, line, material, imagery, and motion rules;
+- project-specific tokens in CSS and a portable structured format;
+- a font acquisition and licensing record;
+- an icon family and rules for its use when needed;
+- a logo or wordmark only when the brief requires one;
+- locked decisions and permitted variations;
+- cultural and anti-convergence boundaries;
+- instructions for future human or AI production;
+- real proof artifacts from the intended channels;
+- a small, project-local decision ledger if the human wants one.
+
+The production system records a discovered language. It must never retroactively make the language look like a generic design system.
+
+## Innovation comes before completeness
+
+V3 is graceful with a strong unfinished idea. A designer can recognize an original typography-led HTML design direction before every state, asset, and rule has been completed. The skill should help that idea continue instead of rejecting it for failing an enterprise-style completeness checklist.
+
+It reports three proof levels separately:
+
+1. **Typography-led HTML design direction selected:** A Round 1 direction has survived unprimed human judgement.
+2. **Direction locked:** The human has explicitly made one concept capsule the authority for Round 2.
+3. **Round 2 artifact system available:** The concrete artifacts, rules, assets, tokens, licenses, implementation, verification, and proof needed for repeated use exist.
+
+V3 must never withhold a strong concept because its complete system is unfinished. It must also never call an exciting Round 1 direction production-ready when the production system does not yet exist.
+
+## Accessibility and recoverability are boundaries, not a style
+
+Accessibility does not prescribe a 12-column grid, a universal type ratio, centered modals, a fixed card anatomy, or a particular motion character. Those are contextual design decisions.
+
+V3 uses WCAG 2.2 as the baseline for interfaces and digital artifacts. Keyboard access, visible and unobscured focus, adequate target size, non-drag alternatives, explicit controls, readable critical text, reduced-motion behavior, safe error recovery, and preservation of unfinished input are fixed boundaries.
+
+Direct manipulation may coexist with buttons, numeric inputs, and precise keyboard alternatives. A modal does not automatically close on an outside click when doing so could destroy work. Adaptive themes and hidden features require a product reason and human approval.
+
+## Production evidence begins in Round 2
+
+Round 1 is judged only by the human through the actual browser-openable HTML files. Claude performs source checks but no browser or rendered inspection, does not manufacture screenshot deliverables, and does not claim visual or production quality.
+
+For Round 2 interfaces, V3 verifies the running interface with real content at relevant widths, then checks keyboard and focus behavior, long text, important states, reduced motion, contrast, and data preservation.
+
+For Round 2 graphic design, the human may request exports or medium-specific proof when the job needs them. The skill does not impose interface-style rendered verification on graphic work.
+
+Verification must match the actual artifact and the proof being claimed.
+
+## V3 never creates SVG
+
+The ban applies to every phase, not only the first concepts. V3 does not author, generate, edit, trace, convert to, export, or recommend SVG for artwork, logos, icons, diagrams, editable masters, intermediate files, inline web markup, or final deliverables.
+
+Lean HTML and CSS remain the editable source for graphic concepts and digital compositions when practical. Round 2 may export PNG for lossless review and delivery, use WebP or JPEG when their trade-offs are appropriate, and produce PDF for print. These formats never replace the ten Round 1 HTML files.
+
+If a logo, fabrication path, or other deliverable genuinely requires a professionally constructed scalable vector master, V3 writes the approved construction brief and states that qualified human vector work remains. It does not manufacture false production quality by emitting path code.
+
+An existing user-supplied or licensed third-party SVG may be treated as immutable input after explicit approval. V3 does not alter, trace, inline, redistribute, or derive new SVG from it.
+
+## The design ledger
+
+After the direction is locked, the human may approve a small ledger stored with the project. It records:
+
+- the premise and allowed evidence;
+- the language's signature traits;
+- committed decisions and open questions as separate things;
+- rejected mutations that would pull the work toward the statistical middle;
+- accessibility, cultural, and production boundaries;
+- the conditions under which the direction may reopen.
+
+The ledger is not a global inspiration library, a hidden profile, or a source of cross-project influence. It belongs to one project and remains editable by the human.
+
+## What V3 refuses
+
+V3 has no required grain, gradient mesh, floating orb, asymmetric bento grid, marquee, animated counter, hover lift, glass effect, fashionable palette, universal grid, or preferred component anatomy. Any visual device may be chosen when the subject and committed language require it; none may appear merely because contemporary design culture has made it familiar.
+
+It has no absolute font or effect bans beyond the creative source firewall. Familiar defaults require a reason. Unfamiliar choices require one too.
+
+It does not ask what a famous designer would do. It does not roll dice for a style. It does not choose from a menu of named aesthetics. Randomness can produce difference, but it cannot produce an independent point of view.
+
+## Status
+
+V3 is a ground-up replacement for V2. Version 3.1.5 preserves the pre-matrix Round 1 architecture, requires the A-through-J set to demonstrate one-, two-, three-, and four-color letterform systems whose claimed roles are perceptible in meaningful supplied text, and includes the complete Round 2 closeout: rebuild the originally requested artifact set with real copy, return it for human judgement, freeze approved artifacts and generation rules, explain next steps, create and link a comprehensive HTML style guide, and allow further artifacts to be requested from the locked visual language. Sibling packages remain outside this change.
+
+The governing sequence is:
+
+```text
+real evidence
+    -> temporary isolation
+    -> ten independent typography-led HTML design directions
+    -> visual-first human judgement
+    -> relevant concept capsules revealed
+    -> one direction explicitly locked
+    -> locked capsule injected into Round 2
+    -> concrete artifacts and production system
+    -> real rendered proof
 ```
 
-## Key Principles
-
-### 1. Design Thinking Protocol
-Ask questions first to understand context, then **commit boldly** to an aesthetic direction.
-
-### 2. Anti-Generic Aesthetics
-**Avoid:** Inter, Roboto, Space Grotesk, SaaS blue (#3B82F6), glass morphism, Apple mimicry
-
-**Embrace:** Characterful typography, unexpected color combinations, intentional visual hierarchy
-
-### 3. Bold Visual Expression
-Shadows and gradients are creative tools when used intentionally. The constraint is against effects that serve no purpose or mimic platforms.
-
-### 4. Accessibility Baseline
-WCAG 2.1 AA compliance enables creativity - it's a foundation, not a limitation.
-
-## Tone Options
-
-Pick an extreme to commit to:
-- **Brutally minimal** - stripped to essence, bold typography
-- **Maximalist chaos** - layered, dense, controlled disorder
-- **Retro-futuristic** - vintage meets sci-fi
-- **Organic/natural** - earth tones, flowing shapes
-- **Editorial/magazine** - grid-based, typographic
-- **Brutalist/raw** - exposed structure, monospace
-
-## Version History
-
-- **v2.0.0** (2025-11-22): Creative liberation update
-  - Added Design Thinking Protocol with tone options
-  - Lifted shadow/gradient restrictions (glass still banned)
-  - Added anti-pattern fonts and colors
-  - Compressed supporting files
-  - Removed DESIGN-SYSTEM-TEMPLATE.md
-- **v1.0.0** (2025-10-18): Initial release
+The objective is not infinite novelty. It is a visual language that could only have emerged from this subject, this context, and this decision—and that remains recognizable after production begins.
