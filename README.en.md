@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 14 custom (`skills/`) + 51 external (`external/`). External skills auto-sync daily from upstream.
+> 14 custom (`skills/`) + 50 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -44,6 +44,9 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **mcp-builder** | Build high-quality MCP servers | anthropics/skills |
 | **skill-creator** | Create / improve / evaluate skills | anthropics/skills |
 | **claude-api** | Claude API usage guide | anthropics/skills |
+| **antfu-skills** | Anthony Fu's Vue / Nuxt / Vite / UnoCSS ecosystem conventions (19 sub-skills) | antfu/skills |
+| **cc-skills-golang** | Go development standards (46 sub-skills: context / concurrency / DI / CI, by the lo/do author) | samber/cc-skills-golang |
+| **tgd-skills** | tGD PDLC engineering discipline (29 sub-skills: review / debugging / launch / ADRs, docs layer only) | openclawyhwang-hub/tGD |
 
 ### UI/UX & Design
 
@@ -85,6 +88,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **trailofbits-skills-curated** | Trail of Bits vetted plugins | trailofbits/skills-curated |
 | **sentry-security-review** | Sentry-convention commits + security review | getsentry/skills |
 | **anthropic-cybersecurity-skills** | Cybersecurity skill collection | mukul975/Anthropic-Cybersecurity-Skills |
+| **cloudflare-security-audit** | Multi-agent orchestrated penetration audit (recon / attack classes / validated reporting) | cloudflare/security-audit-skill |
 
 ### Document Processing
 
@@ -94,6 +98,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **pdf** | Process PDFs (read / merge / extract) | anthropics/skills |
 | **pptx** | Create / edit presentations | anthropics/skills |
 | **xlsx** | Create / edit spreadsheets | anthropics/skills |
+| **archify** | Architecture / sequence / dataflow interactive diagram generator (JSON IR + renderers) | tt-a1i/archify |
 
 ### Writing & Content
 
@@ -168,6 +173,7 @@ Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit 
 
 - Added `security-radar`: daily scheduled scan of security packages (15 entries so far across supply chain, JWT, secrets, SAST), three-dimension verification, auto PR and merge
 - security-radar now carries an OWASP Top 10:2025 column and a coverage matrix that steers upcoming themes by gaps
+- External skills table now lists antfu-skills, cc-skills-golang, tgd-skills, archify, cloudflare-security-audit; removed sync leftover `external/test-space-dir`
 - security-reviewer OWASP mapping updated to Top 10:2025, plus Agentic Applications 2026 (ASI01–ASI10) and GenAI LLM Top 10 2026 (LLM01–LLM10)
 
 ### 2026-06-09

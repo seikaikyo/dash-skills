@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 14 個 (`skills/`) + 外部收錄 51 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 14 個 (`skills/`) + 外部收錄 50 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -44,6 +44,9 @@
 | **mcp-builder** | 建立高品質 MCP server | anthropics/skills |
 | **skill-creator** | 建立 / 改進 / 評測 skill | anthropics/skills |
 | **claude-api** | Claude API 使用指南 | anthropics/skills |
+| **antfu-skills** | Anthony Fu 的 Vue / Nuxt / Vite / UnoCSS 生態規範 (19 個子 skill) | antfu/skills |
+| **cc-skills-golang** | Go 開發規範 (46 個子 skill：context / 並行 / DI / CI 等，lo/do 作者) | samber/cc-skills-golang |
+| **tgd-skills** | tGD PDLC 工程紀律 (29 個子 skill：審查 / 除錯 / 上線 / ADR 等，僅文件層) | openclawyhwang-hub/tGD |
 
 ### UI/UX 與設計
 
@@ -85,6 +88,7 @@
 | **trailofbits-skills-curated** | Trail of Bits 審核過的 plugin 精選 | trailofbits/skills-curated |
 | **sentry-security-review** | Sentry 慣例 commit + 安全審查 | getsentry/skills |
 | **anthropic-cybersecurity-skills** | 網路安全 skill 集 | mukul975/Anthropic-Cybersecurity-Skills |
+| **cloudflare-security-audit** | 多 agent 編排式滲透審計 (偵察 / 攻擊類別 / 驗證報告) | cloudflare/security-audit-skill |
 
 ### 文件處理
 
@@ -94,6 +98,7 @@
 | **pdf** | 處理 PDF (讀取 / 合併 / 提取) | anthropics/skills |
 | **pptx** | 建立 / 編輯簡報 | anthropics/skills |
 | **xlsx** | 建立 / 編輯試算表 | anthropics/skills |
+| **archify** | 架構 / 時序 / 資料流互動圖產生器 (JSON IR + 多種 renderer) | tt-a1i/archify |
 
 ### 寫作與內容
 
@@ -206,6 +211,7 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 - 新增 `security-radar`：每日排程掃描資安套件（供應鏈、JWT、secrets、SAST 四輪已收錄 15 筆），三維度查證後自動開 PR 並合併
 - security-radar 加入 OWASP Top 10:2025 對應欄與涵蓋矩陣，以缺口決定後續主題
+- 外部 skills 表補齊 antfu-skills、cc-skills-golang、tgd-skills、archify、cloudflare-security-audit；移除同步殘留的 `external/test-space-dir`
 - security-reviewer 的 OWASP 對照更新至 Top 10:2025，新增 Agentic Applications 2026（ASI01–ASI10）與 GenAI LLM Top 10 2026（LLM01–LLM10）
 
 ### 2026-06-09
