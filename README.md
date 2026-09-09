@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 12 個 (`skills/`) + 外部收錄 48 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 14 個 (`skills/`) + 外部收錄 51 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -19,7 +19,7 @@
 | **angular-primeng** | Angular 21 + PrimeNG 企業應用開發規範 (MES / ERP / 後台) |
 | **fastapi-patterns** | FastAPI + SQLModel + Neon 後端開發規範 |
 | **openspec** | 規格驅動開發 (SDD) 工作流程 |
-| **security-reviewer** | 安全漏洞檢測與修復 (OWASP Top 10) |
+| **security-reviewer** | 安全漏洞檢測與修復，對照 OWASP Top 10:2025、Agentic Applications 2026、GenAI LLM Top 10 2026 |
 | **build-error-resolver** | 建構與 TypeScript 錯誤快速修復 |
 | **refactor-cleaner** | 死代碼清理與重構整合 |
 | **architecture-audit** | 架構文件稽核，比對 CLAUDE.md 與實際程式碼結構 |
@@ -29,6 +29,7 @@
 | **interview-me** | 需求不明時的意圖萃取訪談 (改寫自 tGD, Apache-2.0) |
 | **sketch** | 拋棄式 HTML mockup 比稿，2 到 3 個設計立場變體 (改寫自 tGD, Apache-2.0) |
 | **security-scan** | 相依漏洞 / 機密 / SAST 三層外部掃描，結果對回 OWASP Top 10:2025 |
+| **security-radar** | 資安套件情報雷達：每日自動掃描並收錄「有效 / 熱門 / 自身安全」的資安工具，附 OWASP Top 10:2025 對應與涵蓋矩陣 |
 
 ### 開發與部署
 
@@ -200,6 +201,12 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 | 後端部署 | Render |
 
 ## 更新紀錄
+
+### 2026-09-09
+
+- 新增 `security-radar`：每日排程掃描資安套件（供應鏈、JWT、secrets、SAST 四輪已收錄 15 筆），三維度查證後自動開 PR 並合併
+- security-radar 加入 OWASP Top 10:2025 對應欄與涵蓋矩陣，以缺口決定後續主題
+- security-reviewer 的 OWASP 對照更新至 Top 10:2025，新增 Agentic Applications 2026（ASI01–ASI10）與 GenAI LLM Top 10 2026（LLM01–LLM10）
 
 ### 2026-06-09
 
