@@ -10,7 +10,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 ## 収録スキル
 
-> 自作 12 個 (`skills/`) + 外部収録 48 個 (`external/`)。外部スキルは毎日上流から自動同期。
+> 自作 14 個 (`skills/`) + 外部収録 51 個 (`external/`)。外部スキルは毎日上流から自動同期。
 
 ### 自作 (`skills/`)
 
@@ -19,7 +19,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **angular-primeng** | Angular 21 + PrimeNG 企業アプリ開発規範 (MES / ERP / 管理画面) |
 | **fastapi-patterns** | FastAPI + SQLModel + Neon バックエンド規範 |
 | **openspec** | 仕様駆動開発 (SDD) ワークフロー |
-| **security-reviewer** | 脆弱性検出と修復 (OWASP Top 10) |
+| **security-reviewer** | 脆弱性検出と修復、OWASP Top 10:2025・Agentic Applications 2026・GenAI LLM Top 10 2026 に対応付け |
 | **build-error-resolver** | ビルド・TypeScript エラー即修復 |
 | **refactor-cleaner** | 不使用コード整理とリファクタ統合 |
 | **architecture-audit** | ドキュメントと実コード構造の差分監査 (CLAUDE.md) |
@@ -29,6 +29,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **interview-me** | 要件不明時の意図抽出インタビュー (tGD より改作, Apache-2.0) |
 | **sketch** | 使い捨て HTML モックアップ比較、2〜3 のデザイン方針バリアント (tGD より改作, Apache-2.0) |
 | **security-scan** | 依存脆弱性・シークレット・SAST の三層スキャン、OWASP Top 10:2025 に対応付け |
+| **security-radar** | セキュリティパッケージレーダー：毎日自動スキャンし「有効 / 人気 / 自身が安全」なセキュリティツールを収録、OWASP Top 10:2025 対応とカバレッジ行列付き |
 
 ### 開発・デプロイ
 
@@ -162,6 +163,12 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 毎日自動：SKILL.md 更新、agent-browser CLI バージョン確認、自動 commit + push。
 
 ## 更新履歴
+
+### 2026-09-09
+
+- `security-radar` を追加：セキュリティパッケージの日次スケジュールスキャン（サプライチェーン・JWT・シークレット・SAST の 4 回で 15 件収録）、三軸検証後に PR を自動作成・マージ
+- security-radar に OWASP Top 10:2025 対応列とカバレッジ行列を追加、ギャップで次のテーマを決定
+- security-reviewer の OWASP 対応を Top 10:2025 に更新、Agentic Applications 2026（ASI01–ASI10）と GenAI LLM Top 10 2026（LLM01–LLM10）を追加
 
 ### 2026-06-09
 
