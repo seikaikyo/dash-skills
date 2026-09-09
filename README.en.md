@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 12 custom (`skills/`) + 48 external (`external/`). External skills auto-sync daily from upstream.
+> 14 custom (`skills/`) + 51 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -19,7 +19,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **angular-primeng** | Angular 21 + PrimeNG enterprise standards (MES / ERP / admin) |
 | **fastapi-patterns** | FastAPI + SQLModel + Neon backend standards |
 | **openspec** | Spec-driven development (SDD) workflow |
-| **security-reviewer** | Vulnerability detection and fix (OWASP Top 10) |
+| **security-reviewer** | Vulnerability detection and fix, mapped to OWASP Top 10:2025, Agentic Applications 2026 and GenAI LLM Top 10 2026 |
 | **build-error-resolver** | Build and TypeScript error quick-fix |
 | **refactor-cleaner** | Dead code cleanup and refactor consolidation |
 | **architecture-audit** | Audit docs vs actual code structure (CLAUDE.md drift) |
@@ -29,6 +29,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **interview-me** | Intent-extraction interview for underspecified asks (adapted from tGD, Apache-2.0) |
 | **sketch** | Throwaway HTML mockups, 2-3 design-stance variants (adapted from tGD, Apache-2.0) |
 | **security-scan** | Three-layer external scan (deps / secrets / SAST) mapped to OWASP Top 10:2025 |
+| **security-radar** | Security package radar: daily automated scan curating effective / popular / self-secure security tools, with OWASP Top 10:2025 mapping and coverage matrix |
 
 ### Development & Deployment
 
@@ -162,6 +163,12 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit + push.
 
 ## Changelog
+
+### 2026-09-09
+
+- Added `security-radar`: daily scheduled scan of security packages (15 entries so far across supply chain, JWT, secrets, SAST), three-dimension verification, auto PR and merge
+- security-radar now carries an OWASP Top 10:2025 column and a coverage matrix that steers upcoming themes by gaps
+- security-reviewer OWASP mapping updated to Top 10:2025, plus Agentic Applications 2026 (ASI01–ASI10) and GenAI LLM Top 10 2026 (LLM01–LLM10)
 
 ### 2026-06-09
 
