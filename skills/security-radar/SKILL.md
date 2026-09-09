@@ -1,7 +1,7 @@
 ---
 name: security-radar
 description: 資安套件情報雷達。每日掃描並精選「有效、熱門、自身安全」的資安套件/工具，聚焦 Nuxt 3 / Vue 3 / TypeScript（npm）、Go、Python (FastAPI) 技術棧。查詢已收錄套件的評估結論、安全狀態與選型建議時使用。
-updated: 2026-08-31
+updated: 2026-09-09
 ---
 
 # Security Radar（資安套件情報雷達）
@@ -34,6 +34,13 @@ Vercel / Render、Logto JWT/JWKS）的資安選型依據。
 - 每日主題輪替：npm/JS（依賴稽核、XSS/CSP、JWT、rate limiting）、
   Go（安全 middleware、secrets 掃描、fuzzing）、
   通用（SAST、supply chain、secrets 偵測、容器/CI 安全）。
+- **OWASP 對應**：每筆收錄必填「OWASP 2025」欄，以 [OWASP Top 10:2025](https://owasp.org/Top10/2025/)
+  代碼標示（可多個）。A01 Broken Access Control（含 SSRF）｜A02 Security Misconfiguration｜
+  A03 Software Supply Chain Failures｜A04 Cryptographic Failures｜A05 Injection｜
+  A06 Insecure Design｜A07 Authentication Failures｜A08 Software or Data Integrity Failures｜
+  A09 Security Logging and Alerting Failures｜A10 Mishandling of Exceptional Conditions。
+  新增後同步更新 `packages.md` 文末的涵蓋矩陣，並以矩陣「缺口」欄優先決定次日主題。
+  OWASP 若發布新版，先更新此對照與矩陣標題，再依新版重標。
 - 有新收錄或狀態更新才 commit / 開 PR；當天無變化則不動 repo。
 - **自動 merge**（使用者已於 2026-08-31 授權）：PR 開**正式**（非 draft）；
   確認無 merge conflict 且 CI（若有）全綠後，直接以 squash 合併並附合併說明，
