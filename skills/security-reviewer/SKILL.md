@@ -1,9 +1,9 @@
 ---
 name: security-reviewer
-description: 安全漏洞檢測與修復專家。在撰寫處理用戶輸入、認證、API 端點或敏感資料的程式碼後主動使用。檢測機密資料外洩、SSRF、注入攻擊、不安全加密和 OWASP Top 10 漏洞。
+description: 安全漏洞檢測與修復專家。在撰寫處理用戶輸入、認證、API 端點、敏感資料或 AI agent/MCP 工具的程式碼後主動使用。檢測機密資料外洩、SSRF、注入攻擊、不安全加密，對照 OWASP Top 10:2025 與 OWASP Top 10 for Agentic Applications 2026。
 source: everything-claude-code (MIT License)
 original_author: affaan-m
-updated: 2026-01-22
+updated: 2026-09-09
 ---
 
 # Security Reviewer (安全審查)
@@ -212,6 +212,50 @@ npm update
 - [ ] lock 檔案已提交
 - [ ] GitHub Dependabot 已啟用
 
+## OWASP 對照
+
+### OWASP Top 10:2025（最新正式版，2026-01 定稿）
+
+相對 2021 版：SSRF 併入 A01；新增 A03 軟體供應鏈失效、A10 例外狀況處理不當；A02 設定錯誤升至第二。
+
+| 代碼 | 分類 | 對應本清單 | 審查重點 |
+|------|------|-----------|----------|
+| A01 | Broken Access Control（含 SSRF） | 4 認證與授權、6 CSRF | 每個端點都有物件層授權；伺服器端發出的 URL 必須白名單 |
+| A02 | Security Misconfiguration | 部署前檢查清單 | 安全標頭、CSP、預設帳密、除錯模式、CORS 範圍 |
+| A03 | Software Supply Chain Failures | 10 依賴安全 | lockfile 提交、依賴來源可信、CI 動作版本 pinning |
+| A04 | Cryptographic Failures | 1 機密資料管理、8 敏感資料外洩 | 演算法與金鑰長度、傳輸與靜態加密、勿自製加密 |
+| A05 | Injection | 2 輸入驗證、3 SQL 注入、5 XSS | 參數化查詢、輸出編碼、命令列與模板注入 |
+| A06 | Insecure Design | （設計階段） | 威脅建模、信任邊界、業務邏輯濫用情境 |
+| A07 | Authentication Failures | 4 認證與授權、7 速率限制 | token 驗證完整（iss/aud/exp/alg）、暴力破解防護、session 固定 |
+| A08 | Software or Data Integrity Failures | 10 依賴安全 | 反序列化來源、未簽章更新、CI/CD 產物完整性 |
+| A09 | Security Logging and Alerting Failures | 緊急應變 | 關鍵事件有紀錄且可告警；log 不含機密 |
+| A10 | Mishandling of Exceptional Conditions | 2 輸入驗證 | 錯誤路徑 fail-closed、例外不洩漏內部資訊、資源釋放 |
+
+### OWASP Top 10 for Agentic Applications 2026（ASI，2025-12 發布）
+
+審查 AI agent、MCP server、tool-calling、自動化 routine 相關程式碼時，額外對照本表。
+來源：OWASP GenAI Security Project。
+
+| 代碼 | 分類 | 審查重點 |
+|------|------|----------|
+| ASI01 | Agent Goal Hijack | 外部內容（網頁、文件、issue、commit message）視為資料而非指令；prompt injection 防線與工具輸出隔離 |
+| ASI02 | Tool Misuse & Exploitation | 每個 tool 有明確參數 schema 與範圍限制；破壞性操作需確認；工具描述不可被外部內容改寫 |
+| ASI03 | Identity & Privilege Abuse | agent 憑證最小權限、短效、可撤銷；勿把人類的長效 token 直接交給 agent；操作可歸因到觸發者 |
+| ASI04 | Agentic Supply Chain Vulnerabilities | MCP server、plugin、skill、模型來源可信且 pinning；第三方 skill 進 repo 前掃描（本 repo 的 SkillSpector） |
+| ASI05 | Unexpected Code Execution (RCE) | agent 產生的程式碼在沙箱執行；shell / eval / 檔案寫入範圍限制；禁止把模型輸出直接餵給直譯器 |
+| ASI06 | Memory & Context Poisoning | 長期記憶與 RAG 來源有寫入控管；快照 / 狀態檔的內容視為不可信資料；記憶可清除與稽核 |
+| ASI07 | Insecure Inter-Agent Communication | agent 之間訊息需驗證來源與完整性；不因訊息「來自另一個 agent」就提升信任 |
+| ASI08 | Cascading Failures | 單一 agent 出錯不應連鎖擴散；有熔斷、重試上限、預算上限（token / 次數 / 費用） |
+| ASI09 | Human-Agent Trust Exploitation | agent 輸出不得偽裝成人類決定或系統訊息；高風險動作留人類確認點 |
+| ASI10 | Rogue Agents | 排程 / 常駐 agent 有停止開關、行為監控與異常告警；權限與範圍可隨時收回 |
+
+**檢查項目（agent 程式碼）:**
+- [ ] 外部輸入（工具結果、抓取內容、通知）標示為不可信並隔離
+- [ ] 每個 tool 有 schema、範圍與破壞性操作確認
+- [ ] agent 憑證最小權限且可撤銷；操作可追溯到觸發者
+- [ ] 第三方 skill / MCP / plugin 來源可信並掃描
+- [ ] 程式碼執行沙箱化；預算與重試上限；有緊急停止開關
+
 ## 安全審查報告格式
 
 ```markdown
@@ -271,6 +315,8 @@ npm update
 
 ## 相關資源
 
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [OWASP Top 10:2025](https://owasp.org/Top10/2025/)
+- [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
+- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/)
 - [Next.js 安全指南](https://nextjs.org/docs/security)
 - [Supabase 安全指南](https://supabase.com/docs/guides/auth)
