@@ -19,6 +19,9 @@
 | [gosec](https://github.com/securego/gosec) | Go（CLI / GitHub Action） | Go 專用 SAST：掃 AST/SSA 找硬編碼憑證、SQL 注入、弱加密等，內建 taint 分析，輸出 SARIF 進 GitHub code scanning | A04、A05、A10 | 8.9k ★；v2.29.0（2026-08-26），活躍 | ✅ GitHub Advisory 無自身公告 | 2026-09-08 | Go 後端 CI 標配，與 semgrep 互補（gosec 規則更貼 Go 慣用漏洞型態） |
 | [bandit](https://github.com/PyCQA/bandit) | Python (pip) | Python 專用 SAST：AST 掃描常見安全問題（assert、eval、subprocess shell、弱雜湊等），PyCQA 官方維護 | A04、A05 | 8.3k ★；持續維護（1.5k commits） | ✅ GitHub Advisory 無自身公告（同名 Erlang 套件的公告勿混淆） | 2026-09-08 | FastAPI 專案 CI 輕量首選；誤報需人工分流，建議搭 baseline |
 | [eslint-plugin-security](https://github.com/eslint-community/eslint-plugin-security) | npm | JS/TS SAST（lint 層）：15 條規則抓 eval 注入、非常值 fs 路徑、ReDoS、timing attack 等 Node 端安全熱點 | A01、A05 | 2.4k ★；v4.0.1（2026-06-12），eslint-community 維護 | ✅ GitHub Advisory 無自身公告 | 2026-09-08 | Nuxt server 端（nitro）適用；官方自述誤報偏多，當提示器用、勿當閘門 |
+| [cosign](https://github.com/sigstore/cosign) | Go（CLI，跨生態） | Artifact 簽章與驗證（sigstore）：對容器映像、blob、SBOM attestation 做 keyless 簽章（Fulcio + Rekor 透明日誌），CI 產物出廠前簽、部署前驗 | A03、A08 | 6.3k ★；v3.1.3（2026-08-06），3.2k commits，活躍 | ✅ [GHSA-fx35-mq7g-6g98](https://github.com/sigstore/cosign/security/advisories/GHSA-fx35-mq7g-6g98)（高危，legacy bundle 公鑰驗證繞過）已於 3.1.3 / 2.6.5 修補；4 月 [CVE-2026-39395](https://github.com/advisories/GHSA-w6c6-c85g-mmv6)（中危）修於 3.0.6；使用 ≥3.1.3 | 2026-09-09 | sigstore 官方；Render/Vercel 部署前可加 `cosign verify` 閘門；驗證 blob 請用新 bundle 格式，勿用 legacy JSON |
+| [syft](https://github.com/anchore/syft) | Go（CLI，跨生態） | SBOM 產生：掃容器映像 / 檔案系統輸出 CycloneDX / SPDX，涵蓋 npm、Go、Python 等數十種生態，可搭 cosign 做 SBOM attestation | A03、A08 | 9.5k ★；v1.51.1（2026-08-27），3.5k commits，高度活躍 | ✅ [CVE-2026-33481](https://github.com/advisories/GHSA-rjcw-vg7j-m9rc)（中危，暫存檔清理不當）已於 1.42.3 修補；2023 憑證洩露公告亦已修；使用 ≥1.42.3 | 2026-09-09 | Anchore 維護；與 osv-scanner / trivy 互補（syft 產 SBOM，前者吃 SBOM 掃漏洞）|
+| [zizmor](https://github.com/zizmorcore/zizmor) | Rust（CLI；pip / cargo / brew / GitHub Action） | CI/CD 靜態分析：掃 GitHub Actions workflow 的範本注入、憑證外洩、權限過大、未 pin 的 action / ref 偽造，也檢查 Dependabot 與 pre-commit 設定 | A02、A03、A08 | 6.5k ★；v1.30.1（2026-09-09），1.6k commits，高度活躍 | ✅ GitHub Advisory 無自身公告 | 2026-09-09 | Trail of Bits / Grafana 贊助；補矩陣 A08「CI 動作 pinning 檢查」缺口，dash-skills 自身的同步 workflow 也適用 |
 
 ## OWASP Top 10:2025 涵蓋矩陣
 
@@ -27,14 +30,14 @@
 | 代碼 | 分類 | 已收錄工具 | 缺口 |
 |------|------|------------|------|
 | A01 | Broken Access Control（含 SSRF） | nuxt-security（CSRF/rate limit）、semgrep、eslint-plugin-security | 缺授權邏輯測試工具（DAST / 授權矩陣檢查） |
-| A02 | Security Misconfiguration | nuxt-security、trivy（IaC）、gitleaks / trufflehog / secretlint | — |
-| A03 | Software Supply Chain Failures | osv-scanner、trivy、scorecard、lockfile-lint | 缺 SBOM 產生與簽章驗證（syft / cosign 類） |
+| A02 | Security Misconfiguration | nuxt-security、trivy（IaC）、gitleaks / trufflehog / secretlint、zizmor（CI 設定） | — |
+| A03 | Software Supply Chain Failures | osv-scanner、trivy、scorecard、lockfile-lint、syft（SBOM）、cosign、zizmor | — |
 | A04 | Cryptographic Failures | jose、golang-jwt、PyJWT、semgrep、gosec、bandit | — |
 | A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security | 缺前端 HTML 淨化庫（DOMPurify 類）與 DAST |
 | A06 | Insecure Design | — | 屬設計流程（威脅建模），非套件可解；可考慮收 threat-modeling 工具 |
 | A07 | Authentication Failures | jose、golang-jwt、PyJWT、gitleaks / trufflehog / secretlint（硬編碼憑證） | 缺 rate limiting / 暴力破解防護（後端層） |
-| A08 | Software or Data Integrity Failures | scorecard（SLSA）、lockfile-lint | 缺 artifact 簽章驗證（sigstore / cosign）與 CI 動作 pinning 檢查 |
+| A08 | Software or Data Integrity Failures | scorecard（SLSA）、lockfile-lint、cosign（簽章驗證）、syft（SBOM attestation）、zizmor（action pinning） | 缺反序列化 / 不可信資料完整性檢查（應用層） |
 | A09 | Security Logging and Alerting Failures | — | 非套件雷達範圍，由 daily-security-watch 與 Sentry 巡檢覆蓋 |
 | A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理） | 缺 fuzzing（go-fuzz / atheris 類） |
 
-缺口欄用來指引後續主題輪替：優先補 A08 簽章驗證、A05 前端淨化、A07 rate limiting、A10 fuzzing。
+缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（2026-09-09）；接下來優先 A05 前端淨化、A07 rate limiting、A10 fuzzing。
