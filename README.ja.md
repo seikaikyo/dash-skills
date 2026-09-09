@@ -10,7 +10,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 ## 収録スキル
 
-> 自作 14 個 (`skills/`) + 外部収録 51 個 (`external/`)。外部スキルは毎日上流から自動同期。
+> 自作 14 個 (`skills/`) + 外部収録 50 個 (`external/`)。外部スキルは毎日上流から自動同期。
 
 ### 自作 (`skills/`)
 
@@ -44,6 +44,9 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **mcp-builder** | 高品質な MCP サーバー構築 | anthropics/skills |
 | **skill-creator** | skill の作成 / 改善 / 評価 | anthropics/skills |
 | **claude-api** | Claude API 利用ガイド | anthropics/skills |
+| **antfu-skills** | Anthony Fu の Vue / Nuxt / Vite / UnoCSS エコシステム規範 (19 サブスキル) | antfu/skills |
+| **cc-skills-golang** | Go 開発規範 (46 サブスキル：context / 並行 / DI / CI 等、lo/do 作者) | samber/cc-skills-golang |
+| **tgd-skills** | tGD PDLC エンジニアリング規律 (29 サブスキル：レビュー / デバッグ / リリース / ADR 等、ドキュメント層のみ) | openclawyhwang-hub/tGD |
 
 ### UI/UX・デザイン
 
@@ -85,6 +88,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **trailofbits-skills-curated** | Trail of Bits 審査済みプラグイン | trailofbits/skills-curated |
 | **sentry-security-review** | Sentry 規約コミット + セキュリティレビュー | getsentry/skills |
 | **anthropic-cybersecurity-skills** | サイバーセキュリティ skill 集 | mukul975/Anthropic-Cybersecurity-Skills |
+| **cloudflare-security-audit** | マルチエージェント編成型ペネトレーション監査 (偵察 / 攻撃クラス / 検証レポート) | cloudflare/security-audit-skill |
 
 ### ドキュメント処理
 
@@ -94,6 +98,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **pdf** | PDF 処理 (読取 / 結合 / 抽出) | anthropics/skills |
 | **pptx** | プレゼンの作成 / 編集 | anthropics/skills |
 | **xlsx** | スプレッドシートの作成 / 編集 | anthropics/skills |
+| **archify** | アーキテクチャ / シーケンス / データフロー対話型図生成 (JSON IR + 各種レンダラー) | tt-a1i/archify |
 
 ### ライティング・コンテンツ
 
@@ -168,6 +173,7 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 - `security-radar` を追加：セキュリティパッケージの日次スケジュールスキャン（サプライチェーン・JWT・シークレット・SAST の 4 回で 15 件収録）、三軸検証後に PR を自動作成・マージ
 - security-radar に OWASP Top 10:2025 対応列とカバレッジ行列を追加、ギャップで次のテーマを決定
+- 外部スキル表に antfu-skills、cc-skills-golang、tgd-skills、archify、cloudflare-security-audit を追加；同期の残骸 `external/test-space-dir` を削除
 - security-reviewer の OWASP 対応を Top 10:2025 に更新、Agentic Applications 2026（ASI01–ASI10）と GenAI LLM Top 10 2026（LLM01–LLM10）を追加
 
 ### 2026-06-09
