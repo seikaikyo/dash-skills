@@ -1,6 +1,6 @@
 ---
 name: security-reviewer
-description: 安全漏洞檢測與修復專家。在撰寫處理用戶輸入、認證、API 端點、敏感資料或 AI agent/MCP 工具的程式碼後主動使用。檢測機密資料外洩、SSRF、注入攻擊、不安全加密，對照 OWASP Top 10:2025 與 OWASP Top 10 for Agentic Applications 2026。
+description: 安全漏洞檢測與修復專家。在撰寫處理用戶輸入、認證、API 端點、敏感資料或 AI agent/MCP 工具的程式碼後主動使用。檢測機密資料外洩、SSRF、注入攻擊、不安全加密，對照 OWASP Top 10:2025、OWASP Top 10 for Agentic Applications 2026 與 OWASP GenAI LLM Top 10 2026。
 source: everything-claude-code (MIT License)
 original_author: affaan-m
 updated: 2026-09-09
@@ -249,6 +249,23 @@ npm update
 | ASI09 | Human-Agent Trust Exploitation | agent 輸出不得偽裝成人類決定或系統訊息；高風險動作留人類確認點 |
 | ASI10 | Rogue Agents | 排程 / 常駐 agent 有停止開關、行為監控與異常告警；權限與範圍可隨時收回 |
 
+### OWASP GenAI LLM Top 10 2026（LLM，2026-08 發布）
+
+任何直接呼叫模型的程式碼（prompt 組裝、RAG、輸出解析）對照本表；agent 相關另看上方 ASI 表。
+
+| 代碼 | 分類 | 審查重點 |
+|------|------|----------|
+| LLM01 | Prompt Injection | 使用者與外部內容與系統指令分層；工具輸出不回灌為指令 |
+| LLM02 | Sensitive Information Disclosure | prompt / context 不含機密；輸出過濾 PII 與憑證 |
+| LLM03 | Excessive Agency | 模型可觸發的動作最小化；高風險動作需確認 |
+| LLM04 | Supply Chain | 模型、權重、prompt 模板、第三方 API 來源可信且 pinning |
+| LLM05 | Data and Model Poisoning | 訓練 / 微調 / RAG 資料來源控管與稽核 |
+| LLM06 | Unbounded Consumption | token、請求數、費用上限；防 DoS 與錢包耗盡 |
+| LLM07 | Misinformation | 關鍵輸出有驗證或引用來源；不把模型輸出當事實直接落庫 |
+| LLM08 | Hidden Context Exposure | 系統提示、檢索文件、記憶、工具回應皆視為可能外洩面 |
+| LLM09 | Vector and Embedding Weaknesses | 向量庫存取控制、多租戶隔離、嵌入反演風險 |
+| LLM10 | Improper Output Handling | 模型輸出進 HTML / SQL / shell 前一律編碼或參數化 |
+
 **檢查項目（agent 程式碼）:**
 - [ ] 外部輸入（工具結果、抓取內容、通知）標示為不可信並隔離
 - [ ] 每個 tool 有 schema、範圍與破壞性操作確認
@@ -317,6 +334,6 @@ npm update
 
 - [OWASP Top 10:2025](https://owasp.org/Top10/2025/)
 - [OWASP Top 10 for Agentic Applications 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)
-- [OWASP Top 10 for LLM Applications 2025](https://genai.owasp.org/llm-top-10/)
+- [OWASP GenAI LLM Top 10 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/)
 - [Next.js 安全指南](https://nextjs.org/docs/security)
 - [Supabase 安全指南](https://supabase.com/docs/guides/auth)
