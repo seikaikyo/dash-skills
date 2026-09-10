@@ -41,6 +41,35 @@ An AI skill that provides design intelligence for building professional UI/UX ac
   <a href="https://nextlevelbuilder.io">NextLevelBuilder.io</a> | <a href="https://goclaw.sh">GoClaw.sh</a> | <a href="https://agentkit.best">AgentKit.best</a> | <a href="https://tose.sh">TOSE.sh</a>
 </p>
 
+---
+
+<p align="center">
+  <span>Check Out Our New Skill:</span>
+  <br/>
+  <a href="https://github.com/viettranx/3dviz-pro-max" target="_blank">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://cdn.nextlevelbuilder.io/skills/3dviz/wordmark-dark.svg">
+      <img src="https://cdn.nextlevelbuilder.io/skills/3dviz/wordmark.svg" alt="3Dviz Pro Max" height="56">
+    </picture>
+  </a>
+</p>
+
+<p align="center"><b>Turn an idea into a 3D scene worth exploring.</b></p>
+
+<p align="center">
+  <img src="https://cdn.nextlevelbuilder.io/skills/3dviz/harness-village.gif" width="800" alt="Harness Village: a fantasy village with camera navigation and animated creatures">
+</p>
+
+<p align="center">
+  <sub><b>Visual inspiration, not a benchmark.</b> An author-supplied project recorded <i>before</i> this skill existed; its UI contains Vietnamese. Historical footage, not an English demo or a runtime test of the skill — see <a href="https://github.com/viettranx/3dviz-pro-max/blob/main/docs/demos/README.md">media provenance</a>.</sub>
+</p>
+
+<p align="center">
+  🤌 Website: <a href="https://3dviz.dev/" target="_blank">https://3dviz.dev/</a>
+</p>
+
+---
+
 ## What's New in v2.0
 
 ### Intelligent Design System Generation
