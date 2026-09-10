@@ -22,6 +22,9 @@
 | [cosign](https://github.com/sigstore/cosign) | Go（CLI，跨生態） | Artifact 簽章與驗證（sigstore）：對容器映像、blob、SBOM attestation 做 keyless 簽章（Fulcio + Rekor 透明日誌），CI 產物出廠前簽、部署前驗 | A03、A08 | 6.3k ★；v3.1.3（2026-08-06），3.2k commits，活躍 | ✅ [GHSA-fx35-mq7g-6g98](https://github.com/sigstore/cosign/security/advisories/GHSA-fx35-mq7g-6g98)（高危，legacy bundle 公鑰驗證繞過）已於 3.1.3 / 2.6.5 修補；4 月 [CVE-2026-39395](https://github.com/advisories/GHSA-w6c6-c85g-mmv6)（中危）修於 3.0.6；使用 ≥3.1.3 | 2026-09-09 | sigstore 官方；Render/Vercel 部署前可加 `cosign verify` 閘門；驗證 blob 請用新 bundle 格式，勿用 legacy JSON |
 | [syft](https://github.com/anchore/syft) | Go（CLI，跨生態） | SBOM 產生：掃容器映像 / 檔案系統輸出 CycloneDX / SPDX，涵蓋 npm、Go、Python 等數十種生態，可搭 cosign 做 SBOM attestation | A03、A08 | 9.5k ★；v1.51.1（2026-08-27），3.5k commits，高度活躍 | ✅ [CVE-2026-33481](https://github.com/advisories/GHSA-rjcw-vg7j-m9rc)（中危，暫存檔清理不當）已於 1.42.3 修補；2023 憑證洩露公告亦已修；使用 ≥1.42.3 | 2026-09-09 | Anchore 維護；與 osv-scanner / trivy 互補（syft 產 SBOM，前者吃 SBOM 掃漏洞）|
 | [zizmor](https://github.com/zizmorcore/zizmor) | Rust（CLI；pip / cargo / brew / GitHub Action） | CI/CD 靜態分析：掃 GitHub Actions workflow 的範本注入、憑證外洩、權限過大、未 pin 的 action / ref 偽造，也檢查 Dependabot 與 pre-commit 設定 | A02、A03、A08 | 6.5k ★；v1.30.1（2026-09-09），1.6k commits，高度活躍 | ✅ GitHub Advisory 無自身公告 | 2026-09-09 | Trail of Bits / Grafana 贊助；補矩陣 A08「CI 動作 pinning 檢查」缺口，dash-skills 自身的同步 workflow 也適用 |
+| [DOMPurify](https://github.com/cure53/DOMPurify) | npm（瀏覽器 / Node + jsdom） | HTML / SVG / MathML XSS 淨化：DOM 層允許清單過濾，內建 DOM clobbering 防護與 Trusted Types 支援，是前端渲染不可信 HTML 的事實標準 | A05 | 17.4k ★；v3.4.15（2026-09-06），Cure53 維護，高度活躍 | ✅ 2026-06～08 共 10 筆公告（IN_PLACE 模式、hook 污染等，中/低危）均已修補，最晚一批修於 3.4.13；使用 ≥3.4.15 | 2026-09-10 | 補矩陣 A05「前端淨化庫」缺口；SSR 用 isomorphic-dompurify；勿用 IN_PLACE 模式處理不可信輸入 |
+| [vue-dompurify-html](https://github.com/LeSuisse/vue-dompurify-html) | npm（Vue 3 / Nuxt 3） | `v-dompurify-html` 指令取代 `v-html`，把 DOMPurify 接進 Vue 模板；repo 附 Nuxt 3 範例（搭 isomorphic-dompurify） | A05 | 336 ★；v5.3.0（2025-05），2026-09-09 仍有 commit，Renovate 持續維護 | ✅ GitHub Advisory 無自身公告（安全面隨 DOMPurify） | 2026-09-10 | 現版僅支援 Vue 3；限制：指令內容只在 client 端淨化，SSR 輸出仍需 server 端另行處理 |
+| [nh3](https://github.com/messense/nh3) | Python (pip)（Rust ammonia 綁定） | Python HTML 淨化：bleach 已棄用後的官方推薦後繼，允許清單模式，效能約為 bleach 20 倍 | A05 | 393 ★；v0.3.7，2026-08 仍活躍，maturin 作者維護 | ✅ GitHub Advisory 無 nh3 / ammonia 公告 | 2026-09-10 | FastAPI 端若需回存或輸出使用者 HTML 用此；小眾但為 bleach 官方指定替代，勿再用 bleach |
 
 ## OWASP Top 10:2025 涵蓋矩陣
 
@@ -33,11 +36,11 @@
 | A02 | Security Misconfiguration | nuxt-security、trivy（IaC）、gitleaks / trufflehog / secretlint、zizmor（CI 設定） | — |
 | A03 | Software Supply Chain Failures | osv-scanner、trivy、scorecard、lockfile-lint、syft（SBOM）、cosign、zizmor | — |
 | A04 | Cryptographic Failures | jose、golang-jwt、PyJWT、semgrep、gosec、bandit | — |
-| A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security | 缺前端 HTML 淨化庫（DOMPurify 類）與 DAST |
+| A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security、DOMPurify / vue-dompurify-html（前端）、nh3（Python） | 缺 Go 端 HTML 淨化庫（bluemonday 已停滯）與 DAST |
 | A06 | Insecure Design | — | 屬設計流程（威脅建模），非套件可解；可考慮收 threat-modeling 工具 |
 | A07 | Authentication Failures | jose、golang-jwt、PyJWT、gitleaks / trufflehog / secretlint（硬編碼憑證） | 缺 rate limiting / 暴力破解防護（後端層） |
 | A08 | Software or Data Integrity Failures | scorecard（SLSA）、lockfile-lint、cosign（簽章驗證）、syft（SBOM attestation）、zizmor（action pinning） | 缺反序列化 / 不可信資料完整性檢查（應用層） |
 | A09 | Security Logging and Alerting Failures | — | 非套件雷達範圍，由 daily-security-watch 與 Sentry 巡檢覆蓋 |
 | A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理） | 缺 fuzzing（go-fuzz / atheris 類） |
 
-缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（2026-09-09）；接下來優先 A05 前端淨化、A07 rate limiting、A10 fuzzing。
+缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）；接下來優先 A07 rate limiting、A10 fuzzing、A01/A05 DAST。
