@@ -25,6 +25,10 @@
 | [DOMPurify](https://github.com/cure53/DOMPurify) | npm（瀏覽器 / Node + jsdom） | HTML / SVG / MathML XSS 淨化：DOM 層允許清單過濾，內建 DOM clobbering 防護與 Trusted Types 支援，是前端渲染不可信 HTML 的事實標準 | A05 | 17.4k ★；v3.4.15（2026-09-06），Cure53 維護，高度活躍 | ✅ 2026-06～08 共 10 筆公告（IN_PLACE 模式、hook 污染等，中/低危）均已修補，最晚一批修於 3.4.13；使用 ≥3.4.15 | 2026-09-10 | 補矩陣 A05「前端淨化庫」缺口；SSR 用 isomorphic-dompurify；勿用 IN_PLACE 模式處理不可信輸入 |
 | [vue-dompurify-html](https://github.com/LeSuisse/vue-dompurify-html) | npm（Vue 3 / Nuxt 3） | `v-dompurify-html` 指令取代 `v-html`，把 DOMPurify 接進 Vue 模板；repo 附 Nuxt 3 範例（搭 isomorphic-dompurify） | A05 | 336 ★；v5.3.0（2025-05），2026-09-09 仍有 commit，Renovate 持續維護 | ✅ GitHub Advisory 無自身公告（安全面隨 DOMPurify） | 2026-09-10 | 現版僅支援 Vue 3；限制：指令內容只在 client 端淨化，SSR 輸出仍需 server 端另行處理 |
 | [nh3](https://github.com/messense/nh3) | Python (pip)（Rust ammonia 綁定） | Python HTML 淨化：bleach 已棄用後的官方推薦後繼，允許清單模式，效能約為 bleach 20 倍 | A05 | 393 ★；v0.3.7，2026-08 仍活躍，maturin 作者維護 | ✅ GitHub Advisory 無 nh3 / ammonia 公告 | 2026-09-10 | FastAPI 端若需回存或輸出使用者 HTML 用此；小眾但為 bleach 官方指定替代，勿再用 bleach |
+| [rate-limiter-flexible](https://github.com/animir/node-rate-limiter-flexible) | npm（Node） | 後端 rate limiting：原子計數器，支援 in-memory / Redis / Valkey / Postgres / DynamoDB 等多種儲存，內建封鎖策略（Block）與儲存故障保險策略（Insurance） | A07 | 3.6k ★；v11.2.0（2026-06-08），近 90 天 25+ commits，高度活躍 | ✅ GitHub Advisory 無自身公告 | 2026-09-13 | Nitro / Node server 端登入、OTP、API key 端點防暴力破解首選；零生產依賴 |
+| [@upstash/ratelimit](https://github.com/upstash/ratelimit-js) | npm（Edge / Serverless） | Serverless rate limiting：以 HTTP 連 Upstash Redis，無 TCP 連線需求，支援 fixed / sliding window / token bucket，可跑在 Vercel Edge、Cloudflare Workers | A07 | 2.0k ★；v2.0.8 穩定 + 2.1.0-rc（2026-08），2026-08-27 仍有 commit | ✅ GitHub Advisory 無自身公告 | 2026-09-13 | Vercel 部署的 Nuxt 若在 edge middleware 做限流，這是少數能跑的方案；綁 Upstash 服務，注意費用與 telemetry 預設開啟（可關） |
+| [slowapi](https://github.com/laurentS/slowapi) | Python (pip)（Starlette / FastAPI） | FastAPI rate limiting：flask-limiter 移植，decorator 掛端點，支援 memory / Redis / memcached 後端，可共用限制群組 | A07 | 2.1k ★；v0.1.10，2026-06-13 仍有 commit，維護步調偏慢但持續 | ✅ GitHub Advisory 無自身公告 | 2026-09-13 | FastAPI 生態最常用；端點需顯式接收 `request` 參數、不支援 WebSocket，選用前確認 |
+| [httprate](https://github.com/go-chi/httprate) | Go（net/http middleware） | Go rate limiting：Cloudflare 式 sliding window counter，key 可按 IP / IP+路徑 / header / 自訂函式，Redis 後端另有 httprate-redis | A07 | 476 ★；2026-06-29 仍有 commit，近 12 個月約 20 commits | ✅ GitHub Advisory 無自身公告 | 2026-09-13 | go-chi 官方；已棄用可被偽造的 `LimitByRealIP`，改用 chi 的 ClientIPFrom* middleware 取可信 IP，這點正是 Render 反向代理場景要注意的 |
 
 ## OWASP Top 10:2025 涵蓋矩陣
 
@@ -38,9 +42,9 @@
 | A04 | Cryptographic Failures | jose、golang-jwt、PyJWT、semgrep、gosec、bandit | — |
 | A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security、DOMPurify / vue-dompurify-html（前端）、nh3（Python） | 缺 Go 端 HTML 淨化庫（bluemonday 已停滯）與 DAST |
 | A06 | Insecure Design | — | 屬設計流程（威脅建模），非套件可解；可考慮收 threat-modeling 工具 |
-| A07 | Authentication Failures | jose、golang-jwt、PyJWT、gitleaks / trufflehog / secretlint（硬編碼憑證） | 缺 rate limiting / 暴力破解防護（後端層） |
+| A07 | Authentication Failures | jose、golang-jwt、PyJWT、gitleaks / trufflehog / secretlint（硬編碼憑證）、rate-limiter-flexible / @upstash/ratelimit（Node / Edge）、slowapi（FastAPI）、httprate（Go） | 缺帳號鎖定 / 密碼強度與外洩比對（HIBP 類）工具 |
 | A08 | Software or Data Integrity Failures | scorecard（SLSA）、lockfile-lint、cosign（簽章驗證）、syft（SBOM attestation）、zizmor（action pinning） | 缺反序列化 / 不可信資料完整性檢查（應用層） |
 | A09 | Security Logging and Alerting Failures | — | 非套件雷達範圍，由 daily-security-watch 與 Sentry 巡檢覆蓋 |
 | A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理） | 缺 fuzzing（go-fuzz / atheris 類） |
 
-缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）；接下來優先 A07 rate limiting、A10 fuzzing、A01/A05 DAST。
+缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）；接下來優先 A10 fuzzing、A01/A05 DAST、A05 Go 端淨化。
