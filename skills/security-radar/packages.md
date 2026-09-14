@@ -29,6 +29,10 @@
 | [@upstash/ratelimit](https://github.com/upstash/ratelimit-js) | npm（Edge / Serverless） | Serverless rate limiting：以 HTTP 連 Upstash Redis，無 TCP 連線需求，支援 fixed / sliding window / token bucket，可跑在 Vercel Edge、Cloudflare Workers | A07 | 2.0k ★；v2.0.8 穩定 + 2.1.0-rc（2026-08），2026-08-27 仍有 commit | ✅ GitHub Advisory 無自身公告 | 2026-09-13 | Vercel 部署的 Nuxt 若在 edge middleware 做限流，這是少數能跑的方案；綁 Upstash 服務，注意費用與 telemetry 預設開啟（可關） |
 | [slowapi](https://github.com/laurentS/slowapi) | Python (pip)（Starlette / FastAPI） | FastAPI rate limiting：flask-limiter 移植，decorator 掛端點，支援 memory / Redis / memcached 後端，可共用限制群組 | A07 | 2.1k ★；v0.1.10，2026-06-13 仍有 commit，維護步調偏慢但持續 | ✅ GitHub Advisory 無自身公告 | 2026-09-13 | FastAPI 生態最常用；端點需顯式接收 `request` 參數、不支援 WebSocket，選用前確認 |
 | [httprate](https://github.com/go-chi/httprate) | Go（net/http middleware） | Go rate limiting：Cloudflare 式 sliding window counter，key 可按 IP / IP+路徑 / header / 自訂函式，Redis 後端另有 httprate-redis | A07 | 476 ★；2026-06-29 仍有 commit，近 12 個月約 20 commits | ✅ GitHub Advisory 無自身公告 | 2026-09-13 | go-chi 官方；已棄用可被偽造的 `LimitByRealIP`，改用 chi 的 ClientIPFrom* middleware 取可信 IP，這點正是 Render 反向代理場景要注意的 |
+| [fast-check](https://github.com/dubzzz/fast-check) | npm（TypeScript 原生） | Property-based testing：自動生成輸入並在失敗時收斂成最小反例，內建 model-based 測試與非同步競態偵測，可掛 Vitest / Jest | A10 | 5.1k ★；v4.10.0（2026-09-13），6.8k commits，高度活躍 | ✅ GitHub Advisory 無自身公告 | 2026-09-14 | Nuxt / TS 專案補 A10 例外處理的最低成本做法；驗證解析器、權限判斷等邊界輸入特別有效 |
+| [Hypothesis](https://github.com/HypothesisWorks/hypothesis) | Python (pip) | Python property-based testing 標準庫：自動生成含邊界值的測試案例，失敗時回報最簡反例，pytest 原生整合 | A10 | 9.0k ★；v6.168.0（2026-09-08），近 90 天 30+ commits，高度活躍 | ✅ GitHub Advisory 無自身公告 | 2026-09-14 | FastAPI 端驗 Pydantic model 與商業邏輯邊界；與 bandit（SAST）互補，一個靜態一個動態 |
+| [Atheris](https://github.com/google/atheris) | Python (pip) | Python coverage-guided fuzzing：libFuzzer 驅動的變異式模糊測試，支援純 Python 與 CPython 原生擴充（可搭 ASan / UBSan），能接進 OSS-Fuzz | A10 | 1.7k ★；2026-06-17 仍有 commit，近 12 個月 35+ commits，支援 Python 3.11–3.14 | ✅ GitHub Advisory 無自身公告 | 2026-09-14 | Google 維護；比 Hypothesis 更貼近「找 crash」而非「驗屬性」，適合解析不可信輸入的程式路徑 |
+| [ClusterFuzzLite](https://github.com/google/clusterfuzzlite) | CI 平台（GitHub Actions / GitLab / Cloud Build） | CI 持續模糊測試：PR 階段跑 fuzzing 擋下缺陷，支援批次深度測試、crash 案例下載與覆蓋率報告，是 OSS-Fuzz 的自架輕量版 | A10、A03 | 536 ★；2026-02-12 最後 commit，近 12 個月約 8–10 commits，維護步調緩慢 | ✅ GitHub Advisory 無自身公告 | 2026-09-14 | Google 維護、OSS-Fuzz 同源；活躍度偏低但仍在維護範圍內，導入前確認 action 版本與 Docker 基底是否跟得上 |
 
 ## OWASP Top 10:2025 涵蓋矩陣
 
@@ -45,6 +49,6 @@
 | A07 | Authentication Failures | jose、golang-jwt、PyJWT、gitleaks / trufflehog / secretlint（硬編碼憑證）、rate-limiter-flexible / @upstash/ratelimit（Node / Edge）、slowapi（FastAPI）、httprate（Go） | 缺帳號鎖定 / 密碼強度與外洩比對（HIBP 類）工具 |
 | A08 | Software or Data Integrity Failures | scorecard（SLSA）、lockfile-lint、cosign（簽章驗證）、syft（SBOM attestation）、zizmor（action pinning） | 缺反序列化 / 不可信資料完整性檢查（應用層） |
 | A09 | Security Logging and Alerting Failures | — | 非套件雷達範圍，由 daily-security-watch 與 Sentry 巡檢覆蓋 |
-| A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理） | 缺 fuzzing（go-fuzz / atheris 類） |
+| A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理）、fast-check（TS）、Hypothesis / Atheris（Python）、ClusterFuzzLite（CI） | 缺 Go 端 fuzzing 輔助庫（標準庫 `go test -fuzz` 可直接用，go-fuzz-headers 已停滯） |
 
-缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）；接下來優先 A10 fuzzing、A01/A05 DAST、A05 Go 端淨化。
+缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）；接下來優先 A01/A05 DAST、A05 Go 端淨化、A07 密碼外洩比對（HIBP 類）。
