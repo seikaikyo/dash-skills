@@ -33,6 +33,9 @@
 | [Hypothesis](https://github.com/HypothesisWorks/hypothesis) | Python (pip) | Python property-based testing 標準庫：自動生成含邊界值的測試案例，失敗時回報最簡反例，pytest 原生整合 | A10 | 9.0k ★；v6.168.0（2026-09-08），近 90 天 30+ commits，高度活躍 | ✅ GitHub Advisory 無自身公告 | 2026-09-14 | FastAPI 端驗 Pydantic model 與商業邏輯邊界；與 bandit（SAST）互補，一個靜態一個動態 |
 | [Atheris](https://github.com/google/atheris) | Python (pip) | Python coverage-guided fuzzing：libFuzzer 驅動的變異式模糊測試，支援純 Python 與 CPython 原生擴充（可搭 ASan / UBSan），能接進 OSS-Fuzz | A10 | 1.7k ★；2026-06-17 仍有 commit，近 12 個月 35+ commits，支援 Python 3.11–3.14 | ✅ GitHub Advisory 無自身公告 | 2026-09-14 | Google 維護；比 Hypothesis 更貼近「找 crash」而非「驗屬性」，適合解析不可信輸入的程式路徑 |
 | [ClusterFuzzLite](https://github.com/google/clusterfuzzlite) | CI 平台（GitHub Actions / GitLab / Cloud Build） | CI 持續模糊測試：PR 階段跑 fuzzing 擋下缺陷，支援批次深度測試、crash 案例下載與覆蓋率報告，是 OSS-Fuzz 的自架輕量版 | A10、A03 | 536 ★；2026-02-12 最後 commit，近 12 個月約 8–10 commits，維護步調緩慢 | ✅ GitHub Advisory 無自身公告 | 2026-09-14 | Google 維護、OSS-Fuzz 同源；活躍度偏低但仍在維護範圍內，導入前確認 action 版本與 Docker 基底是否跟得上 |
+| [ZAP](https://github.com/zaproxy/zaproxy) | Java（CLI / Docker / GitHub Action） | DAST：對執行中的站台做主動與被動掃描，抓 XSS、注入、設定錯誤、存取控制問題，可用 Automation Framework 接進 CI 掃 preview 環境 | A01、A05 | 15.8k ★；每週出版（w2026-09-15），10.4k commits，OWASP 旗艦專案 | ✅ 核心無未修公告；[CVE-2026-57527](https://github.com/advisories/GHSA-grq4-7pwr-9rmp)（高危，反序列化）影響的是 ViewState **add-on**，已於該 add-on v4 修補，核心不受影響 | 2026-09-15 | 補矩陣 A01/A05「DAST」缺口；掃描目標務必是自有環境，勿對線上正式站台跑主動掃描 |
+| [nuclei](https://github.com/projectdiscovery/nuclei) | Go（CLI / CI） | 模板式漏洞掃描：YAML 模板比對已知 CVE 與錯誤設定，涵蓋 HTTP / DNS / SSL / 雲端設定，社群模板庫持續更新，誤報率低 | A01、A05、A02 | 31.2k ★；v3.11.1，2026-09-14 仍有 commit，近 90 天 30+ commits | ✅ 2026-04 兩筆中危（[CVE-2026-41645](https://github.com/advisories/GHSA-jm34-66cf-qpvr) 環境變數洩露、[CVE-2026-41646](https://github.com/advisories/GHSA-29rg-wmcw-hpf4) require() 繞過讀檔）均已於 3.8.0 修補；使用 ≥3.8.0 | 2026-09-15 | 適合定期掃自有網域的已知漏洞；**勿執行來源不明的第三方模板**（歷史高危多與未簽章模板執行有關） |
+| [Schemathesis](https://github.com/schemathesis/schemathesis) | Python (pip)（CLI / pytest） | API 契約與邊界測試：從 OpenAPI / GraphQL schema 自動生成對抗性請求，抓 500 錯誤、schema 不符、狀態相依缺陷；底層用 Hypothesis | A01、A05、A10 | 3.6k ★；v4.27.1（2026-09-13），5k commits，高度活躍 | ✅ GitHub Advisory 無自身公告 | 2026-09-15 | FastAPI 可用 `schemathesis.openapi.from_asgi()` 直接吃 app 的 openapi.json，不必起服務；DAST 中整合成本最低的一環 |
 
 ## OWASP Top 10:2025 涵蓋矩陣
 
@@ -40,15 +43,15 @@
 
 | 代碼 | 分類 | 已收錄工具 | 缺口 |
 |------|------|------------|------|
-| A01 | Broken Access Control（含 SSRF） | nuxt-security（CSRF/rate limit）、semgrep、eslint-plugin-security | 缺授權邏輯測試工具（DAST / 授權矩陣檢查） |
+| A01 | Broken Access Control（含 SSRF） | nuxt-security（CSRF/rate limit）、semgrep、eslint-plugin-security、ZAP / nuclei / Schemathesis（DAST） | 缺多角色授權矩陣自動比對（DAST 工具需自行設計測試情境） |
 | A02 | Security Misconfiguration | nuxt-security、trivy（IaC）、gitleaks / trufflehog / secretlint、zizmor（CI 設定） | — |
 | A03 | Software Supply Chain Failures | osv-scanner、trivy、scorecard、lockfile-lint、syft（SBOM）、cosign、zizmor | — |
 | A04 | Cryptographic Failures | jose、golang-jwt、PyJWT、semgrep、gosec、bandit | — |
-| A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security、DOMPurify / vue-dompurify-html（前端）、nh3（Python） | 缺 Go 端 HTML 淨化庫（bluemonday 已停滯）與 DAST |
+| A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security、DOMPurify / vue-dompurify-html（前端）、nh3（Python）、ZAP / nuclei / Schemathesis（DAST） | 缺 Go 端 HTML 淨化庫（bluemonday 已停滯） |
 | A06 | Insecure Design | — | 屬設計流程（威脅建模），非套件可解；可考慮收 threat-modeling 工具 |
 | A07 | Authentication Failures | jose、golang-jwt、PyJWT、gitleaks / trufflehog / secretlint（硬編碼憑證）、rate-limiter-flexible / @upstash/ratelimit（Node / Edge）、slowapi（FastAPI）、httprate（Go） | 缺帳號鎖定 / 密碼強度與外洩比對（HIBP 類）工具 |
 | A08 | Software or Data Integrity Failures | scorecard（SLSA）、lockfile-lint、cosign（簽章驗證）、syft（SBOM attestation）、zizmor（action pinning） | 缺反序列化 / 不可信資料完整性檢查（應用層） |
 | A09 | Security Logging and Alerting Failures | — | 非套件雷達範圍，由 daily-security-watch 與 Sentry 巡檢覆蓋 |
 | A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理）、fast-check（TS）、Hypothesis / Atheris（Python）、ClusterFuzzLite（CI） | 缺 Go 端 fuzzing 輔助庫（標準庫 `go test -fuzz` 可直接用，go-fuzz-headers 已停滯） |
 
-缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）；接下來優先 A01/A05 DAST、A05 Go 端淨化、A07 密碼外洩比對（HIBP 類）。
+缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）；接下來優先 A07 密碼外洩比對（HIBP 類）、A06 威脅建模工具、A09 日誌與告警（若有適用套件）。
