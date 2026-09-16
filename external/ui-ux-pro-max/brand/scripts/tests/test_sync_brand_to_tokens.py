@@ -71,6 +71,40 @@ def test_sync_parses_bundled_starter_template(tmp_path):
     assert css.exists() and css.stat().st_size > 0
 
 
+def test_dark_base_color_does_not_collapse_shades_to_black(tmp_path):
+    """adjustBrightness() used to add/subtract a flat 255*percent per channel.
+
+    For a dark base color (channels already close to 0), darkening by
+    -0.3/-0.45/-0.6 clamped every channel to 0, so shades 700, 800, and 900
+    all came back as the identical, useless #000000 instead of a graded dark
+    scale. This runs the sync against a dark, coffee-roastery-style brand
+    color and asserts the three shades stay distinct and non-black.
+    """
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "assets").mkdir()
+    shutil.copy(TOKENS_STARTER, tmp_path / "assets" / "design-tokens.json")
+    (tmp_path / "docs" / "brand-guidelines.md").write_text(
+        "## Quick Reference\n\n"
+        "| Element | Value |\n"
+        "|---------|-------|\n"
+        "| Primary Color | #4A3228 |\n"
+        "| Secondary Color | #C08A3E |\n"
+        "| Accent Color | #6B8F71 |\n"
+    )
+
+    result = _run(tmp_path)
+    assert result.returncode == 0, result.stderr + result.stdout
+
+    tokens = json.loads((tmp_path / "assets" / "design-tokens.json").read_text())
+    primary = tokens["primitive"]["color"]["primary"]
+    dark_shades = [primary[shade]["$value"] for shade in ("700", "800", "900")]
+
+    assert len(set(dark_shades)) == 3, (
+        f"expected three distinct dark shades, got {dark_shades}"
+    )
+    assert "#000000" not in dark_shades, dark_shades
+
+
 def test_reports_missing_guidelines_without_breaking_the_harness(tmp_path):
     """The missing-guidelines path is the one that breaks a locale-decoded pipe.
 

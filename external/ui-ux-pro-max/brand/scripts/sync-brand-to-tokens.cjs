@@ -99,15 +99,34 @@ function generateColorScale(baseHex, darkHex, lightHex) {
 }
 
 /**
- * Adjust hex color brightness
+ * Adjust hex color brightness.
+ *
+ * Blends each channel proportionally toward white (percent > 0) or toward
+ * black (percent < 0) instead of adding/subtracting a flat 255*percent to
+ * every channel. The flat-shift approach clamped all three channels to 0
+ * (or 255) whenever the base color's channels were already low (or high)
+ * relative to the shift — e.g. darkening a dark brand color like #4A3228
+ * by -0.3/-0.45/-0.6 produced #000000 for all three, collapsing shades
+ * 700/800/900 into an identical, useless black.
  */
 function adjustBrightness(hex, percent) {
   if (typeof hex !== 'string') return '#000000';
   const num = parseInt(hex.replace('#', ''), 16);
-  const r = Math.min(255, Math.max(0, (num >> 16) + Math.round(255 * percent)));
-  const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + Math.round(255 * percent)));
-  const b = Math.min(255, Math.max(0, (num & 0x0000FF) + Math.round(255 * percent)));
-  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0').toUpperCase()}`;
+  const r = (num >> 16) & 0xFF;
+  const g = (num >> 8) & 0xFF;
+  const b = num & 0xFF;
+
+  const adjustChannel = (channel) => {
+    const adjusted = percent >= 0
+      ? channel + (255 - channel) * percent
+      : channel * (1 + percent);
+    return Math.min(255, Math.max(0, Math.round(adjusted)));
+  };
+
+  const newR = adjustChannel(r);
+  const newG = adjustChannel(g);
+  const newB = adjustChannel(b);
+  return `#${((newR << 16) | (newG << 8) | newB).toString(16).padStart(6, '0').toUpperCase()}`;
 }
 
 /**
