@@ -36,6 +36,9 @@
 | [ZAP](https://github.com/zaproxy/zaproxy) | Java（CLI / Docker / GitHub Action） | DAST：對執行中的站台做主動與被動掃描，抓 XSS、注入、設定錯誤、存取控制問題，可用 Automation Framework 接進 CI 掃 preview 環境 | A01、A05 | 15.8k ★；每週出版（w2026-09-15），10.4k commits，OWASP 旗艦專案 | ✅ 核心無未修公告；[CVE-2026-57527](https://github.com/advisories/GHSA-grq4-7pwr-9rmp)（高危，反序列化）影響的是 ViewState **add-on**，已於該 add-on v4 修補，核心不受影響 | 2026-09-15 | 補矩陣 A01/A05「DAST」缺口；掃描目標務必是自有環境，勿對線上正式站台跑主動掃描 |
 | [nuclei](https://github.com/projectdiscovery/nuclei) | Go（CLI / CI） | 模板式漏洞掃描：YAML 模板比對已知 CVE 與錯誤設定，涵蓋 HTTP / DNS / SSL / 雲端設定，社群模板庫持續更新，誤報率低 | A01、A05、A02 | 31.2k ★；v3.11.1，2026-09-14 仍有 commit，近 90 天 30+ commits | ✅ 2026-04 兩筆中危（[CVE-2026-41645](https://github.com/advisories/GHSA-jm34-66cf-qpvr) 環境變數洩露、[CVE-2026-41646](https://github.com/advisories/GHSA-29rg-wmcw-hpf4) require() 繞過讀檔）均已於 3.8.0 修補；使用 ≥3.8.0 | 2026-09-15 | 適合定期掃自有網域的已知漏洞；**勿執行來源不明的第三方模板**（歷史高危多與未簽章模板執行有關） |
 | [Schemathesis](https://github.com/schemathesis/schemathesis) | Python (pip)（CLI / pytest） | API 契約與邊界測試：從 OpenAPI / GraphQL schema 自動生成對抗性請求，抓 500 錯誤、schema 不符、狀態相依缺陷；底層用 Hypothesis | A01、A05、A10 | 3.6k ★；v4.27.1（2026-09-13），5k commits，高度活躍 | ✅ GitHub Advisory 無自身公告 | 2026-09-15 | FastAPI 可用 `schemathesis.openapi.from_asgi()` 直接吃 app 的 openapi.json，不必起服務；DAST 中整合成本最低的一環 |
+| [@zxcvbn-ts/core](https://github.com/zxcvbn-ts/zxcvbn) | npm（TypeScript 原生） | 密碼強度估算：以破解器思維做模式比對（4 萬常見密碼、姓名、日期、鍵盤序、leetspeak），回傳可解釋的強度分數與建議，支援 i18n 語言包 | A07 | 1.2k ★；2026-08-12 仍有 commit，近 12 個月 30+ commits | ✅ GitHub Advisory 無自身公告 | 2026-09-16 | 註冊 / 改密碼表單的即時強度提示；原版 [dropbox/zxcvbn](https://github.com/dropbox/zxcvbn)（16.1k ★）最後 commit 停在 2017，本專案是 TS 重寫的維護後繼，勿再裝原版 |
+| [@zxcvbn-ts/matcher-pwned](https://github.com/zxcvbn-ts/zxcvbn) | npm（zxcvbn-ts 外掛） | 密碼外洩比對：以 k-anonymity 打 HIBP range API（只送 SHA-1 前 5 碼），把「此密碼已在外洩資料集出現」併入 zxcvbn 強度判定 | A07 | 隨 zxcvbn-ts 主線發布，同一 repo 維護 | ✅ GitHub Advisory 無自身公告 | 2026-09-16 | 補矩陣 A07「密碼外洩比對」缺口；**務必等使用者輸入完才查，勿逐字元觸發**（逐字查詢會讓第三方可從請求序列反推密碼）；可改指向自架的 pwnedpasswords 清單 |
+| [argon2-cffi](https://github.com/hynek/argon2-cffi) | Python (pip) | 密碼雜湊：Argon2id（PHC 競賽優勝）的 Python 綁定，提供 PasswordHasher 介面與 rehash 判斷，參數可調記憶體 / 迭代 / 平行度 | A04、A07 | 732 ★；2026-09-01 仍有 commit，近 12 個月 30+ commits，hynek 維護 | ✅ GitHub Advisory 無自身公告 | 2026-09-16 | 自建帳密時用（本技術棧認證走 Logto，一般不需自行雜湊）；優於 bcrypt，[pyca/bcrypt](https://github.com/pyca/bcrypt) 自身 README 也建議改用 argon2id |
 
 ## OWASP Top 10:2025 涵蓋矩陣
 
@@ -46,12 +49,12 @@
 | A01 | Broken Access Control（含 SSRF） | nuxt-security（CSRF/rate limit）、semgrep、eslint-plugin-security、ZAP / nuclei / Schemathesis（DAST） | 缺多角色授權矩陣自動比對（DAST 工具需自行設計測試情境） |
 | A02 | Security Misconfiguration | nuxt-security、trivy（IaC）、gitleaks / trufflehog / secretlint、zizmor（CI 設定） | — |
 | A03 | Software Supply Chain Failures | osv-scanner、trivy、scorecard、lockfile-lint、syft（SBOM）、cosign、zizmor | — |
-| A04 | Cryptographic Failures | jose、golang-jwt、PyJWT、semgrep、gosec、bandit | — |
+| A04 | Cryptographic Failures | jose、golang-jwt、PyJWT、semgrep、gosec、bandit、argon2-cffi（密碼雜湊） | — |
 | A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security、DOMPurify / vue-dompurify-html（前端）、nh3（Python）、ZAP / nuclei / Schemathesis（DAST） | 缺 Go 端 HTML 淨化庫（bluemonday 已停滯） |
 | A06 | Insecure Design | — | 屬設計流程（威脅建模），非套件可解；可考慮收 threat-modeling 工具 |
-| A07 | Authentication Failures | jose、golang-jwt、PyJWT、gitleaks / trufflehog / secretlint（硬編碼憑證）、rate-limiter-flexible / @upstash/ratelimit（Node / Edge）、slowapi（FastAPI）、httprate（Go） | 缺帳號鎖定 / 密碼強度與外洩比對（HIBP 類）工具 |
+| A07 | Authentication Failures | jose、golang-jwt、PyJWT、gitleaks / trufflehog / secretlint（硬編碼憑證）、rate-limiter-flexible / @upstash/ratelimit（Node / Edge）、slowapi（FastAPI）、httprate（Go）、@zxcvbn-ts/core + matcher-pwned（密碼強度 / 外洩比對）、argon2-cffi（雜湊） | 缺帳號鎖定 / 登入失敗次數策略（多由 Logto 等 IdP 提供，非套件層）｜Python / Go 端無夠成熟的 HIBP 客戶端，建議直接呼叫 range API |
 | A08 | Software or Data Integrity Failures | scorecard（SLSA）、lockfile-lint、cosign（簽章驗證）、syft（SBOM attestation）、zizmor（action pinning） | 缺反序列化 / 不可信資料完整性檢查（應用層） |
 | A09 | Security Logging and Alerting Failures | — | 非套件雷達範圍，由 daily-security-watch 與 Sentry 巡檢覆蓋 |
 | A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理）、fast-check（TS）、Hypothesis / Atheris（Python）、ClusterFuzzLite（CI） | 缺 Go 端 fuzzing 輔助庫（標準庫 `go test -fuzz` 可直接用，go-fuzz-headers 已停滯） |
 
-缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）；接下來優先 A07 密碼外洩比對（HIBP 類）、A06 威脅建模工具、A09 日誌與告警（若有適用套件）。
+缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）、A07 密碼強度與外洩比對（09-16）；接下來優先 A08 應用層反序列化、A05 Go 端淨化、A01 多角色授權矩陣。
