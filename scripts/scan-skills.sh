@@ -57,6 +57,10 @@ for name in "${targets[@]}"; do
         echo "[scan-skills] 目錄不存在，跳過: $name"
         continue
     fi
+    # skillspector 會拒絕父目錄含符號連結的輸入路徑（Refusing to resolve input with a
+    # symlinked parent），而 ~/Documents/github 是 ~/github 的符號連結，整條路徑都中。
+    # 2026-08-27 之後每次掃描都 rc=2 且不產報告就是卡在這，改傳實體路徑。
+    dir="$(cd "$dir" && pwd -P)"
     report="$REPORT_DIR/${name}-${TODAY}.json"
     # 人工判讀後接受的誤報指紋（skillspector baseline 產出），有就帶上只報新發現
     baseline_args=()
