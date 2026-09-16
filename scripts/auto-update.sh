@@ -141,10 +141,34 @@ if [ -n "$(git status --porcelain)" ]; then
         echo "[dash-skills] [4/5] 無實質差異，跳過推送"
     else
         echo "[dash-skills] [4/5] 提交並推送..."
-        git commit -m "chore: daily external skills sync ($TODAY)" > /dev/null 2>&1
+        if ! git commit -m "chore: daily external skills sync ($TODAY)" > /dev/null 2>&1; then
+            echo "[dash-skills]   commit 失敗，跳過推送"
+            commit_ok=0
+        else
+            commit_ok=1
+        fi
 
-        push_output=$(git push 2>&1)
-        push_exit=$?
+        push_output=""
+        push_exit=1
+        if [ "$commit_ok" -eq 1 ]; then
+            push_output=$(git push 2>&1)
+            push_exit=$?
+
+            # 遠端有本機沒有的 commit（雲端 routine 合 PR、另一台機器）時先 rebase 再推。
+            # 2026-09-07 到 09-16：security-radar 的 14 個 PR 合進遠端，這裡沒 rebase 補救，
+            # non-fast-forward 每天靜默失敗，兩個 sync commit 卡了 9 天沒上去。
+            if [ $push_exit -ne 0 ] && echo "$push_output" | grep -qE "fetch first|non-fast-forward|tip of your current branch is behind"; then
+                echo "[dash-skills]   遠端有新 commit，先 rebase 再推"
+                if git pull --rebase origin main > /dev/null 2>&1; then
+                    push_output=$(git push 2>&1)
+                    push_exit=$?
+                else
+                    git rebase --abort > /dev/null 2>&1
+                    echo "[dash-skills]   rebase 有衝突，已 abort，請手動處理"
+                fi
+            fi
+        fi
+
         if [ $push_exit -eq 0 ]; then
             echo "[dash-skills]   已推送到 GitHub"
 
@@ -161,8 +185,9 @@ if [ -n "$(git status --porcelain)" ]; then
         elif echo "$push_output" | grep -q "push declined\|remote rejected"; then
             echo "[dash-skills]   推送被 GitHub 擋住，可能仍有機敏資料"
             echo "[dash-skills]   請手動執行: cd $SKILL_DIR && git push"
-        else
+        elif [ "$commit_ok" -eq 1 ]; then
             echo "[dash-skills]   推送失敗，請手動執行 git push"
+            echo "$push_output" | tail -5 | sed 's/^/[dash-skills]   /'
         fi
     fi
 else
