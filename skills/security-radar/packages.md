@@ -39,6 +39,9 @@
 | [@zxcvbn-ts/core](https://github.com/zxcvbn-ts/zxcvbn) | npm（TypeScript 原生） | 密碼強度估算：以破解器思維做模式比對（4 萬常見密碼、姓名、日期、鍵盤序、leetspeak），回傳可解釋的強度分數與建議，支援 i18n 語言包 | A07 | 1.2k ★；2026-08-12 仍有 commit，近 12 個月 30+ commits | ✅ GitHub Advisory 無自身公告 | 2026-09-16 | 註冊 / 改密碼表單的即時強度提示；原版 [dropbox/zxcvbn](https://github.com/dropbox/zxcvbn)（16.1k ★）最後 commit 停在 2017，本專案是 TS 重寫的維護後繼，勿再裝原版 |
 | [@zxcvbn-ts/matcher-pwned](https://github.com/zxcvbn-ts/zxcvbn) | npm（zxcvbn-ts 外掛） | 密碼外洩比對：以 k-anonymity 打 HIBP range API（只送 SHA-1 前 5 碼），把「此密碼已在外洩資料集出現」併入 zxcvbn 強度判定 | A07 | 隨 zxcvbn-ts 主線發布，同一 repo 維護 | ✅ GitHub Advisory 無自身公告 | 2026-09-16 | 補矩陣 A07「密碼外洩比對」缺口；**務必等使用者輸入完才查，勿逐字元觸發**（逐字查詢會讓第三方可從請求序列反推密碼）；可改指向自架的 pwnedpasswords 清單 |
 | [argon2-cffi](https://github.com/hynek/argon2-cffi) | Python (pip) | 密碼雜湊：Argon2id（PHC 競賽優勝）的 Python 綁定，提供 PasswordHasher 介面與 rehash 判斷，參數可調記憶體 / 迭代 / 平行度 | A04、A07 | 732 ★；2026-09-01 仍有 commit，近 12 個月 30+ commits，hynek 維護 | ✅ GitHub Advisory 無自身公告 | 2026-09-16 | 自建帳密時用（本技術棧認證走 Logto，一般不需自行雜湊）；優於 bcrypt，[pyca/bcrypt](https://github.com/pyca/bcrypt) 自身 README 也建議改用 argon2id |
+| [Zod](https://github.com/colinhacks/zod) | npm（TypeScript 原生） | 執行期 schema 驗證：在信任邊界把外部 JSON / 表單 / API 回應 parse 成強型別物件，未通過即拋錯，補上 TS 型別「編譯後即消失」的空窗 | A08、A05 | 44k ★；v4.6.5（2026-09-13），近 90 天 35+ commits，高度活躍 | ✅ 無經審查的自身公告。[CVE-2026-6991](https://github.com/advisories/GHSA-hprg-jrj6-qhrw)（中危，宣稱 CUID regex 導致 SQL 注入）為 VulDB 投稿的**未評審**公告，技術上不成立（regex 驗證器本身不執行 SQL，注入風險在下游未參數化查詢），且最新版遠高於其宣稱的 ≤4.3.6 | 2026-09-17 | 補矩陣 A08「應用層不可信資料完整性檢查」缺口；Nuxt server route 與 nitro handler 的輸入驗證首選，零依賴、2kb |
+| [Pydantic](https://github.com/pydantic/pydantic) | Python (pip) | 執行期資料驗證：以型別註解定義 model，反序列化時強制驗證與轉型，FastAPI 的請求 / 回應驗證底層 | A08、A05 | 28.8k ★；v2.13.5（2026-08-28），5.7k commits，高度活躍 | ✅ 核心無自身公告（生態周邊 pydantic-ai / pydantic-settings 另有公告，與核心無關） | 2026-09-17 | FastAPI 已內建；重點在**別把驗證繞過**（勿直接吃 `request.json()`），並對巢狀 model 設 `strict` 與長度上限防資源耗盡 |
+| [go-playground/validator](https://github.com/go-playground/validator) | Go | struct 與欄位驗證：以 tag 宣告規則，支援跨欄位 / 跨 struct / map / slice 遞迴驗證，100+ 內建規則與 i18n 錯誤訊息 | A08、A05 | 20.2k ★；v10.30.4（2026-09-03），近 12 個月 40+ commits | ✅ GitHub Advisory 無自身公告 | 2026-09-17 | Go 後端 `json.Unmarshal` 之後的必要一步（Go 的 unmarshal 不驗證業務規則）；repo 公開徵求協作維護者，留意後續維護動能 |
 
 ## OWASP Top 10:2025 涵蓋矩陣
 
@@ -50,11 +53,11 @@
 | A02 | Security Misconfiguration | nuxt-security、trivy（IaC）、gitleaks / trufflehog / secretlint、zizmor（CI 設定） | — |
 | A03 | Software Supply Chain Failures | osv-scanner、trivy、scorecard、lockfile-lint、syft（SBOM）、cosign、zizmor | — |
 | A04 | Cryptographic Failures | jose、golang-jwt、PyJWT、semgrep、gosec、bandit、argon2-cffi（密碼雜湊） | — |
-| A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security、DOMPurify / vue-dompurify-html（前端）、nh3（Python）、ZAP / nuclei / Schemathesis（DAST） | 缺 Go 端 HTML 淨化庫（bluemonday 已停滯） |
+| A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security、DOMPurify / vue-dompurify-html（前端）、nh3（Python）、ZAP / nuclei / Schemathesis（DAST）、Zod / Pydantic / go-playground-validator（輸入驗證） | 缺 Go 端 HTML 淨化庫（bluemonday 已停滯） |
 | A06 | Insecure Design | — | 屬設計流程（威脅建模），非套件可解；可考慮收 threat-modeling 工具 |
 | A07 | Authentication Failures | jose、golang-jwt、PyJWT、gitleaks / trufflehog / secretlint（硬編碼憑證）、rate-limiter-flexible / @upstash/ratelimit（Node / Edge）、slowapi（FastAPI）、httprate（Go）、@zxcvbn-ts/core + matcher-pwned（密碼強度 / 外洩比對）、argon2-cffi（雜湊） | 缺帳號鎖定 / 登入失敗次數策略（多由 Logto 等 IdP 提供，非套件層）｜Python / Go 端無夠成熟的 HIBP 客戶端，建議直接呼叫 range API |
-| A08 | Software or Data Integrity Failures | scorecard（SLSA）、lockfile-lint、cosign（簽章驗證）、syft（SBOM attestation）、zizmor（action pinning） | 缺反序列化 / 不可信資料完整性檢查（應用層） |
+| A08 | Software or Data Integrity Failures | scorecard（SLSA）、lockfile-lint、cosign（簽章驗證）、syft（SBOM attestation）、zizmor（action pinning）、Zod / Pydantic / go-playground-validator（應用層反序列化驗證） | — |
 | A09 | Security Logging and Alerting Failures | — | 非套件雷達範圍，由 daily-security-watch 與 Sentry 巡檢覆蓋 |
 | A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理）、fast-check（TS）、Hypothesis / Atheris（Python）、ClusterFuzzLite（CI） | 缺 Go 端 fuzzing 輔助庫（標準庫 `go test -fuzz` 可直接用，go-fuzz-headers 已停滯） |
 
-缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）、A07 密碼強度與外洩比對（09-16）；接下來優先 A08 應用層反序列化、A05 Go 端淨化、A01 多角色授權矩陣。
+缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）、A07 密碼強度與外洩比對（09-16）、A08 應用層反序列化驗證（09-17）；接下來優先 A05 Go 端淨化、A01 多角色授權矩陣、A02 容器 / 執行期防護。
