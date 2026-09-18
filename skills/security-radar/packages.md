@@ -42,6 +42,7 @@
 | [Zod](https://github.com/colinhacks/zod) | npm（TypeScript 原生） | 執行期 schema 驗證：在信任邊界把外部 JSON / 表單 / API 回應 parse 成強型別物件，未通過即拋錯，補上 TS 型別「編譯後即消失」的空窗 | A08、A05 | 44k ★；v4.6.5（2026-09-13），近 90 天 35+ commits，高度活躍 | ✅ 無經審查的自身公告。[CVE-2026-6991](https://github.com/advisories/GHSA-hprg-jrj6-qhrw)（中危，宣稱 CUID regex 導致 SQL 注入）為 VulDB 投稿的**未評審**公告，技術上不成立（regex 驗證器本身不執行 SQL，注入風險在下游未參數化查詢），且最新版遠高於其宣稱的 ≤4.3.6 | 2026-09-17 | 補矩陣 A08「應用層不可信資料完整性檢查」缺口；Nuxt server route 與 nitro handler 的輸入驗證首選，零依賴、2kb |
 | [Pydantic](https://github.com/pydantic/pydantic) | Python (pip) | 執行期資料驗證：以型別註解定義 model，反序列化時強制驗證與轉型，FastAPI 的請求 / 回應驗證底層 | A08、A05 | 28.8k ★；v2.13.5（2026-08-28），5.7k commits，高度活躍 | ✅ 核心無自身公告（生態周邊 pydantic-ai / pydantic-settings 另有公告，與核心無關） | 2026-09-17 | FastAPI 已內建；重點在**別把驗證繞過**（勿直接吃 `request.json()`），並對巢狀 model 設 `strict` 與長度上限防資源耗盡 |
 | [go-playground/validator](https://github.com/go-playground/validator) | Go | struct 與欄位驗證：以 tag 宣告規則，支援跨欄位 / 跨 struct / map / slice 遞迴驗證，100+ 內建規則與 i18n 錯誤訊息 | A08、A05 | 20.2k ★；v10.30.4（2026-09-03），近 12 個月 40+ commits | ✅ GitHub Advisory 無自身公告 | 2026-09-17 | Go 後端 `json.Unmarshal` 之後的必要一步（Go 的 unmarshal 不驗證業務規則）；repo 公開徵求協作維護者，留意後續維護動能 |
+| [bluemonday](https://github.com/microcosm-cc/bluemonday) | Go | HTML 淨化：allowlist 政策過濾使用者產生的 HTML，移植自 OWASP Java HTML Sanitizer，內建 UGC / strict 預設政策 | A05 | 3.7k ★；2,680 個專案 import，v1.0.27；**最後 commit 2025-04，Go module 逾 12 個月未出新版** | ⚠️ 無未修補漏洞（[CVE-2021-42576](https://github.com/advisories/GHSA-x95h-979x-cf3j) 高危修於 1.0.16、[CVE-2021-29272](https://github.com/advisories/GHSA-3x58-xr87-2fcj) 修於 1.0.5，使用 ≥1.0.27 即可），但**維護停滯**：原維護者於 [issue #203](https://github.com/microcosm-cc/bluemonday/issues/203) 宣告 2024 年交棒，該 issue 至今未關閉 | 2026-09-18 | Go 端唯一可用的 HTML 淨化庫，非推薦而是「無更好替代」的現況記錄。**優先改用 `html/template` 的自動轉義**（多數情境不需要淨化器）；只有非得渲染使用者 HTML 時才用它，且務必 pin 版本並自行追蹤上游動態 |
 
 ## OWASP Top 10:2025 涵蓋矩陣
 
@@ -53,11 +54,11 @@
 | A02 | Security Misconfiguration | nuxt-security、trivy（IaC）、gitleaks / trufflehog / secretlint、zizmor（CI 設定） | — |
 | A03 | Software Supply Chain Failures | osv-scanner、trivy、scorecard、lockfile-lint、syft（SBOM）、cosign、zizmor | — |
 | A04 | Cryptographic Failures | jose、golang-jwt、PyJWT、semgrep、gosec、bandit、argon2-cffi（密碼雜湊） | — |
-| A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security、DOMPurify / vue-dompurify-html（前端）、nh3（Python）、ZAP / nuclei / Schemathesis（DAST）、Zod / Pydantic / go-playground-validator（輸入驗證） | 缺 Go 端 HTML 淨化庫（bluemonday 已停滯） |
+| A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security、DOMPurify / vue-dompurify-html（前端）、nh3（Python）、ZAP / nuclei / Schemathesis（DAST）、Zod / Pydantic / go-playground-validator（輸入驗證）、bluemonday（Go，⚠️ 維護停滯） | Go 端無活躍的淨化庫：2026-09-18 查證 htmlsanitizer（25 ★）、go-sanitize（52 ★，僅 regex 去字串非真淨化）、gosanitize（6 ★，已死）皆不合格，bluemonday 仍是唯一選擇 |
 | A06 | Insecure Design | — | 屬設計流程（威脅建模），非套件可解；可考慮收 threat-modeling 工具 |
 | A07 | Authentication Failures | jose、golang-jwt、PyJWT、gitleaks / trufflehog / secretlint（硬編碼憑證）、rate-limiter-flexible / @upstash/ratelimit（Node / Edge）、slowapi（FastAPI）、httprate（Go）、@zxcvbn-ts/core + matcher-pwned（密碼強度 / 外洩比對）、argon2-cffi（雜湊） | 缺帳號鎖定 / 登入失敗次數策略（多由 Logto 等 IdP 提供，非套件層）｜Python / Go 端無夠成熟的 HIBP 客戶端，建議直接呼叫 range API |
 | A08 | Software or Data Integrity Failures | scorecard（SLSA）、lockfile-lint、cosign（簽章驗證）、syft（SBOM attestation）、zizmor（action pinning）、Zod / Pydantic / go-playground-validator（應用層反序列化驗證） | — |
 | A09 | Security Logging and Alerting Failures | — | 非套件雷達範圍，由 daily-security-watch 與 Sentry 巡檢覆蓋 |
 | A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理）、fast-check（TS）、Hypothesis / Atheris（Python）、ClusterFuzzLite（CI） | 缺 Go 端 fuzzing 輔助庫（標準庫 `go test -fuzz` 可直接用，go-fuzz-headers 已停滯） |
 
-缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）、A07 密碼強度與外洩比對（09-16）、A08 應用層反序列化驗證（09-17）；接下來優先 A05 Go 端淨化、A01 多角色授權矩陣、A02 容器 / 執行期防護。
+缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）、A07 密碼強度與外洩比對（09-16）、A08 應用層反序列化驗證（09-17）；A05 Go 端淨化已查證（09-18，結論為無更好替代）；接下來優先 A01 多角色授權矩陣、A02 容器 / 執行期防護、A06 威脅建模工具。
