@@ -45,6 +45,8 @@
 | [bluemonday](https://github.com/microcosm-cc/bluemonday) | Go | HTML 淨化：allowlist 政策過濾使用者產生的 HTML，移植自 OWASP Java HTML Sanitizer，內建 UGC / strict 預設政策 | A05 | 3.7k ★；2,680 個專案 import，v1.0.27；**最後 commit 2025-04，Go module 逾 12 個月未出新版** | ⚠️ 無未修補漏洞（[CVE-2021-42576](https://github.com/advisories/GHSA-x95h-979x-cf3j) 高危修於 1.0.16、[CVE-2021-29272](https://github.com/advisories/GHSA-3x58-xr87-2fcj) 修於 1.0.5，使用 ≥1.0.27 即可），但**維護停滯**：原維護者於 [issue #203](https://github.com/microcosm-cc/bluemonday/issues/203) 宣告 2024 年交棒，該 issue 至今未關閉 | 2026-09-18 | Go 端唯一可用的 HTML 淨化庫，非推薦而是「無更好替代」的現況記錄。**優先改用 `html/template` 的自動轉義**（多數情境不需要淨化器）；只有非得渲染使用者 HTML 時才用它，且務必 pin 版本並自行追蹤上游動態 |
 | [Akto](https://github.com/akto-api-security/akto) | Java / JS（自架，Docker Compose） | API 安全平台：自動建立 API 清單，以多身分帳號跑 BOLA / BFLA 等授權測試與業務邏輯測試，涵蓋 OWASP API Top 10 | A01、A05 | 1.5k ★；2026-09-18 仍有 commit，近 90 天 45+ commits，MIT 社群版 | ✅ GitHub Advisory 無自身公告 | 2026-09-19 | 補矩陣 A01「多角色授權矩陣」缺口；需自架且要餵多組角色憑證，導入成本高於單純 DAST，適合 API 面積大時才上 |
 | [RESTler](https://github.com/microsoft/restler-fuzzer) | Python / .NET（CLI） | 狀態感知 REST API 模糊測試：從 OpenAPI 推導請求相依序列，內建 resource-hierarchy checker 可揪出「拿 A 帳號的 id 存取 B 帳號資源」這類階層越權 | A01、A10 | 2.9k ★；2026-02-13 最後 commit，近 12 個月約 30 commits，Microsoft Research 維護 | ✅ GitHub Advisory 無自身公告（同名的 Luracast Restler 公告與本專案無關） | 2026-09-19 | 與 Schemathesis 互補：後者驗 schema 契約，RESTler 驗跨請求狀態與資源歸屬；活躍度中等，非高頻更新專案 |
+| [hadolint](https://github.com/hadolint/hadolint) | Haskell（CLI / Docker / pre-commit / GitHub Action） | Dockerfile 靜態檢查：解析成 AST 跑 60+ 規則，抓未固定 tag 的基底映像、以 root 執行、不必要的套件管理器殘留等，內嵌 ShellCheck 檢查 RUN 裡的 bash | A02 | 12.4k ★；2026-08-24 仍有 commit，近 12 個月 50+ commits | ✅ GitHub Advisory 無自身公告 | 2026-09-20 | Render 若用 Dockerfile 部署，這是最低成本的把關（CI 一行接入，輸出 SARIF）；規則偏 best practice，非漏洞掃描，與 trivy 互補 |
+| [distroless](https://github.com/GoogleContainerTools/distroless) | 容器基底映像（Google 維護） | 攻擊面縮減：映像只留應用與執行期依賴，不含 shell、套件管理器與發行版工具；最小的 `static-debian13` 約 2 MiB | A02、A03 | 23.1k ★；2026-09-15 仍有 commit，近 90 天 30+ commits | ✅ GitHub Advisory 無自身公告 | 2026-09-20 | 沒有 shell 就擋掉大量 RCE 後的橫向利用路徑，同時大幅降低 CVE 噪音；代價是無法 `docker exec` 進去除錯，需搭配 debug 變體 |
 
 ## OWASP Top 10:2025 涵蓋矩陣
 
@@ -53,7 +55,7 @@
 | 代碼 | 分類 | 已收錄工具 | 缺口 |
 |------|------|------------|------|
 | A01 | Broken Access Control（含 SSRF） | nuxt-security（CSRF/rate limit）、semgrep、eslint-plugin-security、ZAP / nuclei / Schemathesis（DAST）、Akto（BOLA/BFLA 多角色）、RESTler（資源階層越權） | — |
-| A02 | Security Misconfiguration | nuxt-security、trivy（IaC）、gitleaks / trufflehog / secretlint、zizmor（CI 設定） | — |
+| A02 | Security Misconfiguration | nuxt-security、trivy（IaC）、gitleaks / trufflehog / secretlint、zizmor（CI 設定）、hadolint（Dockerfile）、distroless（基底映像） | — |
 | A03 | Software Supply Chain Failures | osv-scanner、trivy、scorecard、lockfile-lint、syft（SBOM）、cosign、zizmor | — |
 | A04 | Cryptographic Failures | jose、golang-jwt、PyJWT、semgrep、gosec、bandit、argon2-cffi（密碼雜湊） | — |
 | A05 | Injection | nuxt-security（CSP/XSS）、semgrep、gosec、bandit、eslint-plugin-security、DOMPurify / vue-dompurify-html（前端）、nh3（Python）、ZAP / nuclei / Schemathesis（DAST）、Zod / Pydantic / go-playground-validator（輸入驗證）、bluemonday（Go，⚠️ 維護停滯） | Go 端無活躍的淨化庫：2026-09-18 查證 htmlsanitizer（25 ★）、go-sanitize（52 ★，僅 regex 去字串非真淨化）、gosanitize（6 ★，已死）皆不合格，bluemonday 仍是唯一選擇 |
@@ -63,4 +65,4 @@
 | A09 | Security Logging and Alerting Failures | — | 非套件雷達範圍，由 daily-security-watch 與 Sentry 巡檢覆蓋 |
 | A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理）、fast-check（TS）、Hypothesis / Atheris（Python）、ClusterFuzzLite（CI） | 缺 Go 端 fuzzing 輔助庫（標準庫 `go test -fuzz` 可直接用，go-fuzz-headers 已停滯） |
 
-缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）、A07 密碼強度與外洩比對（09-16）、A08 應用層反序列化驗證（09-17）；A05 Go 端淨化已查證（09-18，結論為無更好替代）、A01 多角色授權矩陣已補（09-19）；接下來優先 A02 容器 / 執行期防護、A06 威脅建模工具、A10 Go 端 fuzzing。
+缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）、A07 密碼強度與外洩比對（09-16）、A08 應用層反序列化驗證（09-17）；A05 Go 端淨化已查證（09-18，結論為無更好替代）、A01 多角色授權矩陣已補（09-19）；A02 容器建置期已補（09-20；執行期防護如 Falco 需核心存取，Vercel / Render 等受管平台不適用）；接下來優先 A06 威脅建模工具、A10 Go 端 fuzzing，或回頭複查既有收錄的狀態變化。
