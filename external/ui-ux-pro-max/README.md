@@ -606,6 +606,26 @@ The release workflow uses the default `GITHUB_TOKEN` for GitHub releases and the
 
 ## Troubleshooting
 
+### Claude Code reports `response exceeded the ... output token maximum`
+
+This is a limit on a single Claude Code response, not an error in the UI/UX Pro Max installer or search scripts. First, ask Claude to split the task into smaller steps and write large results to files incrementally.
+
+If you genuinely need a larger single response and the active model supports it, set Claude Code's output-token limit before starting a new session. For example:
+
+```bash
+# macOS, Linux, or WSL
+export CLAUDE_CODE_MAX_OUTPUT_TOKENS="64000"
+claude
+```
+
+```powershell
+# Windows PowerShell
+$env:CLAUDE_CODE_MAX_OUTPUT_TOKENS = "64000"
+claude
+```
+
+Shell environment changes only apply to programs launched from that shell, so restart Claude Code after setting the variable. Claude Code clamps values above the active model's output limit; model and provider caps vary. Increasing this value can also increase latency and usage, and reduces the effective context available before auto-compaction. See the official [Claude Code environment-variable reference](https://code.claude.com/docs/en/env-vars#variables).
+
 ### `uipro: unknown command 'uninstall'` or `unknown command 'update'`
 
 Your installed version of `ui-ux-pro-max-cli` is outdated. Update it and retry:
