@@ -72,3 +72,18 @@
 | A10 | Mishandling of Exceptional Conditions | semgrep、gosec（G104 錯誤未處理）、fast-check（TS）、Hypothesis / Atheris（Python）、rapid / NilAway / gosentry（Go）、ClusterFuzzLite（CI） | — |
 
 缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）、A07 密碼強度與外洩比對（09-16）、A08 應用層反序列化驗證（09-17）；A05 Go 端淨化已查證（09-18，結論為無更好替代）、A01 多角色授權矩陣已補（09-19）；A02 容器建置期已補（09-20；執行期防護如 Falco 需核心存取，Vercel / Render 等受管平台不適用）；A06 威脅建模已補（09-21）；A10 Go 端測試與 fuzzing 已補（09-22；randfill 僅 9 ★ 且官方聲明只支援 Kubernetes 內部、前身 google/gofuzz 已封存，均不收錄）。十項皆已有對應工具，後續以複查既有收錄的狀態變化為主，並視新工具出現補強 A05 Go 端淨化這類仍無理想解的項目。
+
+## 觀察名單
+
+每日複查必查。觀察點解除即移出；狀態變化時連同此表一併更新。
+
+| 套件 | 觀察點 | 列入日期 |
+|------|--------|----------|
+| gitleaks | 維護者已宣告 feature complete 並轉向 [Betterleaks](https://github.com/betterleaks/betterleaks)；追蹤後繼專案成熟度，達收錄標準時評估是否取代 | 2026-09-07 |
+| bluemonday | 最後 commit 2025-04-04，**已超過 12 個月淘汰線**，因 A05 Go 端無任何可用替代而依例外規則保留 ⚠️。恢復維護 → 改回 ✅；出現合格替代品 → 收錄替代品並將本列改標淘汰 | 2026-09-18 |
+| ClusterFuzzLite | 最後 commit 2026-02-12，2027-02 前無活動即達淘汰線 | 2026-09-14 |
+| RESTler | 最後 commit 2026-02-13，2027-02 前無活動即達淘汰線 | 2026-09-19 |
+| Threagile | 最新 tag v0.9.1（2024-07-30）、最後 commit 2026-04-08，2027-04 前無活動即達淘汰線 | 2026-09-21 |
+| NilAway | README 明示可能有破壞性變更與誤報；留意是否出穩定版或重大 breaking release | 2026-09-22 |
+| gosentry | Go 工具鏈 fork，須持續 merge 上游 golang/master 才拿得到 Go 安全修補；上游同步停滯超過一個月即標 ⚠️ | 2026-09-22 |
+| go-playground/validator | repo 公開徵求協作維護者；留意維護動能是否下滑 | 2026-09-17 |
