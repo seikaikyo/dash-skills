@@ -1,6 +1,6 @@
 ---
 name: security-radar
-description: 資安套件情報雷達。每日掃描並精選「有效、熱門、自身安全」的資安套件/工具，聚焦 Nuxt 3 / Vue 3 / TypeScript（npm）、Go、Python (FastAPI) 技術棧。查詢已收錄套件的評估結論、安全狀態與選型建議時使用。
+description: 資安套件情報雷達。每日掃描並精選「有效、熱門、自身安全」的資安套件/工具，聚焦 Nuxt 3 / Vue 3 / TypeScript（npm）、Go、Python (FastAPI) 技術棧，以及 AI agent / LLM 應用安全（OWASP Agentic 2026、LLM Top 10 2026）。查詢已收錄套件的評估結論、安全狀態與選型建議時使用。
 updated: 2026-09-23
 ---
 
@@ -43,16 +43,32 @@ Vercel / Render、Logto JWT/JWKS）的資安選型依據。
      星數、版本號的自然漂移**不算**狀態變化，不為此改表。
   4. 發現需淘汰的項目時，當天就找替代品，不等每週新候選。
 - **每週一：新候選**（3–5 個），只看三個來源：涵蓋矩陣「缺口」欄仍未解的項目、
-  觀察名單列出的後繼專案、當週複查淘汰後留下的空位。依 npm/JS、Go、通用三類輪替。
+  觀察名單列出的後繼專案、當週複查淘汰後留下的空位。依 npm/JS、Go、通用、AI/agent 四類輪替。
+- **AI 矩陣建置期**（2026-09-23 起）：Agentic 2026 與 LLM Top 10 2026 兩張矩陣仍有缺口時，
+  每日複查之外，另從這兩張矩陣的缺口挑一項找 2–3 個候選；兩張矩陣缺口都補齊或查證為
+  「非套件可解」後，回到只在每週一找新候選的節奏。
 - **觀察名單**（`packages.md` 文末）：有具體觀察點的項目（逼近淘汰線、後繼專案、
   已知不穩定因素）。狀態變化時連同名單一併更新；觀察點解除就移出名單。
-- **OWASP 對應**：每筆收錄必填「OWASP 2025」欄，以 [OWASP Top 10:2025](https://owasp.org/Top10/2025/)
-  代碼標示（可多個）。A01 Broken Access Control（含 SSRF）｜A02 Security Misconfiguration｜
-  A03 Software Supply Chain Failures｜A04 Cryptographic Failures｜A05 Injection｜
-  A06 Insecure Design｜A07 Authentication Failures｜A08 Software or Data Integrity Failures｜
-  A09 Security Logging and Alerting Failures｜A10 Mishandling of Exceptional Conditions。
-  新增後同步更新 `packages.md` 文末的涵蓋矩陣，矩陣「缺口」欄是每週新候選的首要來源。
-  OWASP 若發布新版，先更新此對照與矩陣標題，再依新版重標。
+- **OWASP 對應**：每筆收錄必填「OWASP」欄，可混用三份清單的代碼（可多個），各對應 `packages.md` 文末一張涵蓋矩陣：
+  - [OWASP Top 10:2025](https://owasp.org/Top10/2025/)（Web 應用）：A01 Broken Access Control（含 SSRF）｜
+    A02 Security Misconfiguration｜A03 Software Supply Chain Failures｜A04 Cryptographic Failures｜
+    A05 Injection｜A06 Insecure Design｜A07 Authentication Failures｜
+    A08 Software or Data Integrity Failures｜A09 Security Logging and Alerting Failures｜
+    A10 Mishandling of Exceptional Conditions。
+  - OWASP Top 10 for Agentic Applications 2026（agent / MCP / skill）：ASI01 Agent Goal Hijack｜
+    ASI02 Tool Misuse & Exploitation｜ASI03 Identity & Privilege Abuse｜
+    ASI04 Agentic Supply Chain Vulnerabilities｜ASI05 Unexpected Code Execution｜
+    ASI06 Memory & Context Poisoning｜ASI07 Insecure Inter-Agent Communication｜
+    ASI08 Cascading Failures｜ASI09 Human-Agent Trust Exploitation｜ASI10 Rogue Agents。
+  - OWASP GenAI LLM Top 10 2026（直接呼叫模型的程式碼）：LLM01 Prompt Injection｜
+    LLM02 Sensitive Information Disclosure｜LLM03 Excessive Agency｜LLM04 Supply Chain｜
+    LLM05 Data and Model Poisoning｜LLM06 Unbounded Consumption｜LLM07 Misinformation｜
+    LLM08 Hidden Context Exposure｜LLM09 Vector and Embedding Weaknesses｜
+    LLM10 Improper Output Handling。
+  - 三份清單各項的檢查重點見 `skills/security-reviewer/SKILL.md` 的「OWASP 對照」。
+  新增後同步更新對應的涵蓋矩陣，矩陣「缺口」欄是新候選的首要來源。
+  既有工具若也適用 AI 矩陣（例如 rate limiter 可套在 LLM 端點），在矩陣中交叉引用即可，
+  不必回頭改該列的 OWASP 欄。任一清單發布新版，先更新此對照與矩陣標題，再依新版重標。
 - 有新收錄或狀態更新才 commit / 開 PR；當天無變化則不動 repo。
 - **自動 merge**（使用者已於 2026-08-31 授權）：PR 開**正式**（非 draft）；
   確認無 merge conflict 且 CI（若有）全綠後，直接以 squash 合併並附合併說明，

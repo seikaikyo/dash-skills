@@ -1,8 +1,8 @@
 # Security Radar — 收錄套件清單
 
-評估標準見 [SKILL.md](./SKILL.md)。狀態圖例：✅ 無未修 CVE｜⚠️ 有疑慮｜淘汰 不建議使用。OWASP 欄為 [OWASP Top 10:2025](https://owasp.org/Top10/2025/) 代碼，對照表與涵蓋矩陣見文末。
+評估標準見 [SKILL.md](./SKILL.md)。狀態圖例：✅ 無未修 CVE｜⚠️ 有疑慮｜淘汰 不建議使用。OWASP 欄可混用 [OWASP Top 10:2025](https://owasp.org/Top10/2025/)（A01–A10）、Agentic Applications 2026（ASI01–ASI10）、LLM Top 10 2026（LLM01–LLM10）代碼，三張涵蓋矩陣見文末。
 
-| 套件 | 生態 | 用途 | OWASP 2025 | 熱門度 | 安全狀態 | 收錄日期 | 備註 |
+| 套件 | 生態 | 用途 | OWASP | 熱門度 | 安全狀態 | 收錄日期 | 備註 |
 |------|------|------|------------|--------|----------|----------|------|
 | [osv-scanner](https://github.com/google/osv-scanner) | Go（CLI，跨生態） | 依賴漏洞掃描：以 osv.dev 資料庫掃 `package-lock.json` / `go.mod` / `requirements.txt` 等 11+ 生態 lockfile，一支工具覆蓋 npm+Go+Python 全棧 | A03 | 10.9k ★；v2.5.1（2026-08-17），活躍 | ✅ GitHub Advisory 無自身公告 | 2026-08-31 | Google 維護；支援容器映像掃描與 CI action，適合接進 Vercel/Render 前置 CI |
 | [trivy](https://github.com/aquasecurity/trivy) | Go（CLI，跨生態） | 綜合掃描：依賴 CVE、容器映像、IaC 錯誤設定、secrets、license，一站式 CI 安全閘門 | A02、A03 | 37.7k ★；v0.74.0（2026-08-14），高度活躍 | ✅ 歷史 CVE 均已修補（含 [CVE-2026-55092](https://github.com/advisories/GHSA-mcj4-mphf-j9ff) 高危路徑遍歷，0.71.1 已修；使用 ≥0.71.1） | 2026-08-31 | Aqua Security 維護；功能比 osv-scanner 廣但較重，適合完整 pipeline |
@@ -53,6 +53,10 @@
 | [rapid](https://github.com/flyingmutant/rapid) | Go（`pgregory.net/rapid`） | Go property-based testing：自動生成輸入並在失敗時全自動收斂成最小反例，支援 state machine 測試，零外部依賴、直接跑在 `go test` 裡 | A10 | 885 ★；v1.3.0（2026-03-30），2026-09-04 仍有 commit | ✅ GitHub Advisory 無自身公告 | 2026-09-22 | Go 端對應 fast-check（TS）/ Hypothesis（Python）的那一塊；相較標準庫 `go test -fuzz` 強在生成結構化資料與狀態機，弱在沒有覆蓋率導引，兩者互補並用。同類的 gopter（638 ★，最後 commit 2026-04-20）API 較繁瑣且需自寫收斂邏輯，優先選 rapid |
 | [NilAway](https://github.com/uber-go/nilaway) | Go（standalone / golangci-lint plugin / Bazel nogo） | 靜態偵測 nil panic：跨套件追蹤 nil 流向，在編譯期攔下 Go 最常見的 runtime panic 來源，宣稱 build 時間開銷 <5% | A10 | 3.9k ★；2026-09-18 仍有 commit（已升到 Go 1.26），Uber 維護 | ✅ GitHub Advisory 無自身公告 | 2026-09-22 | 與 gosec / semgrep 互補：那兩者查漏洞模式，NilAway 專查會讓服務直接掛掉的 nil dereference。README 明示仍在積極開發、**可能誤報也可能有破壞性變更**，建議先以非阻斷模式觀察再決定是否進 CI 閘門 |
 | [gosentry](https://github.com/trailofbits/gosentry) | Go 工具鏈 fork（自行 build） | 進階 fuzzing：保留標準 `testing.F` 寫法，底層換成更強的 fuzzing stack — 原生 struct fuzzing、LibAFL 整合、Nautilus 文法式 fuzzing、整數溢位與 data race / goroutine 洩漏偵測，並可一鍵產出 campaign 覆蓋率報告 | A10 | 121 ★（工具鏈 fork 性質，star 不具可比性）；最新 release v0.4.1，2026-09-20 仍有自家修補 commit，並持續 merge 上游 golang/master | ✅ GitHub Advisory 無自身公告 | 2026-09-22 | Trail of Bits 維護；整合成本明顯高於前兩者（需 `cd src && ./make.bash` 自行編譯工具鏈），定位是「排定的深度 fuzzing 活動」而非日常 CI。因是 Go 工具鏈 fork，Go 本身的安全修補需靠上游同步才會拿到 — 目前同步頻繁（近日仍在 merge golang/master），導入後仍應自行確認同步進度 |
+| [SkillSpector](https://github.com/NVIDIA/SkillSpector) | Python（`uv tool install skillspector`，另有 Docker / MCP 模式） | Agent skill 安裝前靜態掃描：71 種 pattern / 17 類，抓 skill 內嵌 prompt injection、資料外洩、供應鏈投毒；涵蓋 Claude Code、Codex CLI、Gemini CLI、OpenCode 與 MCP server | ASI04、ASI01、LLM04、A03 | 18.2k ★；v2.0.0，2026-09-23 仍有 commit | ✅ GitHub Advisory 與 repo security 頁皆無自身公告 | 2026-09-23 | NVIDIA 維護、Apache-2.0；**本 repo 已用於 external/ 每日同步的裝載前安檢**。預設啟用 LLM 語意分析時會把檔案內容送到你設定的 LLM provider，並查詢 api.osv.dev；要完全本地請加 `--no-llm` |
+| [Snyk Agent Scan](https://github.com/snyk/agent-scan)（前身 Invariant mcp-scan） | Python（`uvx` / 獨立 binary） | 掃描本機已安裝的 agent 元件：自動找出 MCP server 設定、skill、agent harness，偵測 tool poisoning、tool shadowing、prompt injection 與惡意 payload；tool pinning 以雜湊追蹤工具描述被偷換（rug pull） | ASI04、ASI02、LLM04、A03 | 3.1k ★；v0.6+，2026-09-23 仍有 commit，近 30 天近乎每日更新 | ✅ GitHub Advisory 無自身公告 | 2026-09-23 | 與 SkillSpector 互補：後者看「裝之前的 skill 內容」，這支看「已裝好的 MCP / agent 執行期設定」。**需 Snyk 帳號與 `SNYK_TOKEN`，且會把 MCP 設定、工具名稱與描述、skill 內容送到 Snyk API 分析**（官方說明機密會先遮蔽）；對外傳送有顧慮時只用 SkillSpector `--no-llm` |
+| [promptfoo](https://github.com/promptfoo/promptfoo) | npm（CLI，Node） | LLM / agent 紅隊與評測：`owasp:llm`、`owasp:agentic` 預設組一鍵產生對抗輸入，涵蓋 prompt injection、hijacking、PII 外洩、memory poisoning，以及 agent 層的 SSRF、SQL、shell injection；可進 CI 當回歸測試 | LLM01、LLM02、LLM03、LLM10、ASI01、ASI02、ASI05、ASI06 | 25.4k ★；9.8k commits，2026-09-23 仍有 commit，高度活躍 | ✅ GitHub Advisory 與 repo security 頁皆無自身公告 | 2026-09-23 | MIT；**2026-03 被 OpenAI 收購**，官方聲明維持開源與 MIT，已列入觀察名單。對 Nuxt / TS 專案整合成本最低；官方說明 OSS CLI 以使用者權限執行、不沙箱化使用者設定的程式碼，別拿不可信的設定檔跑 |
+| [garak](https://github.com/NVIDIA/garak) | Python (pip) | LLM 弱點掃描器：對目標模型打大量 probe，包括 jailbreak、編碼繞過注入、DAN、資料外洩、幻覺與錯誤資訊、package hallucination、輸出 XSS | LLM01、LLM02、LLM07、LLM10 | 9.3k ★；v0.17.0（2026-09，與 commits 頁日期交叉確認），2026-09-16 仍有 commit | ✅ GitHub Advisory 無自身公告 | 2026-09-23 | NVIDIA 維護、Apache-2.0；定位偏「模型本身」的紅隊，與 promptfoo（偏應用與 agent 流程）互補。專案若沒有直接呼叫模型的功能，優先級低於 SkillSpector / Agent Scan |
 
 ## OWASP Top 10:2025 涵蓋矩陣
 
@@ -73,6 +77,40 @@
 
 缺口欄用來指引後續主題輪替：已補 A08 簽章驗證（09-09）、A05 前端淨化（09-10）、A07 rate limiting（09-13）、A10 fuzzing（09-14）、A01/A05 DAST（09-15）、A07 密碼強度與外洩比對（09-16）、A08 應用層反序列化驗證（09-17）；A05 Go 端淨化已查證（09-18，結論為無更好替代）、A01 多角色授權矩陣已補（09-19）；A02 容器建置期已補（09-20；執行期防護如 Falco 需核心存取，Vercel / Render 等受管平台不適用）；A06 威脅建模已補（09-21）；A10 Go 端測試與 fuzzing 已補（09-22；randfill 僅 9 ★ 且官方聲明只支援 Kubernetes 內部、前身 google/gofuzz 已封存，均不收錄）。十項皆已有對應工具，後續以複查既有收錄的狀態變化為主，並視新工具出現補強 A05 Go 端淨化這類仍無理想解的項目。
 
+## OWASP Agentic Applications 2026 涵蓋矩陣
+
+2025-12 由 OWASP GenAI Security Project 發布，對象是 agent、MCP server、skill 與 agent 工作流程。2026-09-23 起納入。
+
+| 代碼 | 分類 | 已收錄工具 | 缺口 |
+|------|------|------------|------|
+| ASI01 | Agent Goal Hijack | promptfoo（`owasp:agentic`、hijacking）、SkillSpector（skill 內嵌指令） | 缺執行期的注入偵測 / 隔離層（LLM Guard 已於 2026-07-09 封存，不收） |
+| ASI02 | Tool Misuse & Exploitation | Snyk Agent Scan（tool poisoning / shadowing）、promptfoo（SSRF、shell injection plugin） | — |
+| ASI03 | Identity & Privilege Abuse | — | agent 憑證最小權限、短效 token 的套件層工具待查 |
+| ASI04 | Agentic Supply Chain Vulnerabilities | SkillSpector（安裝前）、Snyk Agent Scan（已安裝 / rug pull） | — |
+| ASI05 | Unexpected Code Execution (RCE) | promptfoo（shell injection 測試） | 缺 agent 產生程式碼的沙箱執行環境 |
+| ASI06 | Memory & Context Poisoning | promptfoo（`agentic:memory-poisoning`） | — |
+| ASI07 | Insecure Inter-Agent Communication | — | 待查 |
+| ASI08 | Cascading Failures | — | 待查（熔斷、預算上限；部分可由既有 rate limiter 在請求層級擋） |
+| ASI09 | Human-Agent Trust Exploitation | — | 待查；可能屬設計流程而非套件可解 |
+| ASI10 | Rogue Agents | — | 待查（agent 行為監控與停止開關） |
+
+## OWASP GenAI LLM Top 10 2026 涵蓋矩陣
+
+對象是直接呼叫模型的程式碼（prompt 組裝、RAG、輸出解析）。2026-09-23 起納入。
+
+| 代碼 | 分類 | 已收錄工具 | 缺口 |
+|------|------|------------|------|
+| LLM01 | Prompt Injection | garak、promptfoo | 缺執行期防護層（同 ASI01） |
+| LLM02 | Sensitive Information Disclosure | garak（資料外洩 probe）、promptfoo（PII plugin）；gitleaks / trufflehog 可防金鑰進 prompt 模板 | — |
+| LLM03 | Excessive Agency | promptfoo（`owasp:llm`） | — |
+| LLM04 | Supply Chain | SkillSpector、Snyk Agent Scan（agent 元件） | 缺模型權重 / 序列化檔掃描 |
+| LLM05 | Data and Model Poisoning | — | 待查 |
+| LLM06 | Unbounded Consumption | 既有 rate-limiter-flexible / @upstash/ratelimit / slowapi / httprate 可套在 LLM 端點（請求數層級） | 缺 token 數 / 費用層級的上限控制 |
+| LLM07 | Misinformation | garak（幻覺、錯誤資訊 probe） | — |
+| LLM08 | Hidden Context Exposure | — | 待查證 garak / promptfoo 的系統提示萃取 probe 覆蓋度 |
+| LLM09 | Vector and Embedding Weaknesses | — | 待查（向量庫存取控制、多租戶隔離；Neon 的 pgvector 權限面） |
+| LLM10 | Improper Output Handling | garak（XSS probe）、promptfoo（SQL / shell injection plugin）；既有 DOMPurify / nh3 / bluemonday 負責輸出淨化 | — |
+
 ## 觀察名單
 
 每日複查必查。觀察點解除即移出；狀態變化時連同此表一併更新。
@@ -87,3 +125,4 @@
 | NilAway | README 明示可能有破壞性變更與誤報；留意是否出穩定版或重大 breaking release | 2026-09-22 |
 | gosentry | Go 工具鏈 fork，須持續 merge 上游 golang/master 才拿得到 Go 安全修補；上游同步停滯超過一個月即標 ⚠️ | 2026-09-22 |
 | go-playground/validator | repo 公開徵求協作維護者；留意維護動能是否下滑 | 2026-09-17 |
+| promptfoo | 2026-03 被 OpenAI 收購，官方聲明維持開源與 MIT；留意授權變更、功能移往商業版或維護節奏下滑 | 2026-09-23 |
