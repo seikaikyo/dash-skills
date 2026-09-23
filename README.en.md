@@ -29,7 +29,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **interview-me** | Intent-extraction interview for underspecified asks (adapted from tGD, Apache-2.0) |
 | **sketch** | Throwaway HTML mockups, 2-3 design-stance variants (adapted from tGD, Apache-2.0) |
 | **security-scan** | Three-layer external scan (deps / secrets / SAST) mapped to OWASP Top 10:2025 |
-| **security-radar** | Security package radar: daily automated scan curating effective / popular / self-secure security tools, with OWASP Top 10:2025 mapping and coverage matrix |
+| **security-radar** | Security package radar: daily automated scan curating effective / popular / self-secure security tools, with coverage matrices for OWASP Top 10:2025, Agentic Applications 2026 and LLM Top 10 2026 |
 
 ### Development & Deployment
 
@@ -168,6 +168,11 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit + push.
 
 ## Changelog
+
+### 2026-09-23
+
+- security-radar expanded to AI agent / LLM security: new coverage matrices for Agentic Applications 2026 and LLM Top 10 2026, first batch SkillSpector, Snyk Agent Scan, promptfoo, garak (53 entries total)
+- security-radar cadence changed to daily rotating re-checks plus weekly (Monday) new candidates, with a watch list
 
 ### 2026-09-09
 

@@ -29,7 +29,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **interview-me** | 要件不明時の意図抽出インタビュー (tGD より改作, Apache-2.0) |
 | **sketch** | 使い捨て HTML モックアップ比較、2〜3 のデザイン方針バリアント (tGD より改作, Apache-2.0) |
 | **security-scan** | 依存脆弱性・シークレット・SAST の三層スキャン、OWASP Top 10:2025 に対応付け |
-| **security-radar** | セキュリティパッケージレーダー：毎日自動スキャンし「有効 / 人気 / 自身が安全」なセキュリティツールを収録、OWASP Top 10:2025 対応とカバレッジ行列付き |
+| **security-radar** | セキュリティパッケージレーダー：毎日自動スキャンし「有効 / 人気 / 自身が安全」なセキュリティツールを収録、OWASP Top 10:2025・Agentic Applications 2026・LLM Top 10 2026 の 3 つのカバレッジ行列付き |
 
 ### 開発・デプロイ
 
@@ -168,6 +168,11 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 毎日自動：SKILL.md 更新、agent-browser CLI バージョン確認、自動 commit + push。
 
 ## 更新履歴
+
+### 2026-09-23
+
+- security-radar の対象を AI エージェント / LLM セキュリティに拡大：Agentic Applications 2026 と LLM Top 10 2026 のカバレッジ行列を追加、初回収録は SkillSpector・Snyk Agent Scan・promptfoo・garak（計 53 件）
+- security-radar の運用を日次ローテーション再確認＋毎週月曜の新候補に変更、ウォッチリストを追加
 
 ### 2026-09-09
 
