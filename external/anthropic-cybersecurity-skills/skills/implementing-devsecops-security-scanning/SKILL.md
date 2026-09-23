@@ -184,7 +184,7 @@ Trivy scans dependencies, container images, IaC files, and generates SBOM:
       - uses: actions/checkout@v4
 
       - name: Run Trivy filesystem scan (dependencies)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -194,7 +194,7 @@ Trivy scans dependencies, container images, IaC files, and generates SBOM:
           output: 'trivy-fs-results.json'
 
       - name: Run Trivy IaC scan (Terraform, CloudFormation)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
         with:
           scan-type: 'config'
           scan-ref: '.'
@@ -221,7 +221,7 @@ Trivy scans dependencies, container images, IaC files, and generates SBOM:
         run: docker build -t app:${{ github.sha }} .
 
       - name: Scan container image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
         with:
           image-ref: 'app:${{ github.sha }}'
           severity: 'CRITICAL,HIGH'
@@ -230,7 +230,7 @@ Trivy scans dependencies, container images, IaC files, and generates SBOM:
           output: 'trivy-image-results.json'
 
       - name: Generate SBOM
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
         with:
           image-ref: 'app:${{ github.sha }}'
           format: 'cyclonedx'

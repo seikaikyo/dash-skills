@@ -274,7 +274,7 @@ jobs:
           directory: rendered.yaml
 
       - name: Scan with trivy
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
         with:
           scan-type: config
           scan-ref: rendered.yaml

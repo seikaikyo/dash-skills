@@ -64,10 +64,10 @@ sudo apt-get install -y trivy
 
 # RHEL/CentOS (YUM repository), macOS (Homebrew), and install script
 brew install trivy
-curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
+curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/v0.74.0/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.74.0
 
 # Containerized usage (no install)
-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image python:3.10-alpine
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969 image python:3.10-alpine
 
 # Verify
 trivy --version
@@ -213,7 +213,7 @@ Example GitHub Actions step using the official action:
 
 ```yaml
 - name: Run Trivy image scan (gate)
-  uses: aquasecurity/trivy-action@master
+  uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
   with:
     image-ref: 'myorg/app:1.4.0'
     format: 'sarif'
