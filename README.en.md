@@ -174,7 +174,8 @@ Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit 
 
 - Added `addy-agent-skills` (addyosmani/agent-skills, MIT) to daily sync, docs layer only; 20 of tgd-skills' 29 sub-skills originate here
 - tgd-skills upstream `openclawyhwang-hub/tGD` (repo and account) is gone; removed from daily sync, `external/tgd-skills` frozen at 2026-07-21
-- security-radar expanded to AI agent / LLM security: new coverage matrices for Agentic Applications 2026 and LLM Top 10 2026, first batch SkillSpector, Snyk Agent Scan, promptfoo, garak (53 entries total)
+- security-radar expanded to AI agent / LLM security: new coverage matrices for Agentic Applications 2026 and LLM Top 10 2026, adding SkillSpector, Snyk Agent Scan, promptfoo, garak, NeMo Guardrails, sandbox-runtime, Bifrost, gobreaker, opossum and Langfuse; both matrices completed the same day (59 entries total)
+- security-radar marks trivy ⚠️ after its March 2026 release-pipeline compromise (GHSA-69fq-xp46-6x23), with conditions for continued use
 - security-radar cadence changed to daily rotating re-checks plus weekly (Monday) new candidates, with a watch list
 
 ### 2026-09-09
