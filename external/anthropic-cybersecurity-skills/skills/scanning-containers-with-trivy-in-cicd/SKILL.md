@@ -88,7 +88,7 @@ jobs:
         run: docker build -t app:${{ github.sha }} .
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
         with:
           image-ref: 'app:${{ github.sha }}'
           format: 'sarif'
@@ -105,7 +105,7 @@ jobs:
           category: 'trivy-container'
 
       - name: Run Trivy misconfiguration scanner
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
         with:
           scan-type: 'config'
           scan-ref: '.'
@@ -157,7 +157,7 @@ build:
 trivy-scan:
   stage: scan
   image:
-    name: aquasec/trivy:latest
+    name: aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969
     entrypoint: [""]
   cache:
     paths:
@@ -225,7 +225,7 @@ Cache the Trivy vulnerability database in CI/CD to reduce scan times and enable 
     restore-keys: trivy-db-
 
 - name: Run Trivy with cached DB
-  uses: aquasecurity/trivy-action@0.28.0
+  uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
   with:
     image-ref: 'app:${{ github.sha }}'
     cache-dir: /tmp/trivy-db

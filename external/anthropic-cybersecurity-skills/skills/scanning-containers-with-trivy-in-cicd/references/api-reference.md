@@ -28,8 +28,8 @@
 
 | Platform | Method |
 |----------|--------|
-| GitHub Actions | `aquasecurity/trivy-action@v0.28.0` |
-| GitLab CI | `aquasec/trivy:latest` Docker image |
+| GitHub Actions | `aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1` |
+| GitLab CI | `aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969` Docker image |
 | Jenkins | Trivy CLI in pipeline script |
 | Azure DevOps | Trivy CLI task |
 

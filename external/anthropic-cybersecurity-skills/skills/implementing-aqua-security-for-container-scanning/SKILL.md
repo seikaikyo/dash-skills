@@ -134,7 +134,7 @@ jobs:
         run: docker build -t myapp:${{ github.sha }} .
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
         with:
           image-ref: 'myapp:${{ github.sha }}'
           format: 'sarif'
@@ -155,7 +155,7 @@ jobs:
 container_scanning:
   stage: security
   image:
-    name: aquasec/trivy:latest
+    name: aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969
     entrypoint: [""]
   variables:
     FULL_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA

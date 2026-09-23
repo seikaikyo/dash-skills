@@ -56,7 +56,7 @@ generic-api-key
 ## GitHub Actions (trivy-action)
 
 ```yaml
-- uses: aquasecurity/trivy-action@master
+- uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1  # v0.35.0
   with:
     scan-type: 'image'      # image | fs | config | repo | sbom
     image-ref: 'myorg/app:1.4.0'
