@@ -211,6 +211,23 @@ npm update
 - [ ] npm audit 無已知漏洞
 - [ ] lock 檔案已提交
 - [ ] GitHub Dependabot 已啟用
+- [ ] **CI 動作 pin 完整 commit SHA**：`.github/workflows/` 內第三方 `uses:` 一律 `owner/action@<40 碼 SHA> # vX.Y.Z`，
+      不得用 `@master`、`@main`、`@v1` 這類可被改指向的 tag（可用 zizmor 自動檢查）
+- [ ] **容器映像不用 `:latest`**：CI 與 Dockerfile 的第三方映像固定版本，關鍵映像以 `@sha256:` digest 固定
+- [ ] **不 `curl | sh` 安裝工具**：改下載固定版本的 release 並驗 checksum / cosign 簽章
+
+**已知遭入侵的發行版本（出現即列 CRITICAL，並要求輪替該 pipeline 可存取的所有 secrets）:**
+
+| 套件 / Action | 受影響版本與期間 | 公告 |
+|---------------|------------------|------|
+| `aquasecurity/trivy-action` | 2026-03-19 ~17:43 至 03-20 ~05:40 UTC 期間，77 個 tag 中 76 個被改指向竊密 commit（v0.35.0 未受影響） | [GHSA-69fq-xp46-6x23](https://github.com/aquasecurity/trivy/security/advisories/GHSA-69fq-xp46-6x23) |
+| `aquasecurity/setup-trivy` | 2026-03-19 ~17:43–21:44 UTC，v0.2.0–v0.2.6 全部 tag | 同上 |
+| trivy binary | v0.69.4（2026-03-19 約 3 小時，含 GitHub release、GHCR、ECR、deb/rpm、get.trivy.dev） | 同上 |
+| `aquasec/trivy` Docker Hub 映像 | v0.69.5、v0.69.6（2026-03-22 15:43 至 03-23 ~01:40 UTC） | 同上 |
+| `litellm`（PyPI） | 1.82.7、1.82.8（2026-03-24 約 40 分鐘） | [BerriAI/litellm#24518](https://github.com/BerriAI/litellm/issues/24518) |
+
+判斷是否受害：看 workflow 是否以 tag（非 SHA）引用上表 Action、或安裝了上表版本，**且**在上述期間實際執行過（查 Actions run 紀錄）。
+兩者都成立 → 視為 secrets 已外洩：輪替 pipeline 可存取的所有 secrets，並在組織內搜尋名為 `tpcp-docs` 的 repo（攻擊者外送憑證的落點之一）。
 
 ## OWASP 對照
 
@@ -319,6 +336,7 @@ npm update
 - [ ] **HTTPS**: 生產環境強制
 - [ ] **安全標頭**: CSP、X-Frame-Options 已設定
 - [ ] **依賴**: 最新且無漏洞
+- [ ] **CI 供應鏈**: 第三方 Action pin SHA、映像不用 `:latest`、無已知遭入侵版本
 
 ## 緊急應變
 
