@@ -212,7 +212,8 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 - 新增 `addy-agent-skills`（addyosmani/agent-skills，MIT）每日同步，僅文件層；tgd-skills 29 個子 skill 中有 20 個源自此處
 - tgd-skills 上游 `openclawyhwang-hub/tGD`（repo 與帳號）已消失，從每日同步移除；`external/tgd-skills` 凍結於 2026-07-21
-- security-radar 擴大範圍至 AI agent / LLM 安全：新增 Agentic Applications 2026 與 LLM Top 10 2026 涵蓋矩陣，首批收錄 SkillSpector、Snyk Agent Scan、promptfoo、garak（共 53 筆）
+- security-radar 擴大範圍至 AI agent / LLM 安全：新增 Agentic Applications 2026 與 LLM Top 10 2026 涵蓋矩陣，收錄 SkillSpector、Snyk Agent Scan、promptfoo、garak、NeMo Guardrails、sandbox-runtime、Bifrost、gobreaker、opossum、Langfuse，兩張矩陣當日補齊（共 59 筆）
+- security-radar 將 trivy 改標 ⚠️：2026-03 發行鏈遭入侵（GHSA-69fq-xp46-6x23），附續用條件
 - security-radar 維護節奏改為每日複查輪替 + 每週一新候選，新增觀察名單
 
 ### 2026-09-09
