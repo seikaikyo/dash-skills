@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 14 個 (`skills/`) + 外部收錄 50 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 14 個 (`skills/`) + 外部收錄 51 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -46,7 +46,8 @@
 | **claude-api** | Claude API 使用指南 | anthropics/skills |
 | **antfu-skills** | Anthony Fu 的 Vue / Nuxt / Vite / UnoCSS 生態規範 (19 個子 skill) | antfu/skills |
 | **cc-skills-golang** | Go 開發規範 (46 個子 skill：context / 並行 / DI / CI 等，lo/do 作者) | samber/cc-skills-golang |
-| **tgd-skills** | tGD PDLC 工程紀律 (29 個子 skill：審查 / 除錯 / 上線 / ADR 等，僅文件層) | openclawyhwang-hub/tGD |
+| **addy-agent-skills** | Addy Osmani 工程紀律 (25 個子 skill：規格 / TDD / 審查 / 除錯 / 上線 等，僅文件層；tGD 的上游來源) | addyosmani/agent-skills |
+| **tgd-skills** | tGD PDLC 工程紀律 (29 個子 skill：審查 / 除錯 / 上線 / ADR 等，僅文件層)。上游已消失，凍結於 2026-07-21 | openclawyhwang-hub/tGD |
 
 ### UI/UX 與設計
 
@@ -209,6 +210,8 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 ### 2026-09-23
 
+- 新增 `addy-agent-skills`（addyosmani/agent-skills，MIT）每日同步，僅文件層；tgd-skills 29 個子 skill 中有 20 個源自此處
+- tgd-skills 上游 `openclawyhwang-hub/tGD`（repo 與帳號）已消失，從每日同步移除；`external/tgd-skills` 凍結於 2026-07-21
 - security-radar 擴大範圍至 AI agent / LLM 安全：新增 Agentic Applications 2026 與 LLM Top 10 2026 涵蓋矩陣，首批收錄 SkillSpector、Snyk Agent Scan、promptfoo、garak（共 53 筆）
 - security-radar 維護節奏改為每日複查輪替 + 每週一新候選，新增觀察名單
 
