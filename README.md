@@ -29,7 +29,7 @@
 | **interview-me** | 需求不明時的意圖萃取訪談 (改寫自 tGD, Apache-2.0) |
 | **sketch** | 拋棄式 HTML mockup 比稿，2 到 3 個設計立場變體 (改寫自 tGD, Apache-2.0) |
 | **security-scan** | 相依漏洞 / 機密 / SAST 三層外部掃描，結果對回 OWASP Top 10:2025 |
-| **security-radar** | 資安套件情報雷達：每日自動掃描並收錄「有效 / 熱門 / 自身安全」的資安工具，附 OWASP Top 10:2025 對應與涵蓋矩陣 |
+| **security-radar** | 資安套件情報雷達：每日自動掃描並收錄「有效 / 熱門 / 自身安全」的資安工具，附 OWASP Top 10:2025、Agentic Applications 2026、LLM Top 10 2026 三張涵蓋矩陣 |
 
 ### 開發與部署
 
@@ -206,6 +206,11 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 | 後端部署 | Render |
 
 ## 更新紀錄
+
+### 2026-09-23
+
+- security-radar 擴大範圍至 AI agent / LLM 安全：新增 Agentic Applications 2026 與 LLM Top 10 2026 涵蓋矩陣，首批收錄 SkillSpector、Snyk Agent Scan、promptfoo、garak（共 53 筆）
+- security-radar 維護節奏改為每日複查輪替 + 每週一新候選，新增觀察名單
 
 ### 2026-09-09
 
