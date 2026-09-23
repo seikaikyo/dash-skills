@@ -46,7 +46,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **claude-api** | Claude API usage guide | anthropics/skills |
 | **antfu-skills** | Anthony Fu's Vue / Nuxt / Vite / UnoCSS ecosystem conventions (19 sub-skills) | antfu/skills |
 | **cc-skills-golang** | Go development standards (46 sub-skills: context / concurrency / DI / CI, by the lo/do author) | samber/cc-skills-golang |
-| **tgd-skills** | tGD PDLC engineering discipline (29 sub-skills: review / debugging / launch / ADRs, docs layer only) | openclawyhwang-hub/tGD |
+| **tgd-skills** | tGD PDLC engineering discipline (29 sub-skills: review / debugging / launch / ADRs, docs layer only). Upstream is gone; frozen at 2026-07-21 | openclawyhwang-hub/tGD |
 
 ### UI/UX & Design
 
@@ -171,6 +171,7 @@ Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit 
 
 ### 2026-09-23
 
+- tgd-skills upstream `openclawyhwang-hub/tGD` (repo and account) is gone; removed from daily sync, `external/tgd-skills` frozen at 2026-07-21
 - security-radar expanded to AI agent / LLM security: new coverage matrices for Agentic Applications 2026 and LLM Top 10 2026, first batch SkillSpector, Snyk Agent Scan, promptfoo, garak (53 entries total)
 - security-radar cadence changed to daily rotating re-checks plus weekly (Monday) new candidates, with a watch list
 

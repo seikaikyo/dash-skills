@@ -46,7 +46,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **claude-api** | Claude API 利用ガイド | anthropics/skills |
 | **antfu-skills** | Anthony Fu の Vue / Nuxt / Vite / UnoCSS エコシステム規範 (19 サブスキル) | antfu/skills |
 | **cc-skills-golang** | Go 開発規範 (46 サブスキル：context / 並行 / DI / CI 等、lo/do 作者) | samber/cc-skills-golang |
-| **tgd-skills** | tGD PDLC エンジニアリング規律 (29 サブスキル：レビュー / デバッグ / リリース / ADR 等、ドキュメント層のみ) | openclawyhwang-hub/tGD |
+| **tgd-skills** | tGD PDLC エンジニアリング規律 (29 サブスキル：レビュー / デバッグ / リリース / ADR 等、ドキュメント層のみ)。上流は消失、2026-07-21 時点で凍結 | openclawyhwang-hub/tGD |
 
 ### UI/UX・デザイン
 
@@ -171,6 +171,7 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 ### 2026-09-23
 
+- tgd-skills の上流 `openclawyhwang-hub/tGD`（リポジトリとアカウント）が消失したため日次同期から除外；`external/tgd-skills` は 2026-07-21 時点で凍結
 - security-radar の対象を AI エージェント / LLM セキュリティに拡大：Agentic Applications 2026 と LLM Top 10 2026 のカバレッジ行列を追加、初回収録は SkillSpector・Snyk Agent Scan・promptfoo・garak（計 53 件）
 - security-radar の運用を日次ローテーション再確認＋毎週月曜の新候補に変更、ウォッチリストを追加
 

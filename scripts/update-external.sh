@@ -286,37 +286,7 @@ update_cc_skills_golang() {
     rm -rf "$temp_dir"
 }
 
-# 函數：更新 tgd-skills (openclawyhwang-hub/tGD - PDLC 工程紀律 skills)
-# 只取 skills/ 與 references/ 文件層；明確不同步 hooks/、agents/、setup.sh、bin/（供應鏈紀律）
-update_tgd_skills() {
-    local skill_dir="$EXTERNAL_DIR/tgd-skills"
-    local temp_dir=$(mktemp -d)
-    local repo="openclawyhwang-hub/tGD"
-
-    echo "更新: tgd-skills (tGD PDLC skills，僅文件層)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo/skills" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp -r repo/skills/* "$skill_dir/"
-        [ -d "repo/references" ] && cp -r repo/references "$skill_dir/"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
+# tgd-skills (openclawyhwang-hub/tGD)：上游 repo 與帳號已消失，external/tgd-skills 凍結於 2026-07-21，不再同步
 
 # 函數：更新 antfu-skills (Anthony Fu - Vue/Nuxt/Vite 生態 skills)
 update_antfu_skills() {
@@ -1066,7 +1036,6 @@ show_available() {
     echo "  - ui-ux-pro-max           (nextlevelbuilder, 50 styles + 21 palettes)"
     echo "  - cc-skills-golang        (samber, Go 開發 40+ skills)"
     echo "  - antfu-skills            (Anthony Fu, Vue/Nuxt/Vite 生態 skills)"
-    echo "  - tgd-skills              (tGD, PDLC 工程紀律 28 skills，僅文件層)"
     echo ""
     echo "  安全 / 資安類:"
     echo "  - trailofbits-security       (Trail of Bits, 35+ security plugins)"
@@ -1176,7 +1145,6 @@ if [ $# -eq 0 ]; then
         update_slack_gif_creator
         update_cc_skills_golang
         update_antfu_skills
-        update_tgd_skills
         update_archify
     )
 
@@ -1423,9 +1391,6 @@ else
                 ;;
             "antfu-skills"|"antfu")
                 update_antfu_skills
-                ;;
-            "tgd-skills"|"tgd")
-                update_tgd_skills
                 ;;
             "archify")
                 update_archify
