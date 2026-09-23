@@ -42,6 +42,11 @@ if ! DASH_SKILLS_NO_PUSH=1 perl -e 'alarm(120); exec @ARGV' ./scripts/update-ext
     echo "[dash-skills] [1/5] 同步逾時或失敗，跳過"
 fi
 
+# 釘死已知風險引用：external/ 的 skill 會教 agent 寫 trivy-action@master、aquasec/trivy:latest，
+# 2026-03 Trivy 發行鏈遭入侵（GHSA-69fq-xp46-6x23）時這類可變引用正是被改指向的入口。
+# 上游每天覆蓋，所以每次同步後、symlink 載入前重跑；冪等，詳見 scripts/pin-refs.py
+python3 ./scripts/pin-refs.py external 2>&1 | sed 's/^/[dash-skills]   /'
+
 # [2/5] SkillSpector 安檢：掃有變更的 external 目錄，趕在 symlink 重建（載入點）之前
 # 警報不阻斷；逾時與未安裝都會明講跳過。詳見 scripts/scan-skills.sh
 echo "[dash-skills] [2/5] 外部 skills 安檢..."
