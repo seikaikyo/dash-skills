@@ -172,6 +172,8 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 ### 2026-09-23
 
+- 外部 skill 同期にロード前ゲートを追加：新規追加分が不可視文字・デコード後実行・ユーザーに隠す指示などのルールに該当、または SkillSpector が警告・失敗した場合、その skill を直前のコミット版に戻して隔離し人手で判定（`scripts/gate-external.py`）
+- 同期後、外部 skill 内の trivy-action や trivy イメージなど可変参照を固定 SHA / digest に自動固定（`scripts/pin-refs.py`）
 - `addy-agent-skills`（addyosmani/agent-skills、MIT）を日次同期に追加、ドキュメント層のみ；tgd-skills の 29 サブスキル中 20 個はここが由来
 - tgd-skills の上流 `openclawyhwang-hub/tGD`（リポジトリとアカウント）が消失したため日次同期から除外；`external/tgd-skills` は 2026-07-21 時点で凍結
 - security-radar の対象を AI エージェント / LLM セキュリティに拡大：Agentic Applications 2026 と LLM Top 10 2026 のカバレッジ行列を追加、SkillSpector・Snyk Agent Scan・promptfoo・garak・NeMo Guardrails・sandbox-runtime・Bifrost・gobreaker・opossum・Langfuse を収録し、両行列を同日中に完成（計 59 件）

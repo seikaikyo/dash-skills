@@ -172,6 +172,8 @@ Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit 
 
 ### 2026-09-23
 
+- External skill sync now has a pre-load gate: if newly added content hits rules such as hidden Unicode, decode-and-execute, or instructions to hide actions from the user, or SkillSpector alerts or fails, that skill is rolled back to its last committed version and quarantined for human review (`scripts/gate-external.py`)
+- After each sync, mutable references in external skills such as trivy-action and trivy images are pinned to fixed SHAs / digests (`scripts/pin-refs.py`)
 - Added `addy-agent-skills` (addyosmani/agent-skills, MIT) to daily sync, docs layer only; 20 of tgd-skills' 29 sub-skills originate here
 - tgd-skills upstream `openclawyhwang-hub/tGD` (repo and account) is gone; removed from daily sync, `external/tgd-skills` frozen at 2026-07-21
 - security-radar expanded to AI agent / LLM security: new coverage matrices for Agentic Applications 2026 and LLM Top 10 2026, adding SkillSpector, Snyk Agent Scan, promptfoo, garak, NeMo Guardrails, sandbox-runtime, Bifrost, gobreaker, opossum and Langfuse; both matrices completed the same day (59 entries total)

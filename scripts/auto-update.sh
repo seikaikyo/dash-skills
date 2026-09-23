@@ -47,10 +47,12 @@ fi
 # 上游每天覆蓋，所以每次同步後、symlink 載入前重跑；冪等，詳見 scripts/pin-refs.py
 python3 ./scripts/pin-refs.py external 2>&1 | sed 's/^/[dash-skills]   /'
 
-# [2/5] SkillSpector 安檢：掃有變更的 external 目錄，趕在 symlink 重建（載入點）之前
-# 警報不阻斷；逾時與未安裝都會明講跳過。詳見 scripts/scan-skills.sh
-echo "[dash-skills] [2/5] 外部 skills 安檢..."
-./scripts/scan-skills.sh 2>&1 | sed 's/^/[dash-skills]   /'
+# [2/5] 裝載前閘門：趕在 symlink 重建（載入點）與 commit 之前。
+# 有變更的 external 目錄要過兩關：新增內容的差異規則（隱形字元、解碼執行、要 agent 瞞著使用者等），
+# 與 SkillSpector 掃描（baseline 外的新告警）。任一不過、掃描失敗或逾時，該目錄退回上一個已提交版本，
+# 被擋下的內容存到 security-reports/quarantine/ 供人工判讀。詳見 scripts/gate-external.py
+echo "[dash-skills] [2/5] 外部 skills 裝載前閘門..."
+python3 ./scripts/gate-external.py 2>&1 | sed 's/^/[dash-skills]   /'
 
 # 重建 ~/.claude/skills symlink，新增的 external skill 才會被 Claude Code 載入
 new_links=$(./scripts/link.sh 2>&1 | grep "建立連結" || true)
