@@ -210,6 +210,8 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 ### 2026-09-23
 
+- 外部 skills 同步加裝載前閘門：新增內容命中隱形字元、解碼執行、要 agent 瞞著使用者等規則，或 SkillSpector 告警、掃描失敗時，該 skill 退回上一版並隔離待人工判讀（`scripts/gate-external.py`）
+- 同步後自動把外部 skill 內的 trivy-action、trivy 映像等可變引用釘成固定 SHA / digest（`scripts/pin-refs.py`）
 - 新增 `addy-agent-skills`（addyosmani/agent-skills，MIT）每日同步，僅文件層；tgd-skills 29 個子 skill 中有 20 個源自此處
 - tgd-skills 上游 `openclawyhwang-hub/tGD`（repo 與帳號）已消失，從每日同步移除；`external/tgd-skills` 凍結於 2026-07-21
 - security-radar 擴大範圍至 AI agent / LLM 安全：新增 Agentic Applications 2026 與 LLM Top 10 2026 涵蓋矩陣，收錄 SkillSpector、Snyk Agent Scan、promptfoo、garak、NeMo Guardrails、sandbox-runtime、Bifrost、gobreaker、opossum、Langfuse，兩張矩陣當日補齊（共 59 筆）

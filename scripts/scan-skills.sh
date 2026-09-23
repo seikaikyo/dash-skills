@@ -11,6 +11,9 @@
 # 行為：警報不阻斷（exit 0），告警印終端機加寫 security-reports/findings.log。
 # 掃描器未安裝、逾時、個別失敗：明講跳過，不靜默。
 # 報告目錄 security-reports/ 已 gitignore（public repo 不對外發布第三方 skill 的漏洞判定）。
+#
+# SCAN_STATUS_FILE 有設時，逐目錄寫一行 `<name>\t<pass|alert|failed|timeout>` 給 gate-external.py
+# 讀；掃描器未安裝寫 `*\tnot-installed`。檔案由呼叫端清空，這裡只 append。
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
@@ -19,9 +22,13 @@ REPORT_DIR="$REPO_DIR/security-reports"
 FINDINGS_LOG="$REPORT_DIR/findings.log"
 SCAN_TIMEOUT="${SCAN_SKILLS_TIMEOUT:-240}"   # 每目錄逾時秒數，補掃大目錄時可環境變數拉長
 TODAY=$(date +%Y-%m-%d)
+STATUS_FILE="${SCAN_STATUS_FILE:-}"
+
+_status() { [ -n "$STATUS_FILE" ] && printf '%s\t%s\n' "$1" "$2" >> "$STATUS_FILE"; return 0; }
 
 if ! command -v skillspector > /dev/null 2>&1; then
     echo "[scan-skills] skillspector 未安裝，跳過安檢（安裝: uv tool install git+https://github.com/NVIDIA/skillspector.git）"
+    _status '*' not-installed
     exit 0
 fi
 
@@ -75,8 +82,10 @@ for name in "${targets[@]}"; do
     if ! jq -e '.risk_assessment' "$report" > /dev/null 2>&1; then
         if [ "$rc" -ge 128 ]; then
             echo "[scan-skills] 掃描逾時（${SCAN_TIMEOUT}s）: $name"
+            _status "$name" timeout
         else
             echo "[scan-skills] 掃描失敗（rc=${rc}）: $name"
+            _status "$name" failed
         fi
         failed=$((failed + 1))
         continue
@@ -94,15 +103,17 @@ for name in "${targets[@]}"; do
             line="$TODAY $name score=$score severity=$sev max_issue=$max_sev issues=$issues report=$(basename "$report")"
             echo "[scan-skills] 安檢警告: $line"
             echo "$line" >> "$FINDINGS_LOG"
+            _status "$name" alert
             ;;
         *)
             echo "[scan-skills] 通過: $name score=$score max_issue=$max_sev issues=$issues"
+            _status "$name" pass
             ;;
     esac
 done
 
 echo "[scan-skills] 完成: 掃描 ${scanned}、告警 ${alerts}、失敗 ${failed}"
 if [ "$alerts" -gt 0 ]; then
-    echo "[scan-skills] 告警明細: ${FINDINGS_LOG}（v1 警報不阻斷，該 skill 仍會被連結，處置由人工判斷）"
+    echo "[scan-skills] 告警明細: ${FINDINGS_LOG}（單獨執行時不阻斷；每日同步經 gate-external.py 時告警會被隔離）"
 fi
 exit 0
