@@ -186,14 +186,16 @@ def check_rules(name, allow):
 
 
 def run_scanner(names):
-    """呼叫 scan-skills.sh，回傳 {name: status}；'*' 代表掃描器整體不可用。"""
+    """呼叫 scan-skills.sh，回傳 {name: status}；'*' 代表掃描器整體不可用。
+
+    輸出直接串流到終端機，不先收集：掃描一個目錄可能要幾分鐘，
+    收集起來最後才印，畫面會整段沒動靜，看起來像當掉（2026-09-25 實際發生，
+    使用者因此中斷同步，更新停在工作目錄沒有 commit）。
+    """
     fd, status_file = tempfile.mkstemp(prefix="scan-status-")
     os.close(fd)
     env = dict(os.environ, SCAN_STATUS_FILE=status_file)
-    proc = subprocess.run([os.path.join(REPO, "scripts", "scan-skills.sh"), *names],
-                          cwd=REPO, env=env, capture_output=True, text=True)
-    for line in proc.stdout.splitlines():
-        print(f"  {line}")
+    subprocess.run([os.path.join(REPO, "scripts", "scan-skills.sh"), *names], cwd=REPO, env=env)
     status = {}
     with open(status_file, encoding="utf-8") as f:
         for raw in f:
@@ -226,6 +228,8 @@ def quarantine(name, reasons, dry_run):
 
 
 def main():
+    # 被管線接到 sed 時 Python 預設整塊緩衝，要等結束才吐出；改成逐行輸出
+    sys.stdout.reconfigure(line_buffering=True)
     dry_run = "--dry-run" in sys.argv
     names = changed_dirs()
     if not names:
@@ -233,7 +237,9 @@ def main():
         return 0
 
     allow = load_allow()
-    print(f"[gate] 檢查 {len(names)} 個有變更的目錄")
+    timeout = os.environ.get("SCAN_SKILLS_TIMEOUT", "240")
+    print(f"[gate] 檢查 {len(names)} 個有變更的目錄：{', '.join(names)}")
+    print(f"[gate] SkillSpector 逐一掃描，每個最多 {timeout} 秒，期間請勿中斷")
     status = run_scanner(names)
     scanner_down = status.get("*") == "not-installed"
     allow_unscanned = os.environ.get("DASH_SKILLS_ALLOW_UNSCANNED") == "1"
