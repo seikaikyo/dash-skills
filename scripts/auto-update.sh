@@ -47,18 +47,8 @@ fi
 # 上游每天覆蓋，所以每次同步後、symlink 載入前重跑；冪等，詳見 scripts/pin-refs.py
 python3 ./scripts/pin-refs.py external 2>&1 | sed 's/^/[dash-skills]   /'
 
-# [2/5] 裝載前閘門：趕在 symlink 重建（載入點）與 commit 之前。
-# 有變更的 external 目錄要過兩關：新增內容的差異規則（隱形字元、解碼執行、要 agent 瞞著使用者等），
-# 與 SkillSpector 掃描（baseline 外的新告警）。任一不過、掃描失敗或逾時，該目錄退回上一個已提交版本，
-# 被擋下的內容存到 security-reports/quarantine/ 供人工判讀。詳見 scripts/gate-external.py
-echo "[dash-skills] [2/5] 外部 skills 裝載前閘門..."
-python3 -u ./scripts/gate-external.py 2>&1 | sed 's/^/[dash-skills]   /'
 
-# 重建 ~/.claude/skills symlink，新增的 external skill 才會被 Claude Code 載入
-new_links=$(./scripts/link.sh 2>&1 | grep "建立連結" || true)
-if [ -n "$new_links" ]; then
-    echo "$new_links" | sed 's/^/[dash-skills]   /'
-fi
+
 
 # 掃描並自動 redact 機敏資料
 # GitHub Push Protection 會擋已知格式的 key，即使是文件中的範例
@@ -120,8 +110,10 @@ redact_secrets() {
     return 0
 }
 
-# [3/5] 清理 + 安全掃描
-echo "[dash-skills] [3/5] 清理 + 機敏資料掃描..."
+# [2/5] 清理 + 機敏資料遮蔽：排在閘門之前（2026-09-25）。
+# 上游範例金鑰每天同步回來都是未遮蔽的，遮蔽前跟 HEAD 比一定有差異；
+# 放在閘門之後的話，資安教材類集合每天都被當成「有變更」整包重掃，每個最多 240 秒。
+echo "[dash-skills] [2/5] 清理 + 機敏資料遮蔽..."
 
 # 清理 iCloud sync 衝突副本
 icloud_dupes=$(find external/ -name "* [0-9]*" 2>/dev/null | wc -l | tr -d ' ')
@@ -131,17 +123,27 @@ if [ "$icloud_dupes" -gt 0 ]; then
     find external/ -depth -name "* [0-9]*" -type d -exec rm -rf {} \; 2>/dev/null
 fi
 
+if ! redact_secrets; then
+    echo "[dash-skills]   已 redact 機敏資料"
+fi
+
+# [3/5] 裝載前閘門：趕在 symlink 重建（載入點）與 commit 之前。
+# 有變更的 external 目錄要過兩關：新增內容的差異規則（隱形字元、解碼執行、要 agent 瞞著使用者等），
+# 與 SkillSpector 掃描（baseline 外的新告警）。任一不過、掃描失敗或逾時，該目錄退回上一個已提交版本，
+# 被擋下的內容存到 security-reports/quarantine/ 供人工判讀。詳見 scripts/gate-external.py
+echo "[dash-skills] [3/5] 外部 skills 裝載前閘門..."
+python3 -u ./scripts/gate-external.py 2>&1 | sed 's/^/[dash-skills]   /'
+
+# 重建 ~/.claude/skills symlink，新增的 external skill 才會被 Claude Code 載入
+new_links=$(./scripts/link.sh 2>&1 | grep "建立連結" || true)
+if [ -n "$new_links" ]; then
+    echo "$new_links" | sed 's/^/[dash-skills]   /'
+fi
+
 # 檢查是否有變更
 if [ -n "$(git status --porcelain)" ]; then
-    # 自動 redact
-    if redact_secrets; then
-        : # 沒有 redact
-    else
-        echo "[dash-skills]   已 redact 機敏資料"
-    fi
-
     # [4/5] 提交 + 推送
-    # 指名 stage（2026-07-25）：本 repo 為 public，git add -A 與上面的 redact_secrets
+    # 指名 stage（2026-07-25）：本 repo 為 public，git add -A 與 redact_secrets
     # 之間存在 race condition，腳本開頭註解已載明風險。git add <path> 涵蓋新增/修改/刪除。
     git add external openspec pi-agent scripts skills *.md 2>/dev/null || true
     if git diff --cached --quiet; then
