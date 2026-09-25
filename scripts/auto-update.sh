@@ -52,7 +52,7 @@ python3 ./scripts/pin-refs.py external 2>&1 | sed 's/^/[dash-skills]   /'
 # 與 SkillSpector 掃描（baseline 外的新告警）。任一不過、掃描失敗或逾時，該目錄退回上一個已提交版本，
 # 被擋下的內容存到 security-reports/quarantine/ 供人工判讀。詳見 scripts/gate-external.py
 echo "[dash-skills] [2/5] 外部 skills 裝載前閘門..."
-python3 ./scripts/gate-external.py 2>&1 | sed 's/^/[dash-skills]   /'
+python3 -u ./scripts/gate-external.py 2>&1 | sed 's/^/[dash-skills]   /'
 
 # 重建 ~/.claude/skills symlink，新增的 external skill 才會被 Claude Code 載入
 new_links=$(./scripts/link.sh 2>&1 | grep "建立連結" || true)

@@ -76,6 +76,7 @@ for name in "${targets[@]}"; do
     fi
     # skillspector 對高風險判定會 exit 1，報告照樣產出：完成與否看報告有效性，不看 exit code
     rm -f "$report"
+    echo "[scan-skills] 掃描中: $name（最多 ${SCAN_TIMEOUT} 秒）"
     rc=0
     perl -e 'alarm shift; exec @ARGV' "$SCAN_TIMEOUT" \
         skillspector scan "$dir" --no-llm --format json --output "$report" "${baseline_args[@]}" > /dev/null 2>&1 || rc=$?
