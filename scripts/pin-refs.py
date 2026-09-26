@@ -8,9 +8,10 @@
 這類可變引用，照抄進專案 CI 就等於把 secrets 交給下一次事件。
 external/ 每天從上游覆蓋同步，直接改檔會被洗掉，所以在每次同步後、symlink 載入前自動改寫。
 
-規則（冪等，已釘死的不會再動）：
+規則（冪等，已釘在目前 SHA 的不會再動）：
 - aquasecurity/trivy-action@<非 SHA>  → @<SHA>，在 `uses:` 行尾補版本註解
 - aquasecurity/setup-trivy@<非 SHA>   → 同上
+- 兩者若停在本腳本以前釘過的舊 SHA（SUPERSEDED_PINS）→ 換成目前的 SHA，行尾版本註解一併更新
 - aquasec/trivy 或 ghcr.io/aquasecurity/trivy 的 :latest 與遭入侵的 0.69.4–0.69.6
   → :<版本>@sha256:<digest>
 - 非官方 namespace 的 aquasecurity/trivy:<tag>（Docker Hub）→ 官方 aquasec/trivy 並釘 digest
@@ -20,15 +21,29 @@ external/ 每天從上游覆蓋同步，直接改檔會被洗掉，所以在每�
   git ls-remote https://github.com/aquasecurity/trivy-action.git refs/tags/<tag>
   並確認該 SHA 在上游預設分支上（git merge-base --is-ancestor <sha> origin/master），
   冒牌 commit 來自 fork，不會在預設分支歷史裡。
+  trivy-action 另外要看該 commit 的 action.yaml：`version` 預設值要 ≥ 0.72.0，
+  內部 setup-trivy 要 ≥ v0.3.1，否則照釘也會裝到有漏洞的 trivy。
   映像 digest：https://hub.docker.com/v2/repositories/aquasec/trivy/tags/<版本>
 """
 import os
 import re
 import sys
 
-# 2026-09-23 查證：兩個 SHA 皆在上游預設分支，commit 日期早於 2026-03-19 事件
-TRIVY_ACTION = ("57a97c7e7821a5776cebc9bb87c984fa69cba8f1", "v0.35.0")  # 2026-03-04，預設 trivy v0.69.3
-SETUP_TRIVY = ("3fb12ec12f41e471780db15c232d5dd185dcb514", "v0.2.6")    # 2026-01-15
+# 2026-09-26 查證：兩個 SHA 皆在上游預設分支，commit 日期晚於 2026-03-19 事件。
+# trivy-action 釘 master 而不是最新 tag：v0.35.0 / v0.36.0 預設裝 trivy v0.69.3 / v0.70.0，
+# 都早於 CVE-2026-54448（0.71.0）、CVE-2026-55092（0.71.1）、CVE-2026-63328（0.72.0）的修補，
+# 內部也還用 setup-trivy v0.2.6。master 這個 commit 預設 trivy v0.74.0、內部用 setup-trivy v0.3.1。
+# 上游出新 tag 且預設版本 ≥ 0.72.0 時改回釘 tag。
+TRIVY_ACTION = ("d2a0b60797ff03db6132bd4e2b293f9b37081297", "master 2026-08-14, trivy v0.74.0")
+# v0.3.0 起 ${{ }} 改經環境變數傳入 run 區塊，修掉 script injection（上游未發 GHSA）；
+# v0.3.0 本身載入會壞，要用 v0.3.1。v0.3.0 起 `path` 只接受字面路徑，不再展開變數與 ~。
+SETUP_TRIVY = ("81e514348e19b6112ce2a7e3ecbafe19c1e1f567", "v0.3.1")   # 2026-06-03
+# 本腳本以前釘過、現已汰換的 SHA 與當時寫進行尾的註解。external/ 已提交的內容帶著這些舊值，
+# 而 pin_action 只改非 SHA 的 ref，所以要另外換掉，換 pin 時把舊值加進來。
+SUPERSEDED_PINS = {
+    "aquasecurity/trivy-action": [("57a97c7e7821a5776cebc9bb87c984fa69cba8f1", "v0.35.0")],
+    "aquasecurity/setup-trivy": [("3fb12ec12f41e471780db15c232d5dd185dcb514", "v0.2.6")],
+}
 TRIVY_VERSION = "0.74.0"
 TRIVY_IMAGE_DIGEST = "sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969"
 
@@ -50,6 +65,15 @@ def pin_action(text, name, sha, tag):
         return new
 
     return "".join(repl_line(l) for l in text.splitlines(keepends=True))
+
+
+def repin_superseded(text, name, sha, tag):
+    for old_sha, old_tag in SUPERSEDED_PINS.get(name, []):
+        ref = re.escape(f"{name}@{old_sha}")
+        # 連同本腳本當初補的行尾註解一起換，避免留下 `# v0.35.0` 這種對不上的版本
+        text = re.sub(rf"{ref}([ \t]+# {re.escape(old_tag)})(?=[ \t]*$)", f"{name}@{sha}  # {tag}", text, flags=re.M)
+        text = re.sub(rf"{ref}\b", f"{name}@{sha}", text)
+    return text
 
 
 def pin_image(text):
@@ -93,8 +117,10 @@ def main(root):
                     old = f.read()
             except (UnicodeDecodeError, OSError):
                 continue
-            new = pin_action(old, "aquasecurity/trivy-action", *TRIVY_ACTION)
-            new = pin_action(new, "aquasecurity/setup-trivy", *SETUP_TRIVY)
+            new = old
+            for name, pin in (("aquasecurity/trivy-action", TRIVY_ACTION), ("aquasecurity/setup-trivy", SETUP_TRIVY)):
+                new = repin_superseded(new, name, *pin)
+                new = pin_action(new, name, *pin)
             new = pin_image(new)
             new = pin_install_script(new)
             if new != old:
