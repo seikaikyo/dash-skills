@@ -226,6 +226,11 @@ npm update
 | `aquasec/trivy` Docker Hub 映像 | v0.69.5、v0.69.6（2026-03-22 15:43 至 03-23 ~01:40 UTC） | 同上 |
 | `litellm`（PyPI） | 1.82.7、1.82.8（2026-03-24 約 40 分鐘） | [BerriAI/litellm#24518](https://github.com/BerriAI/litellm/issues/24518) |
 
+**pin 了也要看版本**：trivy-action 的 tag v0.35.0 / v0.36.0 預設安裝 trivy v0.69.3 / v0.70.0，
+早於 CVE-2026-54448、CVE-2026-55092、CVE-2026-63328 的修補（0.71.0–0.72.0），內部也還用 setup-trivy v0.2.6。
+workflow 用這兩個 tag 卻沒傳 `version:` 列 HIGH，要求加 `version: v0.74.0` 或改釘 master `d2a0b60`；
+直接用 setup-trivy 的要 ≥v0.3.1（v0.3.0 修 run 區塊 script injection，上游未發 GHSA）。
+
 判斷是否受害：看 workflow 是否以 tag（非 SHA）引用上表 Action、或安裝了上表版本，**且**在上述期間實際執行過（查 Actions run 紀錄）。
 兩者都成立 → 視為 secrets 已外洩：輪替 pipeline 可存取的所有 secrets，並在組織內搜尋名為 `tpcp-docs` 的 repo（攻擊者外送憑證的落點之一）。
 
