@@ -170,6 +170,10 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 ## 更新履歴
 
+### 2026-10-01
+
+- security-radar から ⚠️ の 5 件を削除：trivy（リリース基盤侵害）、lockfile-lint（未修正の高危険度脆弱性）、Zod（main に悪意あるコミット）、bluemonday（メンテ停止・未修正の DoS）、Bifrost（管理 API が既定で無認証）；空いた領域はカバレッジ行列のギャップ欄に記録し、再収録を防ぐ「削除済み」一覧を追加（計 56 件）
+
 ### 2026-09-23
 
 - 外部 skill 同期にロード前ゲートを追加：新規追加分が不可視文字・デコード後実行・ユーザーに隠す指示などのルールに該当、または SkillSpector が警告・失敗した場合、その skill を直前のコミット版に戻して隔離し人手で判定（`scripts/gate-external.py`）

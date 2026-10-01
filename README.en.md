@@ -170,6 +170,10 @@ Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit 
 
 ## Changelog
 
+### 2026-10-01
+
+- security-radar removed its 5 ⚠️ packages: trivy (release pipeline compromised), lockfile-lint (unpatched high-severity advisory), Zod (malicious commits pushed to main), bluemonday (unmaintained, unpatched DoS) and Bifrost (management API unauthenticated by default); the resulting gaps are recorded in the coverage matrices, and a new "Removed" list keeps them from being re-added (56 entries total)
+
 ### 2026-09-23
 
 - External skill sync now has a pre-load gate: if newly added content hits rules such as hidden Unicode, decode-and-execute, or instructions to hide actions from the user, or SkillSpector alerts or fails, that skill is rolled back to its last committed version and quarantined for human review (`scripts/gate-external.py`)

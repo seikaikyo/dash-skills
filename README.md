@@ -208,6 +208,10 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 
 ## 更新紀錄
 
+### 2026-10-01
+
+- security-radar 移除 5 個 ⚠️ 套件：trivy（發行鏈遭入侵）、lockfile-lint（未修補高危）、Zod（main 遭推入惡意 commit）、bluemonday（停止維護且有未修補 DoS）、Bifrost（管理 API 預設不驗證）；移除後的空缺寫入涵蓋矩陣缺口欄，另立「已移除」清單避免重新收錄（共 56 筆）
+
 ### 2026-09-23
 
 - 外部 skills 同步加裝載前閘門：新增內容命中隱形字元、解碼執行、要 agent 瞞著使用者等規則，或 SkillSpector 告警、掃描失敗時，該 skill 退回上一版並隔離待人工判讀（`scripts/gate-external.py`）
