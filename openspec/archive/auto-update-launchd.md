@@ -1,7 +1,7 @@
 ---
 title: 每日同步改由 launchd 執行
 type: fix
-status: in-progress
+status: archived
 created: 2026-10-03
 ---
 
