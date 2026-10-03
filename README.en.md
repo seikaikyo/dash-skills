@@ -160,15 +160,26 @@ cd dash-skills
 
 ## Auto-Sync
 
-Add to `~/.zshrc`:
+Runs daily at 06:00 in the background via launchd, logging to `~/Library/Logs/dash-skills-auto-update.log`:
 
 ```bash
-source ~/Documents/github/dash-skills/scripts/auto-update.sh
+cp scripts/launchd/com.dash.skills-auto-update.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-update.plist
+```
+
+Add to `~/.zshrc` to catch up when the day's run has not finished (returns immediately):
+
+```bash
+[ "$(cat ~/Documents/github/dash-skills/.last-update 2>/dev/null)" = "$(date +%Y-%m-%d)" ] || launchctl kickstart gui/$(id -u)/com.dash.skills-auto-update 2>/dev/null
 ```
 
 Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit + push.
 
 ## Changelog
+
+### 2026-10-03
+
+- Daily sync now runs in the background via launchd instead of being sourced in the foreground from `.zshrc`: since 09-26 every run was interrupted during the gate scan, leaving 8 days without a commit. The "already ran today" marker is now written only after a full run, so an interrupted run is retried on the next trigger
 
 ### 2026-10-01
 

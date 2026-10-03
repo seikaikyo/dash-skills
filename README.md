@@ -175,10 +175,17 @@ cp -r external/* ~/.claude/skills/
 
 ## 自動同步
 
-將以下加入 `~/.zshrc`，每天第一次開 terminal 自動同步：
+由 launchd 每天 06:00 在背景執行，輸出寫入 `~/Library/Logs/dash-skills-auto-update.log`：
 
 ```bash
-source ~/Documents/github/dash-skills/scripts/auto-update.sh
+cp scripts/launchd/com.dash.skills-auto-update.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-update.plist
+```
+
+`~/.zshrc` 加下面這行，當天還沒跑完時開 terminal 會補觸發（立即返回，不佔前景）：
+
+```bash
+[ "$(cat ~/Documents/github/dash-skills/.last-update 2>/dev/null)" = "$(date +%Y-%m-%d)" ] || launchctl kickstart gui/$(id -u)/com.dash.skills-auto-update 2>/dev/null
 ```
 
 每日自動：
@@ -207,6 +214,10 @@ source ~/Documents/github/dash-skills/scripts/auto-update.sh
 | 後端部署 | Render |
 
 ## 更新紀錄
+
+### 2026-10-03
+
+- 每日同步改由 launchd 在背景執行，不再於開 terminal 時前景 source：09-26 起每天跑到閘門掃描就被中斷，8 天沒有 commit。「今天已執行」標記改為整趟跑完才寫入，中斷後下次觸發會補跑
 
 ### 2026-10-01
 
