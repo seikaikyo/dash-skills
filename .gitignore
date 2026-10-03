@@ -24,6 +24,7 @@
 # Sync state files
 .last-*-hash
 .last-update
+.auto-update.lock/
 
 # Temporary clone directories (used by auto-update.sh)
 *-tmp/

@@ -1,7 +1,9 @@
 #!/bin/bash
 #
 # Dash Skills 每日自動更新
-# 加到 .zshrc 讓每天第一次開 terminal 時自動同步
+# 由 launchd 執行（scripts/launchd/com.dash.skills-auto-update.plist，每天 06:00），
+# .zshrc 在當天還沒跑完時用 launchctl kickstart 補觸發。不要直接在殼層 source：
+# 2026-09-26 到 10-03 每天在前景跑到閘門掃描就被中斷，8 天沒有 commit。
 #
 # 功能：
 # 1. 同步外部 skills
@@ -23,11 +25,24 @@ if [ ! -d "$SKILL_DIR" ]; then
     return 0 2>/dev/null || exit 0
 fi
 
-# 立刻標記今天已跑，不等整趟結束
-# 2026-07-23 事故：標記寫在腳本尾端，同時間開第二個終端機會再觸發一次，
-# 兩個實例搶 .git/index.lock，git add -A 撞鎖失敗被誤判成「無實質差異」跳過推送；
-# 更壞的情況是一邊 redact 的 sed 還在改檔、另一邊已 git add -A，機敏資料被 commit 進去。
-echo "$TODAY" > "$LAST_UPDATE_FILE"
+# 用鎖防止兩個實例同時跑，.last-update 等整趟跑完才寫（腳本尾端）
+# 2026-07-23 事故：同時兩個實例搶 .git/index.lock，git add 撞鎖被誤判成「無實質差異」；
+# 更壞的情況是一邊 redact 的 sed 還在改檔、另一邊已 git add，機敏資料被 commit 進去。
+# 2026-10-03：原本為了擋第二個實例而在開頭就寫 .last-update，中途被中斷時當天不再重跑，
+# 改成鎖之後中斷不會留下「已完成」標記，下次觸發會補跑。
+LOCK_DIR="$SKILL_DIR/.auto-update.lock"
+if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+    # 鎖裡記的 PID 已不存在就是被砍掉留下的殘留鎖
+    # PID 還沒寫進去（另一個實例剛建鎖）也當作在跑
+    _lock_pid=$(cat "$LOCK_DIR/pid" 2>/dev/null)
+    if [ -z "$_lock_pid" ] || kill -0 "$_lock_pid" 2>/dev/null; then
+        return 0 2>/dev/null || exit 0
+    fi
+    rm -rf "$LOCK_DIR"
+    mkdir "$LOCK_DIR" 2>/dev/null || { return 0 2>/dev/null || exit 0; }
+fi
+echo $$ > "$LOCK_DIR/pid"
+trap 'rm -rf "$LOCK_DIR"' EXIT
 
 # 保存原始目錄，結束時還原（sourced 時會影響 shell 工作目錄）
 _dash_original_dir="$PWD"
@@ -240,6 +255,7 @@ else
     echo "[dash-skills] [5/5] claude-config 目錄不存在，跳過"
 fi
 
+echo "$TODAY" > "$LAST_UPDATE_FILE"
 echo "[dash-skills] 完成"
 
 # 還原工作目錄

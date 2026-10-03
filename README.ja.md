@@ -160,15 +160,26 @@ cd dash-skills
 
 ## 自動同期
 
-`~/.zshrc` に追加：
+launchd で毎日 06:00 にバックグラウンド実行、ログは `~/Library/Logs/dash-skills-auto-update.log`：
 
 ```bash
-source ~/Documents/github/dash-skills/scripts/auto-update.sh
+cp scripts/launchd/com.dash.skills-auto-update.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-update.plist
+```
+
+当日の実行が未完了なら terminal を開いた時に再実行させるため、`~/.zshrc` に追加（すぐ戻る）：
+
+```bash
+[ "$(cat ~/Documents/github/dash-skills/.last-update 2>/dev/null)" = "$(date +%Y-%m-%d)" ] || launchctl kickstart gui/$(id -u)/com.dash.skills-auto-update 2>/dev/null
 ```
 
 毎日自動：SKILL.md 更新、agent-browser CLI バージョン確認、自動 commit + push。
 
 ## 更新履歴
+
+### 2026-10-03
+
+- 毎日の同期を `.zshrc` でのフォアグラウンド source から launchd のバックグラウンド実行に変更：09-26 以降、毎回ゲートスキャン中に中断され 8 日間 commit がなかった。「本日実行済み」の印は全工程完了後にのみ書き込み、中断時は次回の起動で再実行する
 
 ### 2026-10-01
 
