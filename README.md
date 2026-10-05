@@ -215,6 +215,10 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-upd
 
 ## 更新紀錄
 
+### 2026-10-05
+
+- security-radar 補上 10-01 移除後的空缺：收錄 grype（容器映像 CVE 掃描，取代 trivy）與 Valibot（TypeScript 執行期驗證，取代 Zod）；IaC 掃描、lockfile 來源驗證、LLM 閘道、token / 費用硬上限查證後無合格套件，在涵蓋矩陣寫明替代做法（共 58 筆）
+
 ### 2026-10-03
 
 - 每日同步改由 launchd 在背景執行，不再於開 terminal 時前景 source：09-26 起每天跑到閘門掃描就被中斷，8 天沒有 commit。「今天已執行」標記改為整趟跑完才寫入，中斷後下次觸發會補跑

@@ -177,6 +177,10 @@ Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit 
 
 ## Changelog
 
+### 2026-10-05
+
+- security-radar filled the gaps left by the 10-01 removals: added grype (container image CVE scanning, replacing trivy) and Valibot (TypeScript runtime validation, replacing Zod); IaC scanning, lockfile source validation, LLM gateways and token / cost hard caps have no qualifying package after review, so the coverage matrices now describe the alternative approach (58 entries total)
+
 ### 2026-10-03
 
 - Daily sync now runs in the background via launchd instead of being sourced in the foreground from `.zshrc`: since 09-26 every run was interrupted during the gate scan, leaving 8 days without a commit. The "already ran today" marker is now written only after a full run, so an interrupted run is retried on the next trigger
