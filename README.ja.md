@@ -177,6 +177,10 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-upd
 
 ## 更新履歴
 
+### 2026-10-05
+
+- security-radar で 10-01 の削除による空きを補充：grype（コンテナイメージの CVE スキャン、trivy の代替）と Valibot（TypeScript の実行時バリデーション、Zod の代替）を追加；IaC スキャン、lockfile の取得元検証、LLM ゲートウェイ、トークン / コストのハード上限は調査の結果該当パッケージなしとし、代替手段をカバレッジ行列に記載（計 58 件）
+
 ### 2026-10-03
 
 - 毎日の同期を `.zshrc` でのフォアグラウンド source から launchd のバックグラウンド実行に変更：09-26 以降、毎回ゲートスキャン中に中断され 8 日間 commit がなかった。「本日実行済み」の印は全工程完了後にのみ書き込み、中断時は次回の起動で再実行する
