@@ -129,7 +129,7 @@
 | gosentry | Go 工具鏈 fork，須持續 merge 上游 golang/master 才拿得到 Go 安全修補；上游同步停滯超過一個月即標 ⚠️ | 2026-09-22 |
 | go-playground/validator | repo 公開徵求協作維護者；留意維護動能是否下滑 | 2026-09-17 |
 | promptfoo | 2026-03 被 OpenAI 收購，官方聲明維持開源與 MIT；留意授權變更、功能移往商業版或維護節奏下滑 | 2026-09-23 |
-| sandbox-runtime | 官方標示 Beta Research Preview，API 與設定格式可能變動；留意 breaking change 與正式版。v0.0.78（2026-09-30）未含破壞性變更；發版 [PR #577](https://github.com/anthropics/sandbox-runtime/pull/577)（未合併）列的 Node ≥22、不從可寫目錄載入 bwrap / socat / rg、預設禁止建立 user namespace、`[!x]` glob 改為否定，預計在之後版本 | 2026-09-23 |
+| sandbox-runtime | 官方標示 Beta Research Preview，API 與設定格式可能變動；留意 breaking change 與正式版。[v0.0.79](https://github.com/anthropics/sandbox-runtime/releases/tag/v0.0.79)（2026-10-07）起需 Node ≥22.12，`filesystem` 四個路徑清單型別由 `string[]` 改為 `FilesystemPathEntry[]`（可寫 `{ path, literal: true }`），含 glob 字元的路徑若實際存在即照字面比對；同版修正名稱含 glob 字元的資料夾 deny 規則失效、代理遇到無效上游狀態列就整個崩潰等問題，建議升級。[PR #577](https://github.com/anthropics/sandbox-runtime/pull/577)（未合併）另列的不從可寫目錄載入 bwrap / socat / rg、預設禁止建立 user namespace、`[!x]` glob 改為否定，仍未發佈 | 2026-09-23 |
 | Betterleaks | 2026-02 才 1.0、單一主要維護者、無 SLSA provenance、無官方 GitHub Action；留意官方 Action、provenance 與 v2 正式版（v2.0.0-rc.1 有破壞性變更，main 已改為 v2、v1 移到 `v1.x` 分支） | 2026-09-28 |
 | Valibot | npm 只有一位維護者（fabian-hiller），repo 已移到 open-circle 組織；Zod 2026-09 遭推入惡意 commit 後，留意每版是否仍附 provenance、有無異常的發版或維護者變動 | 2026-10-05 |
 
