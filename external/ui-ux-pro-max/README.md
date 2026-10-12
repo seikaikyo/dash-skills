@@ -290,6 +290,7 @@ uipro init --ai augment     # Augment
 uipro init --ai codewhale   # CodeWhale
 uipro init --ai zcode       # ZCode
 uipro init --ai amazonq     # Amazon Q Developer
+uipro init --ai openclaw    # OpenClaw (.agents/skills/)
 uipro init --ai universal   # Universal / Agent Standard (.agents/skills/)
 uipro init --ai all         # All assistants
 ```
@@ -334,7 +335,7 @@ If it is missing, install it yourself from [python.org](https://www.python.org/d
 
 ### Skill Mode (Auto-activate)
 
-**Supported:** Claude Code, Cursor, Windsurf, Antigravity, Codex CLI, Continue, Gemini CLI, OpenCode, Qoder, CodeBuddy, Droid (Factory), KiloCode, Warp, Augment, CodeWhale, ZCode, Amazon Q Developer
+**Supported:** Claude Code, Cursor, Windsurf, Antigravity, Codex CLI, Continue, Gemini CLI, OpenCode, Qoder, CodeBuddy, Droid (Factory), KiloCode, Warp, Augment, CodeWhale, ZCode, Amazon Q Developer, OpenClaw
 
 The skill activates automatically when you request UI/UX work. Just chat naturally:
 
