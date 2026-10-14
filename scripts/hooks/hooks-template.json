@@ -40,7 +40,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "#!/bin/bash\n# 偵測 PR 建立並記錄\ninput=$(cat)\ncmd=$(echo \"$input\" | jq -r '.tool_input.command')\n\nif echo \"$cmd\" | grep -qE 'gh pr create'; then\n  output=$(echo \"$input\" | jq -r '.tool_output.output // \"\"')\n  pr_url=$(echo \"$output\" | grep -oE 'https://github.com/[^/]+/[^/]+/pull/[0-9]+')\n  \n  if [ -n \"$pr_url\" ]; then\n    echo \"[Hook] PR 已建立: $pr_url\" >&2\n  fi\nfi\n\necho \"$input\""
+            "command": "#!/bin/bash\n# 偵測 PR 建立並記錄\ninput=$(cat)\ncmd=$(echo \"$input\" | jq -r '.tool_input.command')\n\nif echo \"$cmd\" | grep -qE 'gh pr create'; then\n  output=$(echo \"$input\" | jq -r '.tool_response.stdout // \"\"')\n  pr_url=$(echo \"$output\" | grep -oE 'https://github.com/[^/]+/[^/]+/pull/[0-9]+')\n  \n  if [ -n \"$pr_url\" ]; then\n    echo \"[Hook] PR 已建立: $pr_url\" >&2\n  fi\nfi\n\necho \"$input\""
           }
         ],
         "description": "PR 建立後記錄 URL"
