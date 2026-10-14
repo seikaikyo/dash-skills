@@ -140,3 +140,39 @@ def test_generate_batch_warns_when_truncated_after_some_icons(gen, tmp_path, cap
         '<svg viewBox="0 0 24 24"><path d="M 15 14 H 19', "MAX_TOKENS")
     assert len(gen.generate_batch("crane", 2, str(tmp_path))) == 1
     assert "MAX_TOKENS" in capsys.readouterr().out
+
+
+def _run_main(gen, monkeypatch, *args):
+    monkeypatch.setattr(sys, "argv", ["generate.py", *args])
+    gen.main()
+
+
+def test_main_exits_1_when_icon_request_fails(gen, monkeypatch, tmp_path):
+    client = gen.genai.Client.return_value
+    client.models.generate_content.side_effect = RuntimeError("429 RESOURCE_EXHAUSTED")
+    with pytest.raises(SystemExit) as raised:
+        _run_main(gen, monkeypatch, "--prompt", "crane", "--output", str(tmp_path / "a.svg"))
+    assert raised.value.code == 1
+
+
+def test_main_exits_1_when_batch_generates_nothing(gen, monkeypatch, tmp_path):
+    client = gen.genai.Client.return_value
+    resp = _response(None, "SAFETY")
+    resp.candidates = []
+    client.models.generate_content.return_value = resp
+    with pytest.raises(SystemExit) as raised:
+        _run_main(gen, monkeypatch, "--prompt", "crane", "--batch", "2",
+                  "--output-dir", str(tmp_path))
+    assert raised.value.code == 1
+
+
+def test_main_exits_0_when_icon_is_saved(gen, monkeypatch, tmp_path):
+    client = gen.genai.Client.return_value
+    client.models.generate_content.return_value = _response(
+        '<svg viewBox="0 0 24 24"><path d="M0 0"/></svg>')
+    _run_main(gen, monkeypatch, "--prompt", "crane", "--output", str(tmp_path / "a.svg"))
+    assert (tmp_path / "a.svg").exists()
+
+
+def test_main_list_styles_exits_0(gen, monkeypatch):
+    _run_main(gen, monkeypatch, "--list-styles")

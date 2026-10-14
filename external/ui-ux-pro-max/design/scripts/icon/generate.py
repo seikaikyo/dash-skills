@@ -493,7 +493,7 @@ def main():
     # Multi-size mode
     if args.sizes:
         sizes = [int(s.strip()) for s in args.sizes.split(",")]
-        generate_sizes(
+        generated = generate_sizes(
             prompt=prompt,
             sizes=sizes,
             style=args.style,
@@ -504,7 +504,7 @@ def main():
     # Batch mode
     elif args.batch:
         output_dir = args.output_dir or "./icons"
-        generate_batch(
+        generated = generate_batch(
             prompt=prompt,
             count=args.batch,
             output_dir=output_dir,
@@ -515,7 +515,7 @@ def main():
         )
     # Single icon
     else:
-        generate_icon(
+        generated = generate_icon(
             prompt=prompt,
             style=args.style,
             category=args.category,
@@ -525,6 +525,10 @@ def main():
             output_path=args.output,
             viewbox=args.viewbox
         )
+
+    # Exit 1 when nothing was generated; a partly generated batch or size set exits 0
+    if not generated:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
