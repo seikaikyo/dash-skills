@@ -335,7 +335,7 @@ If it is missing, install it yourself from [python.org](https://www.python.org/d
 
 ### Skill Mode (Auto-activate)
 
-**Supported:** Claude Code, Cursor, Windsurf, Antigravity, Codex CLI, Continue, Gemini CLI, OpenCode, Qoder, CodeBuddy, Droid (Factory), KiloCode, Warp, Augment, CodeWhale, ZCode, Amazon Q Developer, OpenClaw
+**Supported:** Claude Code, Cursor, Windsurf, Antigravity, Codex CLI, Continue, Gemini CLI, OpenCode, Qoder, CodeBuddy, Droid (Factory), KiloCode, Warp, Augment, CodeWhale, ZCode, Amazon Q Developer, OpenClaw, GitHub Copilot
 
 The skill activates automatically when you request UI/UX work. Just chat naturally:
 
@@ -347,7 +347,7 @@ Build a landing page for my SaaS product
 
 ### Workflow Mode (Slash Command)
 
-**Supported:** Kiro, GitHub Copilot, Roo Code, KiloCode
+**Supported:** Kiro, Roo Code, KiloCode
 
 Use the slash command to invoke the skill:
 
