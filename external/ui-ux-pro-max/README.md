@@ -1,6 +1,7 @@
 # [UI UX Pro Max](https://uupm.cc)
 
 <p align="center">
+  <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.az.md">🇦🇿 Azərbaycanca</a> |
   <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.id.md">🇮🇩 Bahasa Indonesia</a> |
   <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.ko.md">🇰🇷 한국어</a> |
   <a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/main/README.vi.md">🇻🇳 Tiếng Việt</a> |
