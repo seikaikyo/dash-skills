@@ -67,6 +67,13 @@ if [ -d "$EXTERNAL_SRC" ]; then
         src_path="$(resolve_external_path "$skill")"
         dst_path="$SKILLS_DST/$skill"
 
+        # 跳過空殼：移除一個收錄 skill 後，git rm 清不掉未追蹤的 .cc-writes 暫存目錄，
+        # 會留下一個沒有任何檔案的空目錄。連結它會讓已移除的 skill 名稱又出現在 ~/.claude/skills。
+        if [ -z "$(find "$src_path" -type f -print -quit 2>/dev/null)" ]; then
+            echo "  跳過空目錄: $skill"
+            continue
+        fi
+
         if [ -L "$dst_path" ]; then
             echo "  更新連結: $skill"
             rm "$dst_path"
