@@ -38,3 +38,6 @@ security-reports/
 # Python 快取（含本機絕對路徑，不進 public repo）
 __pycache__/
 *.pyc
+
+# 每日同步的個別 skill 失敗清單（本機狀態，auto-update.sh 與每日巡檢讀取）
+.last-sync-failures

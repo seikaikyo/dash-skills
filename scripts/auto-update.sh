@@ -56,6 +56,12 @@ echo "[dash-skills] [1/5] 同步外部 skills..."
 if ! DASH_SKILLS_NO_PUSH=1 perl -e 'alarm(120); exec @ARGV' ./scripts/update-external.sh > /dev/null 2>&1; then
     echo "[dash-skills] [1/5] 同步逾時或失敗，跳過"
 fi
+# 個別 skill 的失敗不會讓整支同步失敗，只記在 .last-sync-failures；這裡把它印出來，
+# 每日巡檢也會讀這個檔，連續失敗不會再被吞掉。
+if [ -s .last-sync-failures ]; then
+    echo "[dash-skills]   警告：有 skill 同步失敗（$(head -1 .last-sync-failures)）"
+    tail -n +2 .last-sync-failures | sed 's/^/[dash-skills]     - /'
+fi
 
 # 釘死已知風險引用：external/ 的 skill 會教 agent 寫 trivy-action@master、aquasec/trivy:latest，
 # 2026-03 Trivy 發行鏈遭入侵（GHSA-69fq-xp46-6x23）時這類可變引用正是被改指向的入口。

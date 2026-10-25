@@ -402,23 +402,20 @@ update_cloudflare_security_audit() {
         return 0
     fi
 
-    if [ -f "repo/SKILL.md" ]; then
+    # 2026-10 上游把檔案從 repo 根目錄移到 skills/security-audit/；整個目錄複製，
+    # 不再逐檔列舉（上游常新增 .md / .cjs，列舉會漏）。README 與 LICENSE 仍在根。
+    local src="repo/skills/security-audit"
+    if [ -f "$src/SKILL.md" ]; then
         rm -rf "$skill_dir"
         mkdir -p "$skill_dir"
-        cp repo/SKILL.md "$skill_dir/" 2>/dev/null || true
-        cp repo/RECONNAISSANCE.md "$skill_dir/" 2>/dev/null || true
-        cp repo/HUNTING.md "$skill_dir/" 2>/dev/null || true
-        cp repo/ATTACK-CLASSES.md "$skill_dir/" 2>/dev/null || true
-        cp repo/VALIDATION-AND-REPORTING.md "$skill_dir/" 2>/dev/null || true
-        cp repo/report-schema.json "$skill_dir/" 2>/dev/null || true
-        cp repo/validate-findings.cjs "$skill_dir/" 2>/dev/null || true
+        cp -r "$src/." "$skill_dir/" 2>/dev/null || true
         cp repo/README.md "$skill_dir/" 2>/dev/null || true
         cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
         # frontmatter name 對齊獨立目錄名，避免與既有 security-audit 撞名
         sed -i '' 's/^name: security-audit$/name: cloudflare-security-audit/' "$skill_dir/SKILL.md"
         echo "  狀態: 已更新"
     else
-        echo "  狀態: 失敗"
+        echo "  狀態: 失敗（上游結構改變，找不到 $src/SKILL.md，需更新同步函數）"
     fi
 
     rm -rf "$temp_dir"
@@ -440,13 +437,16 @@ update_sentry_security_review() {
         return 0
     fi
 
-    if [ -d "repo/plugins/sentry-skills/skills" ]; then
+    # 2026-10 上游把 skills 從 plugins/sentry-skills/skills/ 移到根目錄 skills/。
+    local src="repo/skills"
+    if [ -d "$src" ] && [ -n "$(ls -A "$src" 2>/dev/null)" ]; then
         rm -rf "$skill_dir"
         mkdir -p "$skill_dir"
-        cp -r repo/plugins/sentry-skills/skills/* "$skill_dir/"
+        cp -r "$src/." "$skill_dir/"
+        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
         echo "  狀態: 已更新"
     else
-        echo "  狀態: 失敗"
+        echo "  狀態: 失敗（上游結構改變，找不到 $src/，需更新同步函數）"
     fi
 
     rm -rf "$temp_dir"
@@ -625,18 +625,34 @@ if [ $# -eq 0 ]; then
 
     # 統計結果
     ok=0 fail=0 timeout_count=0
+    failed_names=()
     for fn in "${all_updates[@]}"; do
         if grep -q '狀態: 已更新' "$LOG_DIR/$fn.log" 2>/dev/null; then
             ok=$((ok + 1))
         elif grep -q '狀態: 逾時' "$LOG_DIR/$fn.log" 2>/dev/null; then
             timeout_count=$((timeout_count + 1))
+            failed_names+=("${fn#update_}（逾時）")
         else
             fail=$((fail + 1))
+            failed_names+=("${fn#update_}")
         fi
     done
     echo ""
     echo "  結果: $ok 成功 / $fail 失敗 / $timeout_count 逾時 (共 $total)"
     echo ""
+
+    # 失敗清單寫進狀態檔，讓 auto-update.sh 與每日巡檢讀得到。
+    # 2026-10-25 事故：cloudflare-security-audit、sentry-security-review 因上游改結構連續失敗
+    # 4 到 6 個月，失敗只印在被 auto-update 丟進 /dev/null 的輸出裡，沒有人發現。
+    status_file="$REPO_DIR/.last-sync-failures"
+    if [ ${#failed_names[@]} -gt 0 ]; then
+        {
+            echo "$(date '+%Y-%m-%d %H:%M') 失敗 ${#failed_names[@]} 個"
+            printf '%s\n' "${failed_names[@]//_/-}"
+        } > "$status_file"
+    else
+        : > "$status_file"
+    fi
 
     # 只印出失敗/逾時的詳細資訊，成功的跳過（減少輸出噪音）
     for fn in "${all_updates[@]}"; do
