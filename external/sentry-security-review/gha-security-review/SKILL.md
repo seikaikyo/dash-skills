@@ -1,7 +1,7 @@
 ---
 name: gha-security-review
 description: 'GitHub Actions security review for workflow exploitation vulnerabilities. Use when asked to "review GitHub Actions", "audit workflows", "check CI security", "GHA security", "workflow security review", or review .github/workflows/ for pwn requests, expression injection, credential theft, and supply chain attacks. Exploitation-focused with concrete PoC scenarios.'
-allowed-tools: Read, Grep, Glob, Bash, Task
+allowed-tools: Read Grep Glob Bash Task
 ---
 
 <!--
@@ -118,7 +118,11 @@ Does the workflow load configuration from PR-supplied files?
 
 ### Check 6: Supply Chain
 
-Are third-party actions securely pinned?
+Are **third-party** actions securely pinned to full SHAs?
+- Pin third-party / external actions and reusable workflows only
+- Do **not** flag first-party `actions/*` or `github/*` on version tags
+- Do **not** flag same-repo / vendored (`./.github/actions/...`) as supply-chain pinning issues
+- Only report when the job has secrets, OIDC, write token, release, deploy, package, or signing power — unprivileged read-only CI is not a finding
 
 ### Check 7: Permissions and Secrets
 
@@ -140,7 +144,9 @@ Before reporting, check if the pattern is actually safe:
 | `${{ secrets.* }}` | Not an expression injection vector |
 | `${{ }}` in `if:` conditions | Evaluated by Actions runtime, not shell |
 | `${{ }}` in `with:` inputs | Passed as string parameters, not shell-evaluated |
-| Actions pinned to full SHA | Immutable reference |
+| Third-party actions pinned to full SHA | Immutable reference |
+| First-party `actions/*` / `github/*` on version tags | Outside third-party pinning policy — do not flag |
+| Same-repo / vendored local actions | Not third-party supply chain (review pwn-request separately) |
 | `pull_request` trigger (not `_target`) | Runs in fork context with read-only token |
 | Any expression in `workflow_dispatch`/`schedule`/`push` to protected branches | Requires write access — outside threat model |
 

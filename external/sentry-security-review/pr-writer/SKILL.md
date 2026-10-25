@@ -1,184 +1,160 @@
 ---
 name: pr-writer
-description: ALWAYS use this skill when creating or updating pull requests — never create or edit a PR directly without it. Follows Sentry conventions for PR titles, descriptions, and issue references. Trigger on any create PR, open PR, submit PR, make PR, update PR title, update PR description, edit PR, push and create PR, prepare changes for review task, or request for a PR writer.
+description: Create or refresh reviewer-facing PR titles and descriptions. Use when opening a PR, updating its title or body, or preparing branch changes for review.
 ---
 
 # PR Writer
 
-Create pull requests following Sentry's engineering practices.
+Write the PR body as a cover note for reviewers, not a changelog, template,
+validation log, or file-by-file summary.
 
-**Requires**: GitHub CLI (`gh`) authenticated and available.
+## Inspect the Change
 
-## Prerequisites
-
-Before creating a PR, ensure all changes are committed. If there are uncommitted changes, run the `sentry-skills:commit` skill first to commit them properly.
+Requires authenticated `gh`. Inspect the current branch, working tree, PR,
+base branch, commits, and full diff:
 
 ```bash
-# Check for uncommitted changes
+git branch --show-current
 git status --porcelain
+gh pr view --json number,title,body,url,baseRefName,headRefName
+gh repo view --json defaultBranchRef
 ```
 
-If the output shows any uncommitted changes (modified, added, or untracked files that should be included), invoke the `sentry-skills:commit` skill before proceeding.
-
-## Process
-
-### Step 1: Verify Branch State
+If `gh pr view` reports that no PR exists, continue with first-time PR
+creation. For an existing PR, use its `baseRefName`; otherwise use the
+repository default branch. Set `BASE`, then inspect:
 
 ```bash
-# Detect the default branch — note the output for use in subsequent commands
-gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'
+git log "$BASE"..HEAD --oneline
+git diff "$BASE"...HEAD
 ```
 
-```bash
-# Check current branch and status (substitute the detected branch name above for BASE)
-git status
-git log BASE..HEAD --oneline
-```
+If on `main` or `master`, create a feature branch first. Ensure intended
+changes are committed and review the whole branch diff, not only the latest
+commit or existing PR text.
 
-Ensure:
-- All changes are committed
-- Branch is up to date with remote
-- Changes are rebased on the base branch if needed
+## Core Rules
 
-### Step 2: Analyze Changes
+- Describe concrete changed behavior, affected surfaces, and reviewer impact
+  before implementation detail.
+- Explain motivation, risk, tradeoffs, migration, or review focus only when
+  useful.
+- Use the smallest structure that makes the change easier to review.
+- Replace internal prompt or process terminology with specific behavior.
+- When refreshing a PR, rewrite around the current full diff without narrating
+  review history.
 
-Review what will be included in the PR:
+## Titles
 
-```bash
-# See all commits that will be in the PR (substitute detected branch name for BASE)
-git log BASE..HEAD
+Use `<type>(<scope>): <subject>` or `<type>: <subject>`.
 
-# See the full diff
-git diff BASE...HEAD
-```
+Allowed types: `feat`, `fix`, `ref`, `perf`, `docs`, `test`, `build`,
+`ci`, `chore`, `style`, `meta`, `license`, and `revert`.
 
-Understand the scope and purpose of all changes before writing the description.
+- Describe the dominant full-branch change with the narrowest accurate type
+  and scope.
+- Use `!` only when the change breaks an external contract, and explain the
+  affected surface in the body.
+- Avoid vague subjects such as `update`, `cleanup`, `misc`, `fix stuff`,
+  or `address feedback`. Do not add a trailing period.
+- Keep an existing title only when it still describes the whole diff.
 
-### Step 3: Write the PR Description
+## Body Shape
 
-Use this structure for PR descriptions (ignoring any repository PR templates):
+Choose the minimum useful shape:
+
+| Change | Include |
+|--------|---------|
+| Small or obvious | One concise paragraph without headings. |
+| Feature, bug fix, or refactor | Changed behavior and effect; add root cause, unchanged behavior, or non-obvious approach when relevant. |
+| Contract or breaking change | Affected API, schema, payload, config, permission, storage, or CLI surface; include compatibility and migration guidance. |
+| Operational, visual, or workflow change | User/operator effect, measured impact, failure modes, or flow when useful. |
+| Broad, generated, or cross-cutting change | Organizing principle, why the breadth is necessary, and where review should start. |
+
+Default:
 
 ```markdown
-<brief description of what the PR does>
+<What changed and what effect it has.>
 
-<why these changes are being made - the motivation>
-
-<alternative approaches considered, if any>
-
-<any additional context reviewers need>
+<Why the approach, risk, migration, or review focus matters, if not obvious.>
 ```
 
-**Do NOT include:**
-- "Test plan" sections
-- Checkbox lists of testing steps
-- Redundant summaries of the diff
-- Customer data — customer/org names, user emails, support ticket contents, or PII. Describe the technical symptom, not who hit it, and if available, reference the internal ticket (e.g. `Fixes SENTRY-1234`). PRs are typically public on open-source repos.
+For review-feedback updates, describe the resulting PR as a whole rather than
+the sequence of revisions.
 
-**Do include:**
-- Clear explanation of what and why
-- Links to relevant issues or tickets
-- Context that isn't obvious from the code
-- Notes on specific areas that need careful review
+## Reviewer Aids
 
-### Step 4: Create the PR
+Use an aid only when it reduces reviewer reconstruction work:
+
+- A compact before/after or interface example for changed contracts.
+- A small Mermaid diagram for async flows or state transitions.
+- A screenshot or recording note when visual evidence exists.
+- A rollout, compatibility, risk, or review-order note when reviewers or
+  adopters need it.
+
+Introduce an artifact with one sentence explaining what reviewers should
+notice. Omit it when prose is clearer.
+
+## Boundaries
+
+- Do not add default `Summary`, `Changes`, or `Test Plan` sections.
+- Omit routine validation unless it changes risk assessment or explains
+  meaningful regression coverage. For docs, skills, copy, or config changes,
+  omit it by default.
+- Do not paste commands, CI logs, validation dumps, commit logs, placeholders,
+  or exhaustive file lists.
+- Never include customer or organization names, user emails, support ticket
+  contents, secrets, or PII.
+- Use issue references only when verified from user input, branch names,
+  commits, PR discussion, or tracker output. `Fixes <issue>` closes;
+  `Refs <issue>` only links.
+
+## Create or Update
+
+Create new PRs as drafts. Write the body to a temporary Markdown file, then run:
 
 ```bash
-gh pr create --draft --title "<type>(<scope>): <description>" --body "$(cat <<'EOF'
-<description body here>
-EOF
-)"
+gh pr create --draft --title '<title>' --body-file /tmp/pr-body.md
 ```
 
-**Title format** follows commit conventions:
-- `feat(scope): Add new feature`
-- `fix(scope): Fix the bug`
-- `ref: Refactor something`
-
-## PR Description Examples
-
-### Feature PR
-
-```markdown
-Add Slack thread replies for alert notifications
-
-When an alert is updated or resolved, we now post a reply to the original
-Slack thread instead of creating a new message. This keeps related
-notifications grouped and reduces channel noise.
-
-Previously considered posting edits to the original message, but threading
-better preserves the timeline of events and works when the original message
-is older than Slack's edit window.
-
-Refs SENTRY-1234
-```
-
-### Bug Fix PR
-
-```markdown
-Handle null response in user API endpoint
-
-The user endpoint could return null for soft-deleted accounts, causing
-dashboard crashes when accessing user properties. This adds a null check
-and returns a proper 404 response.
-
-Found while investigating SENTRY-5678.
-
-Fixes SENTRY-5678
-```
-
-### Refactor PR
-
-```markdown
-Extract validation logic to shared module
-
-Moves duplicate validation code from the alerts, issues, and projects
-endpoints into a shared validator class. No behavior change.
-
-This prepares for adding new validation rules in SENTRY-9999 without
-duplicating logic across endpoints.
-```
-
-## Issue References
-
-Reference issues in the PR body:
-
-| Syntax | Effect |
-|--------|--------|
-| `Fixes #1234` | Closes GitHub issue on merge |
-| `Fixes SENTRY-1234` | Closes Sentry issue |
-| `Refs GH-1234` | Links without closing |
-| `Refs LINEAR-ABC-123` | Links Linear issue |
-
-## Guidelines
-
-- **One PR per feature/fix** - Don't bundle unrelated changes
-- **Keep PRs reviewable** - Smaller PRs get faster, better reviews
-- **Explain the why** - Code shows what; description explains why
-- **Mark WIP early** - Use draft PRs for early feedback
-
-## Editing Existing PRs
-
-If you need to update a PR after creation, use `gh api` instead of `gh pr edit`:
+Update existing PRs with `gh api`:
 
 ```bash
-# Update PR description
-gh api -X PATCH repos/{owner}/{repo}/pulls/PR_NUMBER -f body="$(cat <<'EOF'
-Updated description here
-EOF
-)"
-
-# Update PR title
-gh api -X PATCH repos/{owner}/{repo}/pulls/PR_NUMBER -f title='new: Title here'
-
-# Update both
 gh api -X PATCH repos/{owner}/{repo}/pulls/PR_NUMBER \
-  -f title='new: Title' \
-  -f body='New description'
+  -f title='<title>' \
+  -F body=@/tmp/pr-body.md
 ```
 
-Note: `gh pr edit` is currently broken due to GitHub's Projects (classic) deprecation.
+Refresh the title and body when follow-up commits materially change scope,
+approach, breaking behavior, risk, migration, or review expectations. Skip
+typo-only, formatting-only, and rename-only follow-ups.
 
-## References
+## Examples
 
-- [Sentry Code Review Guidelines](https://develop.sentry.dev/engineering-practices/code-review/)
-- [Sentry Commit Messages](https://develop.sentry.dev/engineering-practices/commit-messages/)
+Small change:
+
+```markdown
+The AI Customizations section now starts collapsed so it does not consume
+sidebar space before users need it. Expanding it preserves the existing saved
+preference behavior.
+```
+
+Breaking contract:
+
+````markdown
+Run logs now emit chunk-level records instead of one skill-level record.
+Consumers that read top-level `findings` must iterate over
+`chunk.findings` for each record.
+
+Before:
+
+```json
+{"skill": "security-review", "findings": [...]}
+```
+
+After:
+
+```json
+{"schemaVersion": 1, "chunk": {"index": 1, "findings": [...]}}
+```
+````

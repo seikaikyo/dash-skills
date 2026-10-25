@@ -1,74 +1,115 @@
 # Authoring Path
 
-Use this path to create or update the skill files.
+Use this path to create or update skill files.
 
-## SKILL.md requirements
+## Runtime Writing Rules
 
 1. Frontmatter must be first line.
-2. `name` must match directory.
-3. `description` must contain realistic trigger phrases.
-4. Keep body imperative and concise.
-5. Use SKILL.md as index/orchestration for complex workflows.
-6. Keep bundled-file references relative to the skill root: use `references/...`, `scripts/...`, and `assets/...` for files that ship with the skill.
-7. Keep paths portable: do not hardcode host-specific absolute filesystem paths (for example `<home>/...` or `<drive>:\Users\...`) in `SKILL.md` or `references/`.
+2. `name` must match the directory.
+3. `description` must contain realistic trigger language.
+4. Keep runtime guidance imperative and compact.
+5. Prefer tables, checklists, templates, and examples over prose.
+6. Use `SKILL.md` as the runtime decision layer for complex skills.
 
-## Path handling rules
+## Precision Pass
 
-1. Treat the skill directory containing `SKILL.md` as the root for bundled references.
-2. Prefer relative references in skill content even when the repository also exposes mirrored or symlinked paths.
-3. Reserve repo-root paths for repository registration instructions only (for example `README.md`, `.claude/settings.json`).
-4. If the repository has multiple visible layouts for the same skill tree, inspect the workspace and edit the canonical location rather than assuming one layout from a generic template.
-5. Do not use provider-specific path variables such as `${CLAUDE_SKILL_ROOT}` in skills that are meant to stay provider-agnostic; use skill-root-relative paths instead.
-6. Only keep provider-specific path conventions when the skill is intentionally provider-specific and that scope is made explicit.
+Run the pre-edit check before creating new sections, references, scripts, or assets.
 
-## Supporting files
+| Question | Required answer |
+|----------|-----------------|
+| What behavior should change? | one concrete behavior delta |
+| What existing rule can be narrowed or replaced? | file and section, or `none` with reason |
+| What can be removed or moved out of runtime? | obsolete, duplicate, provenance, or maintenance-only content |
+| Why is any new artifact necessary? | branch, lookup, automation, template, or validation need |
 
-Create only files needed to execute the workflow:
+Prefer editing existing guidance when it can express the behavior without making that guidance broader.
 
-- `references/` for domain/process depth
-- `scripts/` when repeated automation is needed
-- `assets/` for reusable static output artifacts
+After any skill artifact changes, run the post-change pass:
 
-For workflow/process-heavy skills, also load and apply `references/workflow-patterns.md`
-to structure sequencing, conditional branches, and validation loops.
+1. Re-read changed `SKILL.md` and routed references as a user of the skill would.
+2. Remove or narrow any rule made redundant by the change.
+3. Move provenance, rationale, or maintenance-only notes out of runtime files.
+4. Confirm every added line changes an agent decision, action, or verification step.
+5. Record the precision result in the final output as `replaced`, `narrowed`, `moved`, `deleted`, or `added with reason`.
 
-When synthesis is used, include or update `SOURCES.md` for provenance, decision records, coverage, and changelog.
+This is a judgment pass. Do not add validators or rigid checklists solely to make the precision pass machine-checkable.
 
-## Class-specific artifact requirements
+## Path Rules
+
+1. Treat the skill directory as the root for bundled files.
+2. Use `references/...`, `scripts/...`, and `assets/...` paths by default.
+3. Reserve repo-root paths for registration instructions only.
+4. Follow repo prior art if the workspace already standardizes on a provider-specific path variable.
+5. Avoid host-specific absolute filesystem paths.
+
+## Supporting Files
+
+Create only what the skill needs:
+
+| File or dir | Use |
+|-------------|-----|
+| `SPEC.md` | maintenance contract |
+| `references/` | optional depth loaded by route |
+| `references/evidence/` | persistent iteration examples |
+| `scripts/` | repeatable automation or validation |
+| `assets/` | reusable templates or static artifacts |
+
+Keep runtime references as direct children of `references/`. Use clear filename prefixes instead of nested folders when references are related.
+
+## File Creation Rules
+
+1. Read `references/reference-architecture.md` before adding bundled files.
+2. Create a new reference only when it has a clear "open when..." reason and cannot be handled by tightening an existing reference.
+3. If you add a bundled reference, add a direct routing entry for it in `SKILL.md`.
+4. Do not create catch-all docs that mix workflow, source notes, examples, and validation results.
+5. Keep provenance in `SOURCES.md`, not in runtime files.
+6. Update `SPEC.md` when the skill contract changes materially.
+7. Do not add nested runtime reference folders unless the content is non-runtime evidence or static assets.
+
+## Class-Specific Requirements
 
 ### `integration-documentation`
 
-Require these reference artifacts:
+Require focused coverage for:
 
-1. `references/api-surface.md`
-2. `references/common-use-cases.md`
-3. `references/troubleshooting-workarounds.md`
+1. API surface and behavior contracts
+2. config/runtime options
+3. common downstream use cases
+4. known issues and workarounds
+5. version or migration variance
 
-Default minimum depth unless user overrides:
+Default minimum depth:
 
-1. `common-use-cases.md`: at least 6 concrete downstream use cases.
-2. `troubleshooting-workarounds.md`: at least 8 issue/fix entries.
+1. at least 6 concrete downstream use cases
+2. at least 8 issue/fix or failure/workaround entries
 
-## Example artifact requirements
+## Shape-Specific Requirements
 
-For authoring/generator skills, references must include transformed examples that are directly usable:
+| Shape | Require |
+|-------|---------|
+| `router` | route criteria, fallback, per-route contract, misroute recovery |
+| `script-backed-workflow` | documented scripts, non-interactive execution, structured output, fallback |
+| `parallelization` / `orchestrator-workers` | unit of work, worker output schema, merge rule, stop condition |
+| `subagent-fork` | actionable task, return contract, isolation reason, portability note |
+| `hook-backed` | event scope, side-effect boundary, fallback, safety note |
+| `asset-template` | asset routing, placeholder guidance, validation checklist when needed |
+| `argument-driven` | expected arguments, empty-input behavior, manual-only use when risky |
+
+## Example Requirements
+
+Authoring or generator skills should include:
 
 1. happy-path example
-2. secure/robust variant
-3. anti-pattern + corrected version
+2. secure or robust variant
+3. anti-pattern plus correction
 
-Do not accept abstract-only guidance.
-Case-study style references are preferred over generic tips.
+Do not accept abstract-only guidance when a concrete example is needed.
 
-## Attribution/provenance
+## Required Output
 
-Store full source lists in `SOURCES.md`.
-
-Keep `SKILL.md` free of large attribution blocks.
-
-## Required output
-
-- Updated `SKILL.md`
-- Updated/added supporting files
-- Explanation of major authoring decisions
-- Description optimization handoff for trigger-quality pass
+- updated `SKILL.md`
+- updated `SPEC.md` when required
+- updated or added supporting files
+- precision-pass decision: replaced, narrowed, moved, deleted, or added with reason
+- explanation of major authoring decisions
+- description-optimization handoff

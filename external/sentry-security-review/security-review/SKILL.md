@@ -1,7 +1,7 @@
 ---
 name: security-review
 description: Security code review for vulnerabilities. Use when asked to "security review", "find vulnerabilities", "check for security issues", "audit security", "OWASP review", or review code for injection, XSS, authentication, authorization, cryptography issues. Provides systematic review with confidence-based reporting.
-allowed-tools: Read, Grep, Glob, Bash, Task
+allowed-tools: Read Grep Glob Bash Task
 license: LICENSE
 ---
 
@@ -96,7 +96,8 @@ What type of code am I reviewing?
 | Code Type | Load These References |
 |-----------|----------------------|
 | API endpoints, routes | `authorization.md`, `authentication.md`, `injection.md` |
-| Frontend, templates | `xss.md`, `csrf.md` |
+| Django/DRF views, permission classes, object-level access | Use the `django-access-review` skill if available for access control; otherwise `authorization.md` |
+| Frontend, templates | `xss.md`, `csrf.md`, `modern-threats.md` (DOM clobbering, prototype pollution) |
 | File handling, uploads | `file-security.md` |
 | Crypto, secrets, tokens | `cryptography.md`, `data-protection.md` |
 | Data serialization | `deserialization.md` |
@@ -107,6 +108,7 @@ What type of code am I reviewing?
 | CI/CD, dependencies | `supply-chain.md` |
 | Error handling | `error-handling.md` |
 | Audit, logging | `logging.md` |
+| Object merging/cloning, `__proto__`, DOM `id`/`name` lookups, WebSocket handlers, LLM prompt construction | `modern-threats.md` |
 
 ### 2. Load Language Guide
 
@@ -116,19 +118,16 @@ Based on file extension or imports:
 |------------|-------|
 | `.py`, `django`, `flask`, `fastapi` | `languages/python.md` |
 | `.js`, `.ts`, `express`, `react`, `vue`, `next` | `languages/javascript.md` |
-| `.go`, `go.mod` | `languages/go.md` |
-| `.rs`, `Cargo.toml` | `languages/rust.md` |
-| `.java`, `spring`, `@Controller` | `languages/java.md` |
+
+For other languages there is no dedicated guide; rely on the `references/` files and verify framework protections directly in the codebase.
 
 ### 3. Load Infrastructure Guide (if applicable)
 
 | File Type | Guide |
 |-----------|-------|
 | `Dockerfile`, `.dockerignore` | `infrastructure/docker.md` |
-| K8s manifests, Helm charts | `infrastructure/kubernetes.md` |
-| `.tf`, Terraform | `infrastructure/terraform.md` |
-| GitHub Actions, `.gitlab-ci.yml` | `infrastructure/ci-cd.md` |
-| AWS/GCP/Azure configs, IAM | `infrastructure/cloud.md` |
+| GitHub Actions workflows | Use the `gha-security-review` skill if available; otherwise `references/supply-chain.md` |
+| Other CI/CD pipelines, lockfiles, package manifests | `references/supply-chain.md` |
 
 ### 4. Research Before Flagging
 
@@ -300,13 +299,6 @@ If no vulnerabilities found, state: "No high-confidence vulnerabilities identifi
 ### Language Guides (`languages/`)
 - `python.md` - Django, Flask, FastAPI patterns
 - `javascript.md` - Node, Express, React, Vue, Next.js
-- `go.md` - Go-specific security patterns
-- `rust.md` - Rust unsafe blocks, FFI security
-- `java.md` - Spring, Java EE patterns
 
 ### Infrastructure (`infrastructure/`)
 - `docker.md` - Container security
-- `kubernetes.md` - K8s RBAC, secrets, policies
-- `terraform.md` - IaC security
-- `ci-cd.md` - Pipeline security
-- `cloud.md` - AWS/GCP/Azure security
