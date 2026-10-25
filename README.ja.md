@@ -10,7 +10,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 ## 収録スキル
 
-> 自作 14 個 (`skills/`) + 外部収録 51 個 (`external/`)。外部スキルは毎日上流から自動同期。
+> 自作 14 個 (`skills/`) + 外部収録 34 個 (`external/`)。外部スキルは毎日上流から自動同期。
 
 ### 自作 (`skills/`)
 
@@ -44,10 +44,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **mcp-builder** | 高品質な MCP サーバー構築 | anthropics/skills |
 | **skill-creator** | skill の作成 / 改善 / 評価 | anthropics/skills |
 | **claude-api** | Claude API 利用ガイド | anthropics/skills |
-| **antfu-skills** | Anthony Fu の Vue / Nuxt / Vite / UnoCSS エコシステム規範 (19 サブスキル) | antfu/skills |
-| **cc-skills-golang** | Go 開発規範 (46 サブスキル：context / 並行 / DI / CI 等、lo/do 作者) | samber/cc-skills-golang |
-| **addy-agent-skills** | Addy Osmani エンジニアリング規律 (25 サブスキル：仕様 / TDD / レビュー / デバッグ / リリース等、ドキュメント層のみ；tGD の上流) | addyosmani/agent-skills |
-| **tgd-skills** | tGD PDLC エンジニアリング規律 (29 サブスキル：レビュー / デバッグ / リリース / ADR 等、ドキュメント層のみ)。上流は消失、2026-07-21 時点で凍結 | openclawyhwang-hub/tGD |
 
 ### UI/UX・デザイン
 
@@ -56,19 +52,12 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **frontend-design** | AI っぽさを排除したフロントエンドデザイン | anthropics/skills |
 | **interface-design** | コンポーネント一貫性のデザイン記憶システム | Dammyjay93/interface-design |
 | **ui-ux-pro-max** | 50以上の UI スタイル / 161 パレット / 57 フォントペア | nextlevelbuilder/ui-ux-pro-max-skill |
-| **bencium-marketplace** | UX 監査 + タイポグラフィ + 革新的 UX | bencium/bencium-marketplace |
 | **web-design-guidelines** | UI コードレビュー (a11y / UX / 性能) | vercel-labs/agent-skills |
 | **canvas-design** | デザイン哲学で PNG / PDF ビジュアル作成 | anthropics/skills |
 | **brand-guidelines** | Anthropic 公式ブランドカラーとフォント適用 | anthropics/skills |
 | **theme-factory** | テーマで artifact をスタイリング (10 プリセット) | anthropics/skills |
 | **web-artifacts-builder** | 複数コンポーネントの claude.ai HTML artifact 構築 | anthropics/skills |
 | **algorithmic-art** | p5.js でアルゴリズムアート | anthropics/skills |
-
-### アクセシビリティ
-
-| スキル | 説明 | ソース |
-|--------|------|--------|
-| **accessibility-agents** | WCAG AA 強制 (80 エージェント + 25 コマンド) | Community-Access/accessibility-agents |
 
 ### テスト
 
@@ -81,14 +70,9 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 | スキル | 説明 | ソース |
 |--------|------|--------|
-| **security-audit** | ホワイト / グレーボックスセキュリティ監査 (ISO 27001 対応) | afiqiqmal/claude-security-audit |
-| **security-skills** | セキュリティ自動化 skill マーケットプレイス | eth0izzle/security-skills |
-| **claude-code-owasp** | OWASP Top 10 コードセキュリティレビュー | agamm/claude-code-owasp |
-| **ot-security-mcp** | IEC 62443 / NIST 800-82 OT セキュリティ MCP | Ansvar-Systems/ot-security-mcp |
 | **trailofbits-security** | セキュリティ分析プラグイン (CodeQL / Semgrep) | trailofbits/skills |
 | **trailofbits-skills-curated** | Trail of Bits 審査済みプラグイン | trailofbits/skills-curated |
 | **sentry-security-review** | Sentry 規約コミット + セキュリティレビュー | getsentry/skills |
-| **anthropic-cybersecurity-skills** | サイバーセキュリティ skill 集 | mukul975/Anthropic-Cybersecurity-Skills |
 | **cloudflare-security-audit** | マルチエージェント編成型ペネトレーション監査 (偵察 / 攻撃クラス / 検証レポート) | cloudflare/security-audit-skill |
 
 ### ドキュメント処理
@@ -99,7 +83,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **pdf** | PDF 処理 (読取 / 結合 / 抽出) | anthropics/skills |
 | **pptx** | プレゼンの作成 / 編集 | anthropics/skills |
 | **xlsx** | スプレッドシートの作成 / 編集 | anthropics/skills |
-| **archify** | アーキテクチャ / シーケンス / データフロー対話型図生成 (JSON IR + 各種レンダラー) | tt-a1i/archify |
 
 ### ライティング・コンテンツ
 
@@ -107,10 +90,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 |--------|------|--------|
 | **humanizer-zh-tw** | 中国語 AI 文体の痕跡除去 (強制適用) | kevintsai1202/Humanizer-zh-TW |
 | **humanizer-en** | 英語 AI 文体の痕跡除去 | blader/humanizer |
-| **content-research-writer** | リサーチ + 引用補助のコンテンツ作成 | ComposioHQ/awesome-claude-skills |
-| **creative-writing-skills** | 架空世界観 / キャラ wiki 作成 | haowjy/creative-writing-skills |
-| **paper-writer-skill** | 医学 / 科学論文の執筆ワークフロー | kgraph57/paper-writer-skill |
-| **storytelling** | 製品価値と課題を繋ぐ物語構築 | gtmagents/gtm-agents |
 | **doc-coauthoring** | 構造化ドキュメント共同執筆 | anthropics/skills |
 | **internal-comms** | 社内コミュニケーション文書 (状況報告 / 経営層向け) | anthropics/skills |
 
@@ -118,7 +97,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 | スキル | 説明 | ソース |
 |--------|------|--------|
-| **remotion-video-skill** | Remotion でプログラム的に動画生成 | wshuyi/remotion-video-skill |
 | **slack-gif-creator** | Slack 最適化アニメ GIF | anthropics/skills |
 
 ### データベース
@@ -126,16 +104,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | スキル | 説明 | ソース |
 |--------|------|--------|
 | **neon-skills** | Neon serverless ドライバ設定 (6 サブ skill) | neondatabase/ai-rules |
-
-### 削除済み
-
-| スキル | 理由 |
-|--------|------|
-| ~~cisco-skill-scanner~~ | 同期停止 |
-| ~~neon-ai-rules~~ | neon-skills に統合 |
-| ~~ux-designer~~ | bencium/design-skill repo が消滅 |
-| ~~ui-agents~~ | JakobStadler/claude-code-ui-agents repo が消滅 |
-| ~~claude-designer~~ | joeseesun/claude-designer-skill repo が消滅 |
 
 ## pi.dev 設定 (`pi-agent/`)
 
@@ -176,53 +144,6 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-upd
 毎日自動：SKILL.md 更新、agent-browser CLI バージョン確認、自動 commit + push。
 
 ## 更新履歴
-
-### 2026-10-05
-
-- security-radar で 10-01 の削除による空きを補充：grype（コンテナイメージの CVE スキャン、trivy の代替）と Valibot（TypeScript の実行時バリデーション、Zod の代替）を追加；IaC スキャン、lockfile の取得元検証、LLM ゲートウェイ、トークン / コストのハード上限は調査の結果該当パッケージなしとし、代替手段をカバレッジ行列に記載（計 58 件）
-
-### 2026-10-03
-
-- 毎日の同期を `.zshrc` でのフォアグラウンド source から launchd のバックグラウンド実行に変更：09-26 以降、毎回ゲートスキャン中に中断され 8 日間 commit がなかった。「本日実行済み」の印は全工程完了後にのみ書き込み、中断時は次回の起動で再実行する
-
-### 2026-10-01
-
-- security-radar から ⚠️ の 5 件を削除：trivy（リリース基盤侵害）、lockfile-lint（未修正の高危険度脆弱性）、Zod（main に悪意あるコミット）、bluemonday（メンテ停止・未修正の DoS）、Bifrost（管理 API が既定で無認証）；空いた領域はカバレッジ行列のギャップ欄に記録し、再収録を防ぐ「削除済み」一覧を追加（計 56 件）
-
-### 2026-09-23
-
-- 外部 skill 同期にロード前ゲートを追加：新規追加分が不可視文字・デコード後実行・ユーザーに隠す指示などのルールに該当、または SkillSpector が警告・失敗した場合、その skill を直前のコミット版に戻して隔離し人手で判定（`scripts/gate-external.py`）
-- 同期後、外部 skill 内の trivy-action や trivy イメージなど可変参照を固定 SHA / digest に自動固定（`scripts/pin-refs.py`）
-- `addy-agent-skills`（addyosmani/agent-skills、MIT）を日次同期に追加、ドキュメント層のみ；tgd-skills の 29 サブスキル中 20 個はここが由来
-- tgd-skills の上流 `openclawyhwang-hub/tGD`（リポジトリとアカウント）が消失したため日次同期から除外；`external/tgd-skills` は 2026-07-21 時点で凍結
-- security-radar の対象を AI エージェント / LLM セキュリティに拡大：Agentic Applications 2026 と LLM Top 10 2026 のカバレッジ行列を追加、SkillSpector・Snyk Agent Scan・promptfoo・garak・NeMo Guardrails・sandbox-runtime・Bifrost・gobreaker・opossum・Langfuse を収録し、両行列を同日中に完成（計 59 件）
-- security-radar で trivy を ⚠️ に変更：2026-03 のリリース基盤侵害（GHSA-69fq-xp46-6x23）、継続利用の条件を付記
-- security-radar の運用を日次ローテーション再確認＋毎週月曜の新候補に変更、ウォッチリストを追加
-
-### 2026-09-09
-
-- `security-radar` を追加：セキュリティパッケージの日次スケジュールスキャン（サプライチェーン・JWT・シークレット・SAST の 4 回で 15 件収録）、三軸検証後に PR を自動作成・マージ
-- security-radar に OWASP Top 10:2025 対応列とカバレッジ行列を追加、ギャップで次のテーマを決定
-- 外部スキル表に antfu-skills、cc-skills-golang、tgd-skills、archify、cloudflare-security-audit を追加；同期の残骸 `external/test-space-dir` を削除
-- security-reviewer の OWASP 対応を Top 10:2025 に更新、Agentic Applications 2026（ASI01–ASI10）と GenAI LLM Top 10 2026（LLM01–LLM10）を追加
-
-### 2026-06-09
-
-- README 全面同期：skill 一覧を 22 から 54 に拡充（自作 9 + 外部 45）、外部 skill ごとに上流ソースを記載
-- 消滅した項目を削除：cisco-skill-scanner、neon-ai-rules（neon-skills に統合）
-- `pi-agent/` を追加：pi.dev コーディングエージェントの個人設定(AGENTS.md / APPEND_SYSTEM.md / guardrails extension / settings フラグメント)
-
-### 2026-03-14
-
-- セキュリティスキル 5 個追加（security-audit, ot-security-mcp, trailofbits, sentry, cisco）
-- UI/UX スキル 3 個追加（frontend-design, accessibility-agents, bencium-marketplace）
-- 消滅したリポジトリを削除（ux-designer, ui-agents, claude-designer）
-- update-external.sh の git clone 失敗時クラッシュを修正
-- agent-browser CLI npm 自動更新を追加
-
-### 2026-01-16
-
-- 初回リリース
 
 ## ライセンス
 

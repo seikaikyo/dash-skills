@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 14 custom (`skills/`) + 51 external (`external/`). External skills auto-sync daily from upstream.
+> 14 custom (`skills/`) + 34 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -44,10 +44,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **mcp-builder** | Build high-quality MCP servers | anthropics/skills |
 | **skill-creator** | Create / improve / evaluate skills | anthropics/skills |
 | **claude-api** | Claude API usage guide | anthropics/skills |
-| **antfu-skills** | Anthony Fu's Vue / Nuxt / Vite / UnoCSS ecosystem conventions (19 sub-skills) | antfu/skills |
-| **cc-skills-golang** | Go development standards (46 sub-skills: context / concurrency / DI / CI, by the lo/do author) | samber/cc-skills-golang |
-| **addy-agent-skills** | Addy Osmani engineering discipline (25 sub-skills: spec / TDD / review / debugging / launch, docs layer only; upstream source of tGD) | addyosmani/agent-skills |
-| **tgd-skills** | tGD PDLC engineering discipline (29 sub-skills: review / debugging / launch / ADRs, docs layer only). Upstream is gone; frozen at 2026-07-21 | openclawyhwang-hub/tGD |
 
 ### UI/UX & Design
 
@@ -56,19 +52,12 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **frontend-design** | Anti-generic-AI frontend design | anthropics/skills |
 | **interface-design** | Design memory system for component consistency | Dammyjay93/interface-design |
 | **ui-ux-pro-max** | 50+ UI styles / 161 palettes / 57 font pairings | nextlevelbuilder/ui-ux-pro-max-skill |
-| **bencium-marketplace** | UX audit + typography + innovative UX | bencium/bencium-marketplace |
 | **web-design-guidelines** | UI code review (a11y / UX / perf) | vercel-labs/agent-skills |
 | **canvas-design** | PNG / PDF visual art via design philosophy | anthropics/skills |
 | **brand-guidelines** | Apply Anthropic brand colors and typography | anthropics/skills |
 | **theme-factory** | Style artifacts with themes (10 presets) | anthropics/skills |
 | **web-artifacts-builder** | Build multi-component claude.ai HTML artifacts | anthropics/skills |
 | **algorithmic-art** | Algorithmic art with p5.js | anthropics/skills |
-
-### Accessibility
-
-| Skill | Description | Source |
-|-------|-------------|--------|
-| **accessibility-agents** | WCAG AA enforcement (80 agents + 25 commands) | Community-Access/accessibility-agents |
 
 ### Testing
 
@@ -81,14 +70,9 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 | Skill | Description | Source |
 |-------|-------------|--------|
-| **security-audit** | White/gray-box security audit (ISO 27001 mapped) | afiqiqmal/claude-security-audit |
-| **security-skills** | Security automation skill marketplace | eth0izzle/security-skills |
-| **claude-code-owasp** | OWASP Top 10 code security review | agamm/claude-code-owasp |
-| **ot-security-mcp** | IEC 62443 / NIST 800-82 OT security MCP | Ansvar-Systems/ot-security-mcp |
 | **trailofbits-security** | Security analysis plugins (CodeQL / Semgrep) | trailofbits/skills |
 | **trailofbits-skills-curated** | Trail of Bits vetted plugins | trailofbits/skills-curated |
 | **sentry-security-review** | Sentry-convention commits + security review | getsentry/skills |
-| **anthropic-cybersecurity-skills** | Cybersecurity skill collection | mukul975/Anthropic-Cybersecurity-Skills |
 | **cloudflare-security-audit** | Multi-agent orchestrated penetration audit (recon / attack classes / validated reporting) | cloudflare/security-audit-skill |
 
 ### Document Processing
@@ -99,7 +83,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **pdf** | Process PDFs (read / merge / extract) | anthropics/skills |
 | **pptx** | Create / edit presentations | anthropics/skills |
 | **xlsx** | Create / edit spreadsheets | anthropics/skills |
-| **archify** | Architecture / sequence / dataflow interactive diagram generator (JSON IR + renderers) | tt-a1i/archify |
 
 ### Writing & Content
 
@@ -107,10 +90,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 |-------|-------------|--------|
 | **humanizer-zh-tw** | Remove Chinese AI writing patterns (enforced) | kevintsai1202/Humanizer-zh-TW |
 | **humanizer-en** | Remove English AI writing patterns | blader/humanizer |
-| **content-research-writer** | Research + citation-assisted content writing | ComposioHQ/awesome-claude-skills |
-| **creative-writing-skills** | Fictional world / character wiki writing | haowjy/creative-writing-skills |
-| **paper-writer-skill** | Medical / scientific paper writing workflow | kgraph57/paper-writer-skill |
-| **storytelling** | Narrative arcs connecting product value to pain | gtmagents/gtm-agents |
 | **doc-coauthoring** | Structured doc co-authoring workflow | anthropics/skills |
 | **internal-comms** | Internal comms (status reports / leadership updates) | anthropics/skills |
 
@@ -118,7 +97,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 | Skill | Description | Source |
 |-------|-------------|--------|
-| **remotion-video-skill** | Programmatic video generation with Remotion | wshuyi/remotion-video-skill |
 | **slack-gif-creator** | Slack-optimized animated GIFs | anthropics/skills |
 
 ### Database
@@ -126,16 +104,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | Skill | Description | Source |
 |-------|-------------|--------|
 | **neon-skills** | Neon serverless driver config (6 sub-skills) | neondatabase/ai-rules |
-
-### Removed
-
-| Skill | Reason |
-|-------|--------|
-| ~~cisco-skill-scanner~~ | No longer synced |
-| ~~neon-ai-rules~~ | Merged into neon-skills |
-| ~~ux-designer~~ | bencium/design-skill repo gone |
-| ~~ui-agents~~ | JakobStadler/claude-code-ui-agents repo gone |
-| ~~claude-designer~~ | joeseesun/claude-designer-skill repo gone |
 
 ## pi.dev Config (`pi-agent/`)
 
@@ -176,53 +144,6 @@ Add to `~/.zshrc` to catch up when the day's run has not finished (returns immed
 Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit + push.
 
 ## Changelog
-
-### 2026-10-05
-
-- security-radar filled the gaps left by the 10-01 removals: added grype (container image CVE scanning, replacing trivy) and Valibot (TypeScript runtime validation, replacing Zod); IaC scanning, lockfile source validation, LLM gateways and token / cost hard caps have no qualifying package after review, so the coverage matrices now describe the alternative approach (58 entries total)
-
-### 2026-10-03
-
-- Daily sync now runs in the background via launchd instead of being sourced in the foreground from `.zshrc`: since 09-26 every run was interrupted during the gate scan, leaving 8 days without a commit. The "already ran today" marker is now written only after a full run, so an interrupted run is retried on the next trigger
-
-### 2026-10-01
-
-- security-radar removed its 5 ⚠️ packages: trivy (release pipeline compromised), lockfile-lint (unpatched high-severity advisory), Zod (malicious commits pushed to main), bluemonday (unmaintained, unpatched DoS) and Bifrost (management API unauthenticated by default); the resulting gaps are recorded in the coverage matrices, and a new "Removed" list keeps them from being re-added (56 entries total)
-
-### 2026-09-23
-
-- External skill sync now has a pre-load gate: if newly added content hits rules such as hidden Unicode, decode-and-execute, or instructions to hide actions from the user, or SkillSpector alerts or fails, that skill is rolled back to its last committed version and quarantined for human review (`scripts/gate-external.py`)
-- After each sync, mutable references in external skills such as trivy-action and trivy images are pinned to fixed SHAs / digests (`scripts/pin-refs.py`)
-- Added `addy-agent-skills` (addyosmani/agent-skills, MIT) to daily sync, docs layer only; 20 of tgd-skills' 29 sub-skills originate here
-- tgd-skills upstream `openclawyhwang-hub/tGD` (repo and account) is gone; removed from daily sync, `external/tgd-skills` frozen at 2026-07-21
-- security-radar expanded to AI agent / LLM security: new coverage matrices for Agentic Applications 2026 and LLM Top 10 2026, adding SkillSpector, Snyk Agent Scan, promptfoo, garak, NeMo Guardrails, sandbox-runtime, Bifrost, gobreaker, opossum and Langfuse; both matrices completed the same day (59 entries total)
-- security-radar marks trivy ⚠️ after its March 2026 release-pipeline compromise (GHSA-69fq-xp46-6x23), with conditions for continued use
-- security-radar cadence changed to daily rotating re-checks plus weekly (Monday) new candidates, with a watch list
-
-### 2026-09-09
-
-- Added `security-radar`: daily scheduled scan of security packages (15 entries so far across supply chain, JWT, secrets, SAST), three-dimension verification, auto PR and merge
-- security-radar now carries an OWASP Top 10:2025 column and a coverage matrix that steers upcoming themes by gaps
-- External skills table now lists antfu-skills, cc-skills-golang, tgd-skills, archify, cloudflare-security-audit; removed sync leftover `external/test-space-dir`
-- security-reviewer OWASP mapping updated to Top 10:2025, plus Agentic Applications 2026 (ASI01–ASI10) and GenAI LLM Top 10 2026 (LLM01–LLM10)
-
-### 2026-06-09
-
-- README full sync: skill list expanded from 22 to 54 (9 custom + 45 external), upstream source noted per external skill
-- Removed defunct entries: cisco-skill-scanner, neon-ai-rules (merged into neon-skills)
-- Added `pi-agent/`: personal pi.dev coding agent config (AGENTS.md / APPEND_SYSTEM.md / guardrails extension / settings fragment)
-
-### 2026-03-14
-
-- Added 5 security skills (security-audit, ot-security-mcp, trailofbits, sentry, cisco)
-- Added 3 UI/UX skills (frontend-design, accessibility-agents, bencium-marketplace)
-- Removed defunct repos (ux-designer, ui-agents, claude-designer)
-- Fixed update-external.sh crash on failed git clone
-- Added agent-browser CLI npm auto-update
-
-### 2026-01-16
-
-- Initial release
 
 ## License
 

@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 14 個 (`skills/`) + 外部收錄 51 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 14 個 (`skills/`) + 外部收錄 34 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -44,10 +44,6 @@
 | **mcp-builder** | 建立高品質 MCP server | anthropics/skills |
 | **skill-creator** | 建立 / 改進 / 評測 skill | anthropics/skills |
 | **claude-api** | Claude API 使用指南 | anthropics/skills |
-| **antfu-skills** | Anthony Fu 的 Vue / Nuxt / Vite / UnoCSS 生態規範 (19 個子 skill) | antfu/skills |
-| **cc-skills-golang** | Go 開發規範 (46 個子 skill：context / 並行 / DI / CI 等，lo/do 作者) | samber/cc-skills-golang |
-| **addy-agent-skills** | Addy Osmani 工程紀律 (25 個子 skill：規格 / TDD / 審查 / 除錯 / 上線 等，僅文件層；tGD 的上游來源) | addyosmani/agent-skills |
-| **tgd-skills** | tGD PDLC 工程紀律 (29 個子 skill：審查 / 除錯 / 上線 / ADR 等，僅文件層)。上游已消失，凍結於 2026-07-21 | openclawyhwang-hub/tGD |
 
 ### UI/UX 與設計
 
@@ -56,19 +52,12 @@
 | **frontend-design** | 反 AI 罐頭風格的前端設計 | anthropics/skills |
 | **interface-design** | 設計記憶系統，確保元件風格一致 | Dammyjay93/interface-design |
 | **ui-ux-pro-max** | 50+ UI 風格 / 161 色彩 / 57 字型配對 | nextlevelbuilder/ui-ux-pro-max-skill |
-| **bencium-marketplace** | UX 審查 + typography + 創新 UX | bencium/bencium-marketplace |
 | **web-design-guidelines** | UI 程式碼審查 (a11y / UX / 效能) | vercel-labs/agent-skills |
 | **canvas-design** | 用設計哲學做 PNG / PDF 視覺作品 | anthropics/skills |
 | **brand-guidelines** | 套用 Anthropic 官方品牌色彩與字型 | anthropics/skills |
 | **theme-factory** | 用主題為 artifact 上樣式 (10 種預設) | anthropics/skills |
 | **web-artifacts-builder** | 建立多元件 claude.ai HTML artifact | anthropics/skills |
 | **algorithmic-art** | 用 p5.js 做演算法藝術 | anthropics/skills |
-
-### 無障礙
-
-| Skill | 描述 | 來源 |
-|-------|------|------|
-| **accessibility-agents** | WCAG AA 無障礙強制 (80 專家 agent + 25 指令) | Community-Access/accessibility-agents |
 
 ### 測試
 
@@ -81,14 +70,9 @@
 
 | Skill | 描述 | 來源 |
 |-------|------|------|
-| **security-audit** | 白箱 / 灰箱安全稽核 (ISO 27001 對映) | afiqiqmal/claude-security-audit |
-| **security-skills** | 安全自動化 skill marketplace | eth0izzle/security-skills |
-| **claude-code-owasp** | OWASP Top 10 程式碼安全審查 | agamm/claude-code-owasp |
-| **ot-security-mcp** | IEC 62443 / NIST 800-82 OT 安全 MCP | Ansvar-Systems/ot-security-mcp |
 | **trailofbits-security** | 安全分析 plugin (CodeQL / Semgrep) | trailofbits/skills |
 | **trailofbits-skills-curated** | Trail of Bits 審核過的 plugin 精選 | trailofbits/skills-curated |
 | **sentry-security-review** | Sentry 慣例 commit + 安全審查 | getsentry/skills |
-| **anthropic-cybersecurity-skills** | 網路安全 skill 集 | mukul975/Anthropic-Cybersecurity-Skills |
 | **cloudflare-security-audit** | 多 agent 編排式滲透審計 (偵察 / 攻擊類別 / 驗證報告) | cloudflare/security-audit-skill |
 
 ### 文件處理
@@ -99,7 +83,6 @@
 | **pdf** | 處理 PDF (讀取 / 合併 / 提取) | anthropics/skills |
 | **pptx** | 建立 / 編輯簡報 | anthropics/skills |
 | **xlsx** | 建立 / 編輯試算表 | anthropics/skills |
-| **archify** | 架構 / 時序 / 資料流互動圖產生器 (JSON IR + 多種 renderer) | tt-a1i/archify |
 
 ### 寫作與內容
 
@@ -107,10 +90,6 @@
 |-------|------|------|
 | **humanizer-zh-tw** | 去除中文 AI 寫作痕跡 (強制套用) | kevintsai1202/Humanizer-zh-TW |
 | **humanizer-en** | 去除英文 AI 寫作痕跡 | blader/humanizer |
-| **content-research-writer** | 研究 + 引用輔助的內容寫作 | ComposioHQ/awesome-claude-skills |
-| **creative-writing-skills** | 虛構世界觀 / 角色 wiki 寫作 | haowjy/creative-writing-skills |
-| **paper-writer-skill** | 醫學 / 科學論文寫作流程 | kgraph57/paper-writer-skill |
-| **storytelling** | 產品價值與痛點的敘事建構 | gtmagents/gtm-agents |
 | **doc-coauthoring** | 結構化文件協作流程 | anthropics/skills |
 | **internal-comms** | 內部溝通文件 (狀態報告 / 領導層更新) | anthropics/skills |
 
@@ -118,7 +97,6 @@
 
 | Skill | 描述 | 來源 |
 |-------|------|------|
-| **remotion-video-skill** | 用 Remotion 以程式碼產生影片 | wshuyi/remotion-video-skill |
 | **slack-gif-creator** | 製作 Slack 最佳化的動態 GIF | anthropics/skills |
 
 ### 資料庫
@@ -126,16 +104,6 @@
 | Skill | 描述 | 來源 |
 |-------|------|------|
 | **neon-skills** | Neon serverless 驅動配置 (6 個子 skill) | neondatabase/ai-rules |
-
-### 已移除
-
-| Skill | 原因 |
-|-------|------|
-| ~~cisco-skill-scanner~~ | 不再同步 |
-| ~~neon-ai-rules~~ | 併入 neon-skills |
-| ~~ux-designer~~ | bencium/design-skill repo 已不存在 |
-| ~~ui-agents~~ | JakobStadler/claude-code-ui-agents repo 已不存在 |
-| ~~claude-designer~~ | joeseesun/claude-designer-skill repo 已不存在 |
 
 ## pi.dev 配置 (`pi-agent/`)
 
@@ -151,27 +119,6 @@
 安裝與位置說明見 [`pi-agent/README.md`](./pi-agent/README.md)。
 
 ## 安裝
-
-### 方法一：安裝腳本
-
-```bash
-git clone https://github.com/seikaikyo/dash-skills.git
-cd dash-skills
-./scripts/install.sh
-```
-
-### 方法二：手動複製
-
-```bash
-cp -r skills/* ~/.claude/skills/
-cp -r external/* ~/.claude/skills/
-```
-
-### 方法三：Symlink（開發用）
-
-```bash
-./scripts/link.sh
-```
 
 ## 自動同步
 
@@ -194,14 +141,6 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-upd
 - 檢查 agent-browser CLI npm 版本，有新版自動更新
 - 有變更自動 commit + push
 
-### 手動同步
-
-```bash
-./scripts/update-external.sh              # 更新全部
-./scripts/update-external.sh --list       # 列出可用的
-./scripts/update-external.sh agent-browser # 更新指定的
-```
-
 ## 技術棧總覽
 
 | 層級 | 技術選擇 |
@@ -214,64 +153,6 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-upd
 | 後端部署 | Render |
 
 ## 更新紀錄
-
-### 2026-10-05
-
-- security-radar 補上 10-01 移除後的空缺：收錄 grype（容器映像 CVE 掃描，取代 trivy）與 Valibot（TypeScript 執行期驗證，取代 Zod）；IaC 掃描、lockfile 來源驗證、LLM 閘道、token / 費用硬上限查證後無合格套件，在涵蓋矩陣寫明替代做法（共 58 筆）
-
-### 2026-10-03
-
-- 每日同步改由 launchd 在背景執行，不再於開 terminal 時前景 source：09-26 起每天跑到閘門掃描就被中斷，8 天沒有 commit。「今天已執行」標記改為整趟跑完才寫入，中斷後下次觸發會補跑
-
-### 2026-10-01
-
-- security-radar 移除 5 個 ⚠️ 套件：trivy（發行鏈遭入侵）、lockfile-lint（未修補高危）、Zod（main 遭推入惡意 commit）、bluemonday（停止維護且有未修補 DoS）、Bifrost（管理 API 預設不驗證）；移除後的空缺寫入涵蓋矩陣缺口欄，另立「已移除」清單避免重新收錄（共 56 筆）
-
-### 2026-09-23
-
-- 外部 skills 同步加裝載前閘門：新增內容命中隱形字元、解碼執行、要 agent 瞞著使用者等規則，或 SkillSpector 告警、掃描失敗時，該 skill 退回上一版並隔離待人工判讀（`scripts/gate-external.py`）
-- 同步後自動把外部 skill 內的 trivy-action、trivy 映像等可變引用釘成固定 SHA / digest（`scripts/pin-refs.py`）
-- 新增 `addy-agent-skills`（addyosmani/agent-skills，MIT）每日同步，僅文件層；tgd-skills 29 個子 skill 中有 20 個源自此處
-- tgd-skills 上游 `openclawyhwang-hub/tGD`（repo 與帳號）已消失，從每日同步移除；`external/tgd-skills` 凍結於 2026-07-21
-- security-radar 擴大範圍至 AI agent / LLM 安全：新增 Agentic Applications 2026 與 LLM Top 10 2026 涵蓋矩陣，收錄 SkillSpector、Snyk Agent Scan、promptfoo、garak、NeMo Guardrails、sandbox-runtime、Bifrost、gobreaker、opossum、Langfuse，兩張矩陣當日補齊（共 59 筆）
-- security-radar 將 trivy 改標 ⚠️：2026-03 發行鏈遭入侵（GHSA-69fq-xp46-6x23），附續用條件
-- security-radar 維護節奏改為每日複查輪替 + 每週一新候選，新增觀察名單
-
-### 2026-09-09
-
-- 新增 `security-radar`：每日排程掃描資安套件（供應鏈、JWT、secrets、SAST 四輪已收錄 15 筆），三維度查證後自動開 PR 並合併
-- security-radar 加入 OWASP Top 10:2025 對應欄與涵蓋矩陣，以缺口決定後續主題
-- 外部 skills 表補齊 antfu-skills、cc-skills-golang、tgd-skills、archify、cloudflare-security-audit；移除同步殘留的 `external/test-space-dir`
-- security-reviewer 的 OWASP 對照更新至 Top 10:2025，新增 Agentic Applications 2026（ASI01–ASI10）與 GenAI LLM Top 10 2026（LLM01–LLM10）
-
-### 2026-06-09
-
-- README 全面同步：skills 清單從 22 補到 54（自建 9 + 外部 45），每個外部 skill 標上游來源
-- 移除已不存在的項目：cisco-skill-scanner、neon-ai-rules（併入 neon-skills）
-- 新增 `pi-agent/`：pi.dev coding agent 個人配置(AGENTS.md / APPEND_SYSTEM.md / guardrails extension / settings 片段)
-
-### 2026-03-15
-
-- 移除 accessibility-agents 38 個已刪除的 agent 檔案（上游同步）
-- 機敏資料自動 redact 功能加入 auto-update
-
-### 2026-03-14
-
-- 新增 5 個資安 skills（security-audit, ot-security-mcp, trailofbits, sentry, cisco）
-- 新增 3 個 UI/UX skills（frontend-design, accessibility-agents, bencium-marketplace）
-- 移除已消失的 repo（ux-designer, ui-agents, claude-designer）
-- 修復 `update-external.sh` 的 `set -e` 中斷問題
-- 新增 agent-browser CLI npm 自動更新
-- 技術棧更新：Shoelace 改為 PrimeVue
-
-### 2026-03-01
-
-- 新增 humanizer-zh-tw（強制套用）
-- 新增 neon-skills 6 個獨立 skills
-
-### 2026-01-16
-
-- 初始版本：自建 Skills + 外部收錄
 
 ## 授權
 

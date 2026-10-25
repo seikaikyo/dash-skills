@@ -257,98 +257,13 @@ update_internal_comms() { _update_anthropic_skill "internal-comms"; }
 update_slack_gif_creator() { _update_anthropic_skill "slack-gif-creator"; }
 
 # 函數：更新 cc-skills-golang (samber - Go 開發 skills，lo/do/slog 作者)
-update_cc_skills_golang() {
-    local skill_dir="$EXTERNAL_DIR/cc-skills-golang"
-    local temp_dir=$(mktemp -d)
-    local repo="samber/cc-skills-golang"
-
-    echo "更新: cc-skills-golang (samber Go skills)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo/skills" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp -r repo/skills/* "$skill_dir/"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # tgd-skills (openclawyhwang-hub/tGD)：上游 repo 與帳號已消失，external/tgd-skills 凍結於 2026-07-21，不再同步
 
 # 函數：更新 addy-agent-skills (addyosmani/agent-skills - 工程紀律 skills，tGD 的上游來源)
 # 只取 skills/ 與 references/ 文件層；明確不同步 hooks/、agents/、commands/、scripts/（供應鏈紀律）
-update_addy_agent_skills() {
-    local skill_dir="$EXTERNAL_DIR/addy-agent-skills"
-    local temp_dir=$(mktemp -d)
-    local repo="addyosmani/agent-skills"
-
-    echo "更新: addy-agent-skills (Addy Osmani 工程紀律 skills，僅文件層)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo/skills" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp -r repo/skills/* "$skill_dir/"
-        [ -d "repo/references" ] && cp -r repo/references "$skill_dir/"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 antfu-skills (Anthony Fu - Vue/Nuxt/Vite 生態 skills)
-update_antfu_skills() {
-    local skill_dir="$EXTERNAL_DIR/antfu-skills"
-    local temp_dir=$(mktemp -d)
-    local repo="antfu/skills"
-
-    echo "更新: antfu-skills (Anthony Fu Vue/Nuxt/Vite skills)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo/skills" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp -r repo/skills/* "$skill_dir/"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 通用函數：更新 vercel-labs/agent-skills 指定 branch + skills 子目錄
 _update_vercel_agent_skill() {
@@ -406,62 +321,8 @@ update_vercel_python() {
 }
 
 # 函數：更新 accessibility-agents
-update_accessibility_agents() {
-    local skill_dir="$EXTERNAL_DIR/accessibility-agents"
-    local temp_dir=$(mktemp -d)
-    local repo="Community-Access/accessibility-agents"
-
-    echo "更新: accessibility-agents (57 agents)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo/claude-code-plugin/agents" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp -r repo/claude-code-plugin/agents "$skill_dir/"
-        cp repo/claude-code-plugin/CLAUDE.md "$skill_dir/" 2>/dev/null || true
-        cp repo/claude-code-plugin/AGENTS.md "$skill_dir/" 2>/dev/null || true
-        cp repo/claude-code-plugin/README.md "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 bencium-marketplace (UX 設計)
-update_bencium_marketplace() {
-    local skill_dir="$EXTERNAL_DIR/bencium-marketplace"
-    local temp_dir=$(mktemp -d)
-    local repo="bencium/bencium-marketplace"
-
-    echo "更新: bencium-marketplace (UX audit + typography)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    rm -rf "$skill_dir"
-    mkdir -p "$skill_dir"
-    cp repo/README.md "$skill_dir/" 2>/dev/null || true
-    for skill in bencium-controlled-ux-designer bencium-innovative-ux-designer design-audit typography; do
-        [ -d "repo/$skill" ] && cp -r "repo/$skill" "$skill_dir/"
-    done
-    echo "  狀態: 已更新"
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 humanizer-zh-tw
 update_humanizer_zh_tw() {
@@ -520,118 +381,15 @@ update_humanizer_en() {
 }
 
 # 函數：更新 creative-writing-skills (6 個子 skill)
-update_creative_writing_skills() {
-    local skill_dir="$EXTERNAL_DIR/creative-writing-skills"
-    local temp_dir=$(mktemp -d)
-    local repo="haowjy/creative-writing-skills"
-
-    echo "更新: creative-writing-skills (6 sub-skills)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
-
-    if [ -d "repo/creative-writing-skills" ]; then
-        rm -rf "$skill_dir"
-        cp -r repo/creative-writing-skills "$skill_dir"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-        echo "  包含:"
-        ls -1 "$skill_dir" | grep "^cw-" | while read s; do
-            echo "    - $s"
-        done
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 paper-writer-skill (EN+JA 學術寫作)
-update_paper_writer_skill() {
-    local skill_dir="$EXTERNAL_DIR/paper-writer-skill"
-    local temp_dir=$(mktemp -d)
-    local repo="kgraph57/paper-writer-skill"
-
-    echo "更新: paper-writer-skill (EN+JA)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
-
-    if [ -f "repo/SKILL.md" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp repo/SKILL.md repo/README.md repo/README.ja.md "$skill_dir/" 2>/dev/null
-        cp -r repo/templates "$skill_dir/" 2>/dev/null || true
-        cp -r repo/references "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 content-research-writer
-update_content_research_writer() {
-    local skill_dir="$EXTERNAL_DIR/content-research-writer"
-    local temp_dir=$(mktemp -d)
-    local repo="ComposioHQ/awesome-claude-skills"
-
-    echo "更新: content-research-writer"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" repo 2>/dev/null
-
-    cd repo
-    git sparse-checkout set content-research-writer 2>/dev/null
-
-    if [ -d "content-research-writer" ]; then
-        rm -rf "$skill_dir"
-        cp -r content-research-writer "$skill_dir"
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 doc-coauthoring (Anthropic 官方)
 update_doc_coauthoring() { _update_anthropic_skill "doc-coauthoring"; }
 
 # 函數：更新 storytelling (SCAR 框架)
-update_storytelling() {
-    local skill_dir="$EXTERNAL_DIR/storytelling"
-    local temp_dir=$(mktemp -d)
-    local repo="gtmagents/gtm-agents"
-
-    echo "更新: storytelling (SCAR 框架)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 --filter=blob:none --sparse "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    cd repo
-    git sparse-checkout set plugins/content-marketing/skills/storytelling 2>/dev/null
-
-    if [ -d "plugins/content-marketing/skills/storytelling" ]; then
-        rm -rf "$skill_dir"
-        cp -r plugins/content-marketing/skills/storytelling "$skill_dir"
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # === 安全 / 資安類 Skills ===
 
@@ -673,35 +431,6 @@ update_trailofbits_security() {
 }
 
 # 函數：更新 claude-code-owasp (OWASP Top 10:2025 + ASVS 5.0)
-update_claude_code_owasp() {
-    local skill_dir="$EXTERNAL_DIR/claude-code-owasp"
-    local temp_dir=$(mktemp -d)
-    local repo="agamm/claude-code-owasp"
-
-    echo "更新: claude-code-owasp (OWASP Top 10:2025)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -f "repo/.claude/skills/owasp-security/SKILL.md" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp repo/.claude/skills/owasp-security/SKILL.md "$skill_dir/"
-        cp repo/OWASP-2025-2026-Report.md "$skill_dir/" 2>/dev/null || true
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 trailofbits-skills-curated (審核過的 skill marketplace)
 update_trailofbits_skills_curated() {
@@ -735,104 +464,10 @@ update_trailofbits_skills_curated() {
 }
 
 # 函數：更新 anthropic-cybersecurity-skills (MITRE ATT&CK 734+ skills)
-update_anthropic_cybersecurity_skills() {
-    local skill_dir="$EXTERNAL_DIR/anthropic-cybersecurity-skills"
-    local temp_dir=$(mktemp -d)
-    local repo="mukul975/Anthropic-Cybersecurity-Skills"
-
-    echo "更新: anthropic-cybersecurity-skills (MITRE ATT&CK 734+ skills)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp -r repo/skills "$skill_dir/" 2>/dev/null || true
-        cp -r repo/.claude "$skill_dir/" 2>/dev/null || true
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 security-skills (SecOps/SOAR 自動化)
-update_security_skills() {
-    local skill_dir="$EXTERNAL_DIR/security-skills"
-    local temp_dir=$(mktemp -d)
-    local repo="eth0izzle/security-skills"
-
-    echo "更新: security-skills (SecOps/SOAR)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        # 複製 skills 目錄和文件
-        for dir in repo/*/; do
-            local dirname=$(basename "$dir")
-            [ "$dirname" = ".git" ] && continue
-            [ "$dirname" = ".github" ] && continue
-            [ -d "$dir" ] && cp -r "$dir" "$skill_dir/"
-        done
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 security-audit (OWASP/CWE/NIST/MITRE 白箱審計)
-update_security_audit() {
-    local skill_dir="$EXTERNAL_DIR/security-audit"
-    local temp_dir=$(mktemp -d)
-    local repo="afiqiqmal/claude-security-audit"
-
-    echo "更新: security-audit (白箱/灰箱安全審計)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp repo/CLAUDE.md "$skill_dir/" 2>/dev/null || true
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        [ -d "repo/commands" ] && cp -r repo/commands "$skill_dir/"
-        [ -d "repo/references" ] && cp -r repo/references "$skill_dir/"
-        [ -d "repo/targets" ] && cp -r repo/targets "$skill_dir/"
-        cp repo/security-audit-guidelines.md "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 cloudflare-security-audit (Cloudflare 多 agent 編排式滲透審計)
 # 獨立目錄名，不覆蓋既有 external/security-audit (afiqiqmal)
@@ -902,35 +537,6 @@ update_sentry_security_review() {
 }
 
 # 函數：更新 ot-security-mcp (IEC 62443 OT 安全)
-update_ot_security_mcp() {
-    local skill_dir="$EXTERNAL_DIR/ot-security-mcp"
-    local temp_dir=$(mktemp -d)
-    local repo="Ansvar-Systems/ot-security-mcp"
-
-    echo "更新: ot-security-mcp (IEC 62443)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/package.json "$skill_dir/" 2>/dev/null || true
-        [ -d "repo/src" ] && cp -r repo/src "$skill_dir/"
-        [ -d "repo/skills" ] && cp -r repo/skills "$skill_dir/"
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # === 設計類 Skills (手動來源) ===
 
@@ -1001,36 +607,6 @@ update_ui_ux_pro_max() {
 # === 影片製作類 Skills ===
 
 # 函數：更新 remotion-video-skill (程式化影片製作)
-update_remotion_video() {
-    local skill_dir="$EXTERNAL_DIR/remotion-video-skill"
-    local temp_dir=$(mktemp -d)
-    local repo="wshuyi/remotion-video-skill"
-
-    echo "更新: remotion-video-skill (Remotion 程式化影片)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -f "repo/SKILL.md" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp repo/SKILL.md "$skill_dir/"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/README_CN.md "$skill_dir/" 2>/dev/null || true
-        cp -r repo/scripts "$skill_dir/" 2>/dev/null || true
-        cp -r repo/templates "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 顯示可用的 skills
 show_available() {
@@ -1062,66 +638,25 @@ show_available() {
     echo "  - vercel-cost-optimization (Vercel Labs, Hobby 用量管理)"
     echo "  - vercel-react-best-practices (Vercel Labs, v1.0.0 版本化 45 rules)"
     echo "  - vercel-python           (Vercel Labs, Python/FastAPI/Flask/Django 部署診斷)"
-    echo "  - accessibility-agents    (Community-Access, 57 a11y agents)"
-    echo "  - bencium-marketplace     (bencium, UX audit + typography)"
     echo "  - interface-design        (Dammyjay93, 儀表板/後台介面設計)"
     echo "  - ui-ux-pro-max           (nextlevelbuilder, 50 styles + 21 palettes)"
-    echo "  - cc-skills-golang        (samber, Go 開發 40+ skills)"
-    echo "  - antfu-skills            (Anthony Fu, Vue/Nuxt/Vite 生態 skills)"
-    echo "  - addy-agent-skills       (Addy Osmani, 工程紀律 25 skills，僅文件層)"
     echo ""
     echo "  安全 / 資安類:"
     echo "  - trailofbits-security       (Trail of Bits, 35+ security plugins)"
-    echo "  - claude-code-owasp          (agamm, OWASP Top 10:2025 + ASVS 5.0)"
     echo "  - trailofbits-skills-curated (Trail of Bits, 審核過的 marketplace)"
-    echo "  - anthropic-cybersecurity-skills (mukul975, MITRE ATT&CK 734+ skills)"
-    echo "  - security-skills            (eth0izzle, SecOps/SOAR 自動化)"
-    echo "  - security-audit             (afiqiqmal, OWASP/CWE/NIST 白箱審計)"
     echo "  - cloudflare-security-audit  (Cloudflare, 多 agent 編排式滲透審計)"
     echo "  - sentry-security-review     (Sentry 官方, security code review)"
-    echo "  - ot-security-mcp            (Ansvar, IEC 62443 OT 安全)"
     echo ""
     echo "  影片製作類:"
-    echo "  - remotion-video-skill    (wshuyi, Remotion 程式化影片製作)"
     echo ""
     echo "  寫作 / 敘事類:"
     echo "  - humanizer-en            (blader, EN 去 AI 痕跡)"
     echo "  - humanizer-zh-tw         (kevintsai1202, ZH-TW 去 AI 痕跡) [強制]"
-    echo "  - creative-writing-skills (haowjy, 6 sub-skills: 散文/腦力激盪/故事批評)"
-    echo "  - paper-writer-skill      (kgraph57, EN+JA 學術寫作)"
-    echo "  - content-research-writer (ComposioHQ, 研究寫作夥伴)"
     echo "  - doc-coauthoring         (Anthropic 官方, 文件共筆)"
-    echo "  - storytelling            (GTM Agents, SCAR 敘事框架)"
-    echo "  - archify                 (tt-a1i, 架構/時序/資料流互動圖產生器)"
     echo ""
 }
 
 # 函數：更新 archify（架構圖產生器，skill 本體在 repo 的 archify/ 子目錄）
-update_archify() {
-    local skill_dir="$EXTERNAL_DIR/archify"
-    local temp_dir=$(mktemp -d)
-    local repo="tt-a1i/archify"
-
-    echo "更新: archify"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    git clone --depth 1 --filter=blob:none --sparse \
-        "https://github.com/$repo.git" repo 2>/dev/null
-
-    cd repo
-    git sparse-checkout set archify 2>/dev/null
-
-    if [ -f "archify/SKILL.md" ]; then
-        rm -rf "$skill_dir"
-        cp -r archify "$skill_dir"
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 主程式
 if [ $# -eq 0 ]; then
@@ -1135,27 +670,15 @@ if [ $# -eq 0 ]; then
         update_web_design_guidelines
         update_neon_skills
         update_frontend_design
-        update_accessibility_agents
-        update_bencium_marketplace
         update_humanizer_zh_tw
         update_humanizer_en
-        update_creative_writing_skills
-        update_paper_writer_skill
-        update_content_research_writer
         update_doc_coauthoring
-        update_storytelling
         update_trailofbits_security
-        update_claude_code_owasp
         update_trailofbits_skills_curated
-        update_anthropic_cybersecurity_skills
-        update_security_skills
-        update_security_audit
         update_cloudflare_security_audit
         update_sentry_security_review
-        update_ot_security_mcp
         update_interface_design
         update_ui_ux_pro_max
-        update_remotion_video
         update_canvas_design
         update_pdf
         update_docx
@@ -1176,10 +699,6 @@ if [ $# -eq 0 ]; then
         update_algorithmic_art
         update_internal_comms
         update_slack_gif_creator
-        update_cc_skills_golang
-        update_antfu_skills
-        update_addy_agent_skills
-        update_archify
     )
 
     total=${#all_updates[@]}
@@ -1309,50 +828,20 @@ else
             "humanizer-en"|"humanizer")
                 update_humanizer_en
                 ;;
-            "creative-writing-skills"|"creative-writing"|"cw")
-                update_creative_writing_skills
-                ;;
-            "paper-writer-skill"|"paper-writer")
-                update_paper_writer_skill
-                ;;
-            "content-research-writer"|"content-writer")
-                update_content_research_writer
-                ;;
             "doc-coauthoring"|"doc")
                 update_doc_coauthoring
-                ;;
-            "storytelling"|"story")
-                update_storytelling
-                ;;
-            "remotion-video-skill"|"remotion-video"|"remotion")
-                update_remotion_video
                 ;;
             "trailofbits-security"|"trailofbits"|"tob")
                 update_trailofbits_security
                 ;;
-            "claude-code-owasp"|"owasp")
-                update_claude_code_owasp
-                ;;
             "trailofbits-skills-curated"|"tob-curated"|"skills-curated")
                 update_trailofbits_skills_curated
-                ;;
-            "anthropic-cybersecurity-skills"|"cybersecurity"|"mitre")
-                update_anthropic_cybersecurity_skills
-                ;;
-            "security-skills"|"secops"|"soar")
-                update_security_skills
-                ;;
-            "security-audit"|"audit")
-                update_security_audit
                 ;;
             "cloudflare-security-audit"|"cf-audit"|"cloudflare-audit")
                 update_cloudflare_security_audit
                 ;;
             "sentry-security-review"|"sentry-review")
                 update_sentry_security_review
-                ;;
-            "ot-security-mcp"|"ot-security")
-                update_ot_security_mcp
                 ;;
             "interface-design")
                 update_interface_design
@@ -1419,18 +908,6 @@ else
                 ;;
             "slack-gif-creator"|"slack-gif"|"gif")
                 update_slack_gif_creator
-                ;;
-            "cc-skills-golang"|"golang")
-                update_cc_skills_golang
-                ;;
-            "antfu-skills"|"antfu")
-                update_antfu_skills
-                ;;
-            "addy-agent-skills"|"addy")
-                update_addy_agent_skills
-                ;;
-            "archify")
-                update_archify
                 ;;
             *)
                 echo "警告: 未知的 skill: $skill"
