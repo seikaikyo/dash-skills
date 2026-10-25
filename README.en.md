@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 17 custom (`skills/`) + 31 external (`external/`). External skills auto-sync daily from upstream.
+> 18 custom (`skills/`) + 30 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -33,6 +33,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **humanizer-zh-tw** | Rewrite tool to strip Chinese AI writing patterns (enforced) |
 | **humanizer-en** | Rewrite tool to strip English AI writing patterns |
 | **interface-design** | Craft-first design foundation and audit for dashboards, admin panels and tools |
+| **webapp-uat** | Screen-by-screen UAT of deployed apps (agent-browser, 3-size RWD, trilingual i18n, console/network, Sentry) |
 
 ### Development & Deployment
 
@@ -66,7 +67,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | Skill | Description | Source |
 |-------|-------------|--------|
 | **webapp-testing** | Test local web apps with Playwright | anthropics/skills |
-| **webapp-uat** | Full browser UAT (console / network / a11y / i18n) | tsilverberg/webapp-uat |
 
 ### Security / Compliance
 

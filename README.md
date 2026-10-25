@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 17 個 (`skills/`) + 外部收錄 31 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 18 個 (`skills/`) + 外部收錄 30 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -33,6 +33,7 @@
 | **humanizer-zh-tw** | 去除中文 AI 寫作痕跡的改寫工具 (強制套用) |
 | **humanizer-en** | 去除英文 AI 寫作痕跡的改寫工具 |
 | **interface-design** | 儀表板 / 後台 / 工具類介面的 craft-first 設計基礎與稽核 |
+| **webapp-uat** | 對部署站做逐畫面 UAT (agent-browser、三尺寸 RWD、三語 i18n、console/network、Sentry) |
 
 ### 開發與部署
 
@@ -66,7 +67,6 @@
 | Skill | 描述 | 來源 |
 |-------|------|------|
 | **webapp-testing** | 用 Playwright 測試本地 web app | anthropics/skills |
-| **webapp-uat** | 瀏覽器全流程 UAT (console / network / a11y / i18n) | tsilverberg/webapp-uat |
 
 ### 資安 / 合規
 

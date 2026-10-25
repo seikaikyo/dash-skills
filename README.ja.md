@@ -10,7 +10,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 ## 収録スキル
 
-> 自作 17 個 (`skills/`) + 外部収録 31 個 (`external/`)。外部スキルは毎日上流から自動同期。
+> 自作 18 個 (`skills/`) + 外部収録 30 個 (`external/`)。外部スキルは毎日上流から自動同期。
 
 ### 自作 (`skills/`)
 
@@ -33,6 +33,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **humanizer-zh-tw** | 中国語 AI 文体の痕跡を除去する書き換えツール (強制適用) |
 | **humanizer-en** | 英語 AI 文体の痕跡を除去する書き換えツール |
 | **interface-design** | ダッシュボード / 管理画面 / ツール向け craft-first 設計基盤と監査 |
+| **webapp-uat** | デプロイ済みサイトの画面単位 UAT (agent-browser、3 サイズ RWD、3 言語 i18n、console/network、Sentry) |
 
 ### 開発・デプロイ
 
@@ -66,7 +67,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | スキル | 説明 | ソース |
 |--------|------|--------|
 | **webapp-testing** | Playwright でローカル web アプリをテスト | anthropics/skills |
-| **webapp-uat** | ブラウザ全体 UAT (console / network / a11y / i18n) | tsilverberg/webapp-uat |
 
 ### セキュリティ / コンプライアンス
 
