@@ -324,61 +324,9 @@ update_vercel_python() {
 
 # 函數：更新 bencium-marketplace (UX 設計)
 
-# 函數：更新 humanizer-zh-tw
-update_humanizer_zh_tw() {
-    local skill_dir="$EXTERNAL_DIR/humanizer-zh-tw"
-    local temp_dir=$(mktemp -d)
-    local repo="kevintsai1202/Humanizer-zh-TW"
-
-    echo "更新: humanizer-zh-tw (強制)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
-
-    if [ -f "repo/SKILL.md" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp repo/SKILL.md "$skill_dir/"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
-
 # 注意: neon-ai-rules 已移除 (含敏感資料，改用 neon-skills)
 
 # === 寫作 / 敘事 / 語言學 Skills ===
-
-# 函數：更新 humanizer-en (英文去 AI 痕跡)
-update_humanizer_en() {
-    local skill_dir="$EXTERNAL_DIR/humanizer-en"
-    local temp_dir=$(mktemp -d)
-    local repo="blader/humanizer"
-
-    echo "更新: humanizer-en"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
-
-    if [ -f "repo/SKILL.md" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp repo/SKILL.md "$skill_dir/"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 creative-writing-skills (6 個子 skill)
 
@@ -650,8 +598,6 @@ show_available() {
     echo "  影片製作類:"
     echo ""
     echo "  寫作 / 敘事類:"
-    echo "  - humanizer-en            (blader, EN 去 AI 痕跡)"
-    echo "  - humanizer-zh-tw         (kevintsai1202, ZH-TW 去 AI 痕跡) [強制]"
     echo "  - doc-coauthoring         (Anthropic 官方, 文件共筆)"
     echo ""
 }
@@ -670,8 +616,6 @@ if [ $# -eq 0 ]; then
         update_web_design_guidelines
         update_neon_skills
         update_frontend_design
-        update_humanizer_zh_tw
-        update_humanizer_en
         update_doc_coauthoring
         update_trailofbits_security
         update_trailofbits_skills_curated
@@ -821,12 +765,6 @@ else
                 ;;
             "neon-skills"|"neon")
                 update_neon_skills
-                ;;
-            "humanizer-zh-tw")
-                update_humanizer_zh_tw
-                ;;
-            "humanizer-en"|"humanizer")
-                update_humanizer_en
                 ;;
             "doc-coauthoring"|"doc")
                 update_doc_coauthoring

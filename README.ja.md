@@ -10,7 +10,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 ## 収録スキル
 
-> 自作 14 個 (`skills/`) + 外部収録 34 個 (`external/`)。外部スキルは毎日上流から自動同期。
+> 自作 16 個 (`skills/`) + 外部収録 32 個 (`external/`)。外部スキルは毎日上流から自動同期。
 
 ### 自作 (`skills/`)
 
@@ -30,6 +30,8 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **sketch** | 使い捨て HTML モックアップ比較、2〜3 のデザイン方針バリアント (tGD より改作, Apache-2.0) |
 | **security-scan** | 依存脆弱性・シークレット・SAST の三層スキャン、OWASP Top 10:2025 に対応付け |
 | **security-radar** | セキュリティパッケージレーダー：毎日自動スキャンし「有効 / 人気 / 自身が安全」なセキュリティツールを収録、OWASP Top 10:2025・Agentic Applications 2026・LLM Top 10 2026 の 3 つのカバレッジ行列付き |
+| **humanizer-zh-tw** | 中国語 AI 文体の痕跡を除去する書き換えツール (強制適用) |
+| **humanizer-en** | 英語 AI 文体の痕跡を除去する書き換えツール |
 
 ### 開発・デプロイ
 
@@ -88,8 +90,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 | スキル | 説明 | ソース |
 |--------|------|--------|
-| **humanizer-zh-tw** | 中国語 AI 文体の痕跡除去 (強制適用) | kevintsai1202/Humanizer-zh-TW |
-| **humanizer-en** | 英語 AI 文体の痕跡除去 | blader/humanizer |
 | **doc-coauthoring** | 構造化ドキュメント共同執筆 | anthropics/skills |
 | **internal-comms** | 社内コミュニケーション文書 (状況報告 / 経営層向け) | anthropics/skills |
 

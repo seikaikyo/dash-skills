@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 14 custom (`skills/`) + 34 external (`external/`). External skills auto-sync daily from upstream.
+> 16 custom (`skills/`) + 32 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -30,6 +30,8 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **sketch** | Throwaway HTML mockups, 2-3 design-stance variants (adapted from tGD, Apache-2.0) |
 | **security-scan** | Three-layer external scan (deps / secrets / SAST) mapped to OWASP Top 10:2025 |
 | **security-radar** | Security package radar: daily automated scan curating effective / popular / self-secure security tools, with coverage matrices for OWASP Top 10:2025, Agentic Applications 2026 and LLM Top 10 2026 |
+| **humanizer-zh-tw** | Rewrite tool to strip Chinese AI writing patterns (enforced) |
+| **humanizer-en** | Rewrite tool to strip English AI writing patterns |
 
 ### Development & Deployment
 
@@ -88,8 +90,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 | Skill | Description | Source |
 |-------|-------------|--------|
-| **humanizer-zh-tw** | Remove Chinese AI writing patterns (enforced) | kevintsai1202/Humanizer-zh-TW |
-| **humanizer-en** | Remove English AI writing patterns | blader/humanizer |
 | **doc-coauthoring** | Structured doc co-authoring workflow | anthropics/skills |
 | **internal-comms** | Internal comms (status reports / leadership updates) | anthropics/skills |
 

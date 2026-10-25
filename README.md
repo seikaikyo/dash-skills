@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 14 個 (`skills/`) + 外部收錄 34 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 16 個 (`skills/`) + 外部收錄 32 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -30,6 +30,8 @@
 | **sketch** | 拋棄式 HTML mockup 比稿，2 到 3 個設計立場變體 (改寫自 tGD, Apache-2.0) |
 | **security-scan** | 相依漏洞 / 機密 / SAST 三層外部掃描，結果對回 OWASP Top 10:2025 |
 | **security-radar** | 資安套件情報雷達：每日自動掃描並收錄「有效 / 熱門 / 自身安全」的資安工具，附 OWASP Top 10:2025、Agentic Applications 2026、LLM Top 10 2026 三張涵蓋矩陣 |
+| **humanizer-zh-tw** | 去除中文 AI 寫作痕跡的改寫工具 (強制套用) |
+| **humanizer-en** | 去除英文 AI 寫作痕跡的改寫工具 |
 
 ### 開發與部署
 
@@ -88,8 +90,6 @@
 
 | Skill | 描述 | 來源 |
 |-------|------|------|
-| **humanizer-zh-tw** | 去除中文 AI 寫作痕跡 (強制套用) | kevintsai1202/Humanizer-zh-TW |
-| **humanizer-en** | 去除英文 AI 寫作痕跡 | blader/humanizer |
 | **doc-coauthoring** | 結構化文件協作流程 | anthropics/skills |
 | **internal-comms** | 內部溝通文件 (狀態報告 / 領導層更新) | anthropics/skills |
 
