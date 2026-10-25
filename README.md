@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 18 個 (`skills/`) + 外部收錄 30 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 19 個 (`skills/`) + 外部收錄 29 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -34,6 +34,7 @@
 | **humanizer-en** | 去除英文 AI 寫作痕跡的改寫工具 |
 | **interface-design** | 儀表板 / 後台 / 工具類介面的 craft-first 設計基礎與稽核 |
 | **webapp-uat** | 對部署站做逐畫面 UAT (agent-browser、三尺寸 RWD、三語 i18n、console/network、Sentry) |
+| **ui-ux-pro-max** | 50+ UI 風格 / 161 色彩 / 57 字型配對 (內化自 nextlevelbuilder/ui-ux-pro-max-skill, MIT) |
 
 ### 開發與部署
 
@@ -54,7 +55,6 @@
 | Skill | 描述 | 來源 |
 |-------|------|------|
 | **frontend-design** | 反 AI 罐頭風格的前端設計 | anthropics/skills |
-| **ui-ux-pro-max** | 50+ UI 風格 / 161 色彩 / 57 字型配對 | nextlevelbuilder/ui-ux-pro-max-skill |
 | **web-design-guidelines** | UI 程式碼審查 (a11y / UX / 效能) | vercel-labs/agent-skills |
 | **canvas-design** | 用設計哲學做 PNG / PDF 視覺作品 | anthropics/skills |
 | **brand-guidelines** | 套用 Anthropic 官方品牌色彩與字型 | anthropics/skills |

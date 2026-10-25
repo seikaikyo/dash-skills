@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 18 custom (`skills/`) + 30 external (`external/`). External skills auto-sync daily from upstream.
+> 19 custom (`skills/`) + 29 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -34,6 +34,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **humanizer-en** | Rewrite tool to strip English AI writing patterns |
 | **interface-design** | Craft-first design foundation and audit for dashboards, admin panels and tools |
 | **webapp-uat** | Screen-by-screen UAT of deployed apps (agent-browser, 3-size RWD, trilingual i18n, console/network, Sentry) |
+| **ui-ux-pro-max** | 50+ UI styles / 161 palettes / 57 font pairings (vendored from nextlevelbuilder/ui-ux-pro-max-skill, MIT) |
 
 ### Development & Deployment
 
@@ -54,7 +55,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | Skill | Description | Source |
 |-------|-------------|--------|
 | **frontend-design** | Anti-generic-AI frontend design | anthropics/skills |
-| **ui-ux-pro-max** | 50+ UI styles / 161 palettes / 57 font pairings | nextlevelbuilder/ui-ux-pro-max-skill |
 | **web-design-guidelines** | UI code review (a11y / UX / perf) | vercel-labs/agent-skills |
 | **canvas-design** | PNG / PDF visual art via design philosophy | anthropics/skills |
 | **brand-guidelines** | Apply Anthropic brand colors and typography | anthropics/skills |

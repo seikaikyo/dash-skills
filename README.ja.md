@@ -10,7 +10,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 ## 収録スキル
 
-> 自作 18 個 (`skills/`) + 外部収録 30 個 (`external/`)。外部スキルは毎日上流から自動同期。
+> 自作 19 個 (`skills/`) + 外部収録 29 個 (`external/`)。外部スキルは毎日上流から自動同期。
 
 ### 自作 (`skills/`)
 
@@ -34,6 +34,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **humanizer-en** | 英語 AI 文体の痕跡を除去する書き換えツール |
 | **interface-design** | ダッシュボード / 管理画面 / ツール向け craft-first 設計基盤と監査 |
 | **webapp-uat** | デプロイ済みサイトの画面単位 UAT (agent-browser、3 サイズ RWD、3 言語 i18n、console/network、Sentry) |
+| **ui-ux-pro-max** | 50以上の UI スタイル / 161 パレット / 57 フォントペア (nextlevelbuilder/ui-ux-pro-max-skill より取り込み, MIT) |
 
 ### 開発・デプロイ
 
@@ -54,7 +55,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | スキル | 説明 | ソース |
 |--------|------|--------|
 | **frontend-design** | AI っぽさを排除したフロントエンドデザイン | anthropics/skills |
-| **ui-ux-pro-max** | 50以上の UI スタイル / 161 パレット / 57 フォントペア | nextlevelbuilder/ui-ux-pro-max-skill |
 | **web-design-guidelines** | UI コードレビュー (a11y / UX / 性能) | vercel-labs/agent-skills |
 | **canvas-design** | デザイン哲学で PNG / PDF ビジュアル作成 | anthropics/skills |
 | **brand-guidelines** | Anthropic 公式ブランドカラーとフォント適用 | anthropics/skills |

@@ -13,20 +13,20 @@ EXTERNAL_SRC="$REPO_DIR/external"
 SKILLS_DST="$HOME/.claude/skills"
 
 # 深層 skill 覆寫（2026-08-10）：Claude Code 只認 ~/.claude/skills/<name>/SKILL.md 這一層，
-# 集合型目錄裡的技能不會被載入。指名連出來，格式 <連結名稱>:<external/ 下相對路徑>。
+# 集合型目錄裡的技能不會被載入。指名連出來，格式 <連結名稱>:<來源根目錄下相對路徑>。
+# ui-ux-pro-max 2026-10-25 內化到 skills/，覆寫對自建與外部兩個來源都適用。
 NESTED_OVERRIDES="ui-ux-pro-max:ui-ux-pro-max/ui-ux-pro-max"
 
-resolve_external_path() {
-    local entry
+resolve_nested_path() {
+    local name="$1" base="$2" entry
     for entry in $NESTED_OVERRIDES; do
-        [ "${entry%%:*}" = "$1" ] || continue
-        if [ -f "$EXTERNAL_SRC/${entry#*:}/SKILL.md" ]; then
-            echo "$EXTERNAL_SRC/${entry#*:}"
+        [ "${entry%%:*}" = "$name" ] || continue
+        if [ -f "$base/${entry#*:}/SKILL.md" ]; then
+            echo "$base/${entry#*:}"
             return
         fi
-        echo "  警告: 覆寫目標缺 SKILL.md，改用原路徑: ${entry#*:}" >&2
     done
-    echo "$EXTERNAL_SRC/$1"
+    echo "$base/$name"
 }
 
 echo "=== Dash Skills Symlink 設定 ==="
@@ -39,7 +39,7 @@ mkdir -p "$SKILLS_DST"
 echo "自建 Skills:"
 if [ -d "$SKILLS_SRC" ]; then
     for skill in $(ls -1 "$SKILLS_SRC" 2>/dev/null); do
-        src_path="$SKILLS_SRC/$skill"
+        src_path="$(resolve_nested_path "$skill" "$SKILLS_SRC")"
         dst_path="$SKILLS_DST/$skill"
 
         # 移除既有的目錄或連結
@@ -64,7 +64,7 @@ echo ""
 echo "外部 Skills:"
 if [ -d "$EXTERNAL_SRC" ]; then
     for skill in $(ls -1 "$EXTERNAL_SRC" 2>/dev/null); do
-        src_path="$(resolve_external_path "$skill")"
+        src_path="$(resolve_nested_path "$skill" "$EXTERNAL_SRC")"
         dst_path="$SKILLS_DST/$skill"
 
         # 跳過空殼：移除一個收錄 skill 後，git rm 清不掉未追蹤的 .cc-writes 暫存目錄，
