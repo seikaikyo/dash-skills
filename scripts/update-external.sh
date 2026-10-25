@@ -488,34 +488,6 @@ update_sentry_security_review() {
 
 # === 設計類 Skills (手動來源) ===
 
-# 函數：更新 interface-design (儀表板/後台介面設計)
-update_interface_design() {
-    local skill_dir="$EXTERNAL_DIR/interface-design"
-    local temp_dir=$(mktemp -d)
-    local repo="Dammyjay93/interface-design"
-
-    echo "更新: interface-design (介面設計系統)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -f "repo/.claude/skills/interface-design/SKILL.md" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        cp -r repo/.claude/skills/interface-design/* "$skill_dir/"
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
 
 # 函數：更新 ui-ux-pro-max (50 styles + 21 palettes)
 update_ui_ux_pro_max() {
@@ -586,7 +558,6 @@ show_available() {
     echo "  - vercel-cost-optimization (Vercel Labs, Hobby 用量管理)"
     echo "  - vercel-react-best-practices (Vercel Labs, v1.0.0 版本化 45 rules)"
     echo "  - vercel-python           (Vercel Labs, Python/FastAPI/Flask/Django 部署診斷)"
-    echo "  - interface-design        (Dammyjay93, 儀表板/後台介面設計)"
     echo "  - ui-ux-pro-max           (nextlevelbuilder, 50 styles + 21 palettes)"
     echo ""
     echo "  安全 / 資安類:"
@@ -621,7 +592,6 @@ if [ $# -eq 0 ]; then
         update_trailofbits_skills_curated
         update_cloudflare_security_audit
         update_sentry_security_review
-        update_interface_design
         update_ui_ux_pro_max
         update_canvas_design
         update_pdf
@@ -780,9 +750,6 @@ else
                 ;;
             "sentry-security-review"|"sentry-review")
                 update_sentry_security_review
-                ;;
-            "interface-design")
-                update_interface_design
                 ;;
             "ui-ux-pro-max"|"ux-pro-max")
                 update_ui_ux_pro_max

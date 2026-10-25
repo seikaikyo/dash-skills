@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 16 custom (`skills/`) + 32 external (`external/`). External skills auto-sync daily from upstream.
+> 17 custom (`skills/`) + 31 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -32,6 +32,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **security-radar** | Security package radar: daily automated scan curating effective / popular / self-secure security tools, with coverage matrices for OWASP Top 10:2025, Agentic Applications 2026 and LLM Top 10 2026 |
 | **humanizer-zh-tw** | Rewrite tool to strip Chinese AI writing patterns (enforced) |
 | **humanizer-en** | Rewrite tool to strip English AI writing patterns |
+| **interface-design** | Craft-first design foundation and audit for dashboards, admin panels and tools |
 
 ### Development & Deployment
 
@@ -52,7 +53,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | Skill | Description | Source |
 |-------|-------------|--------|
 | **frontend-design** | Anti-generic-AI frontend design | anthropics/skills |
-| **interface-design** | Design memory system for component consistency | Dammyjay93/interface-design |
 | **ui-ux-pro-max** | 50+ UI styles / 161 palettes / 57 font pairings | nextlevelbuilder/ui-ux-pro-max-skill |
 | **web-design-guidelines** | UI code review (a11y / UX / perf) | vercel-labs/agent-skills |
 | **canvas-design** | PNG / PDF visual art via design philosophy | anthropics/skills |

@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 16 個 (`skills/`) + 外部收錄 32 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 17 個 (`skills/`) + 外部收錄 31 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -32,6 +32,7 @@
 | **security-radar** | 資安套件情報雷達：每日自動掃描並收錄「有效 / 熱門 / 自身安全」的資安工具，附 OWASP Top 10:2025、Agentic Applications 2026、LLM Top 10 2026 三張涵蓋矩陣 |
 | **humanizer-zh-tw** | 去除中文 AI 寫作痕跡的改寫工具 (強制套用) |
 | **humanizer-en** | 去除英文 AI 寫作痕跡的改寫工具 |
+| **interface-design** | 儀表板 / 後台 / 工具類介面的 craft-first 設計基礎與稽核 |
 
 ### 開發與部署
 
@@ -52,7 +53,6 @@
 | Skill | 描述 | 來源 |
 |-------|------|------|
 | **frontend-design** | 反 AI 罐頭風格的前端設計 | anthropics/skills |
-| **interface-design** | 設計記憶系統，確保元件風格一致 | Dammyjay93/interface-design |
 | **ui-ux-pro-max** | 50+ UI 風格 / 161 色彩 / 57 字型配對 | nextlevelbuilder/ui-ux-pro-max-skill |
 | **web-design-guidelines** | UI 程式碼審查 (a11y / UX / 效能) | vercel-labs/agent-skills |
 | **canvas-design** | 用設計哲學做 PNG / PDF 視覺作品 | anthropics/skills |

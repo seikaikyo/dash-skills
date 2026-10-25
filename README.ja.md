@@ -10,7 +10,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 ## 収録スキル
 
-> 自作 16 個 (`skills/`) + 外部収録 32 個 (`external/`)。外部スキルは毎日上流から自動同期。
+> 自作 17 個 (`skills/`) + 外部収録 31 個 (`external/`)。外部スキルは毎日上流から自動同期。
 
 ### 自作 (`skills/`)
 
@@ -32,6 +32,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **security-radar** | セキュリティパッケージレーダー：毎日自動スキャンし「有効 / 人気 / 自身が安全」なセキュリティツールを収録、OWASP Top 10:2025・Agentic Applications 2026・LLM Top 10 2026 の 3 つのカバレッジ行列付き |
 | **humanizer-zh-tw** | 中国語 AI 文体の痕跡を除去する書き換えツール (強制適用) |
 | **humanizer-en** | 英語 AI 文体の痕跡を除去する書き換えツール |
+| **interface-design** | ダッシュボード / 管理画面 / ツール向け craft-first 設計基盤と監査 |
 
 ### 開発・デプロイ
 
@@ -52,7 +53,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | スキル | 説明 | ソース |
 |--------|------|--------|
 | **frontend-design** | AI っぽさを排除したフロントエンドデザイン | anthropics/skills |
-| **interface-design** | コンポーネント一貫性のデザイン記憶システム | Dammyjay93/interface-design |
 | **ui-ux-pro-max** | 50以上の UI スタイル / 161 パレット / 57 フォントペア | nextlevelbuilder/ui-ux-pro-max-skill |
 | **web-design-guidelines** | UI コードレビュー (a11y / UX / 性能) | vercel-labs/agent-skills |
 | **canvas-design** | デザイン哲学で PNG / PDF ビジュアル作成 | anthropics/skills |
