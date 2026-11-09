@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 19 custom (`skills/`) + 29 external (`external/`). External skills auto-sync daily from upstream.
+> 19 custom (`skills/`) + 27 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -41,9 +41,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | Skill | Description | Source |
 |-------|-------------|--------|
 | **react-best-practices** | React / Next.js performance optimization | vercel-labs/agent-skills |
-| **vercel-react-best-practices** | React / Next.js perf (TSX review) | vercel-labs/agent-skills |
-| **vercel-python** | Python project Vercel deployment diagnosis/fix | vercel-labs/agent-skills |
-| **vercel-cost-optimization** | Vercel billing analysis and cost optimization | vercel-labs/agent-skills |
+| **vercel-optimize** | Vercel cost and performance audit (driven by production metrics) | vercel-labs/agent-skills |
 | **deploy-to-vercel** | Deploy apps to Vercel | vercel-labs/agent-skills |
 | **agent-browser** | Browser automation CLI (200+ commands) | vercel-labs/agent-browser |
 | **mcp-builder** | Build high-quality MCP servers | anthropics/skills |

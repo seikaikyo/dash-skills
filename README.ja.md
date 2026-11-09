@@ -10,7 +10,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 ## 収録スキル
 
-> 自作 19 個 (`skills/`) + 外部収録 29 個 (`external/`)。外部スキルは毎日上流から自動同期。
+> 自作 19 個 (`skills/`) + 外部収録 27 個 (`external/`)。外部スキルは毎日上流から自動同期。
 
 ### 自作 (`skills/`)
 
@@ -41,9 +41,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | スキル | 説明 | ソース |
 |--------|------|--------|
 | **react-best-practices** | React / Next.js パフォーマンス最適化 | vercel-labs/agent-skills |
-| **vercel-react-best-practices** | React / Next.js 最適化 (TSX レビュー版) | vercel-labs/agent-skills |
-| **vercel-python** | Python プロジェクトの Vercel デプロイ診断・修復 | vercel-labs/agent-skills |
-| **vercel-cost-optimization** | Vercel 請求分析とコスト最適化 | vercel-labs/agent-skills |
+| **vercel-optimize** | Vercel のコスト・性能最適化監査（本番メトリクス基準） | vercel-labs/agent-skills |
 | **deploy-to-vercel** | アプリを Vercel にデプロイ | vercel-labs/agent-skills |
 | **agent-browser** | ブラウザ自動化 CLI (200以上のコマンド) | vercel-labs/agent-browser |
 | **mcp-builder** | 高品質な MCP サーバー構築 | anthropics/skills |

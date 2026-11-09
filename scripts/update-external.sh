@@ -17,7 +17,7 @@ echo ""
 update_react_best_practices() {
     local skill_dir="$EXTERNAL_DIR/react-best-practices"
     local temp_dir=$(mktemp -d)
-    local branch="react-best-practices"
+    local branch="main"
     local repo="vercel-labs/agent-skills"
 
     echo "更新: react-best-practices"
@@ -87,7 +87,7 @@ update_agent_browser() {
 update_web_design_guidelines() {
     local skill_dir="$EXTERNAL_DIR/web-design-guidelines"
     local temp_dir=$(mktemp -d)
-    local branch="web-design-guidelines"
+    local branch="main"
     local repo="vercel-labs/agent-skills"
 
     echo "更新: web-design-guidelines"
@@ -270,22 +270,12 @@ _update_vercel_agent_skill() {
 
 # 函數：更新 deploy-to-vercel (Vercel 部署 skill)
 update_deploy_to_vercel() {
-    _update_vercel_agent_skill "deploy-to-vercel" "deploy-to-vercel"
+    _update_vercel_agent_skill "deploy-to-vercel" "main"
 }
 
-# 函數：更新 vercel-cost-optimization (Vercel Hobby 用量管理)
-update_vercel_cost_optimization() {
-    _update_vercel_agent_skill "vercel-cost-optimization" "mingchungx/vercel-cost-optimization"
-}
-
-# 函數：更新 vercel-react-best-practices (Vercel 維護的版本化 React 最佳實踐 v1.0.0，name 跟現有 react-best-practices 不同，獨立 skill)
-update_vercel_react_best_practices() {
-    _update_vercel_agent_skill "react-best-practices" "versioned-react-best-practices" "vercel-react-best-practices"
-}
-
-# 函數：更新 vercel-python (Vercel Python 部署 / FastAPI / Flask / Django 診斷)
-update_vercel_python() {
-    _update_vercel_agent_skill "vercel-python" "gscho/PY-222-vercel-python-skill"
+# 函數：更新 vercel-optimize (Vercel 官方，以 metrics 為準的成本與效能優化審查)
+update_vercel_optimize() {
+    _update_vercel_agent_skill "vercel-optimize" "main"
 }
 
 # 函數：更新 accessibility-agents
@@ -488,9 +478,7 @@ show_available() {
     echo "  - internal-comms          (Anthropic 官方, 內部溝通文件)"
     echo "  - slack-gif-creator       (Anthropic 官方, Slack 動畫 GIF)"
     echo "  - deploy-to-vercel        (Vercel Labs, Vercel 部署)"
-    echo "  - vercel-cost-optimization (Vercel Labs, Hobby 用量管理)"
-    echo "  - vercel-react-best-practices (Vercel Labs, v1.0.0 版本化 45 rules)"
-    echo "  - vercel-python           (Vercel Labs, Python/FastAPI/Flask/Django 部署診斷)"
+    echo "  - vercel-optimize         (Vercel Labs, 成本與效能優化審查)"
     echo ""
     echo "  安全 / 資安類:"
     echo "  - trailofbits-security       (Trail of Bits, 35+ security plugins)"
@@ -537,9 +525,7 @@ if [ $# -eq 0 ]; then
         update_brand_guidelines
         update_web_artifacts_builder
         update_deploy_to_vercel
-        update_vercel_cost_optimization
-        update_vercel_react_best_practices
-        update_vercel_python
+        update_vercel_optimize
         update_algorithmic_art
         update_internal_comms
         update_slack_gif_creator
@@ -736,14 +722,8 @@ else
             "deploy-to-vercel"|"deploy")
                 update_deploy_to_vercel
                 ;;
-            "vercel-cost-optimization"|"cost-opt"|"cost")
-                update_vercel_cost_optimization
-                ;;
-            "vercel-react-best-practices"|"vrbp")
-                update_vercel_react_best_practices
-                ;;
-            "vercel-python"|"py")
-                update_vercel_python
+            "vercel-optimize"|"optimize")
+                update_vercel_optimize
                 ;;
             "algorithmic-art"|"algo-art")
                 update_algorithmic_art

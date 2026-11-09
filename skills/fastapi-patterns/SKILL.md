@@ -1,15 +1,15 @@
 ---
 name: fastapi-patterns
-description: FastAPI + SQLModel + Neon PostgreSQL 後端開發最佳實踐。適用於 Render 部署的 API 服務。涵蓋路由設計、資料庫操作、錯誤處理、認證授權。
+description: FastAPI + SQLModel + Neon PostgreSQL 後端開發最佳實踐。適用於 Render 或 Vercel 部署的 API 服務。涵蓋路由設計、資料庫操作、錯誤處理、認證授權與兩種部署方式。
 source: custom
-updated: 2025-01-16
+updated: 2026-11-09
 ---
 
 # FastAPI + SQLModel 後端開發規範
 
 ## 適用場景
 
-- Render 部署的 API 服務
+- Render 或 Vercel 部署的 API 服務
 - 搭配 Neon PostgreSQL
 - RESTful API 設計
 - MES/ERP 後端服務
@@ -641,6 +641,78 @@ python-jose[cryptography]>=3.3.0
 psycopg2-binary>=2.9.9
 ```
 
+## Vercel 部署
+
+Vercel 把 FastAPI 當成一個 Vercel Function 執行，不需要 uvicorn 啟動指令，也沒有常駐程序。以下依 Vercel 官方文件（[FastAPI](https://vercel.com/docs/frameworks/backend/fastapi)、[Python runtime](https://vercel.com/docs/functions/runtimes/python)）整理，2026-11 查證。
+
+### 入口與相依
+
+- 入口檔：Vercel 會在 `app.py`、`index.py`、`server.py`、`main.py`、`wsgi.py`、`asgi.py`（或 `src/`、`app/` 底下同名檔）找名為 `app` 的 FastAPI 實例。上面的專案結構 `app/main.py` 可直接被偵測到。
+- 入口不在預設位置時，在 `pyproject.toml` 指定：
+
+```toml
+[tool.vercel]
+entrypoint = "backend.server:app"
+```
+
+- 相依用 `requirements.txt`、`pyproject.toml` 或 `Pipfile` 擇一宣告。
+- Python 版本寫在 `.python-version`（例如 `3.13`）；沒寫時預設 3.12。
+
+### vercel.json
+
+`functions` 的 key 是實際入口檔路徑：
+
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["sin1"],
+  "functions": {
+    "app/main.py": {
+      "maxDuration": 60,
+      "excludeFiles": "{tests/**,**/test_*.py,fixtures/**,static/**}"
+    }
+  }
+}
+```
+
+- `regions`：Hobby 方案可選一個區域，預設 `iad1`。設成離 Neon 資料庫最近的區域，例如 Neon 在 `aws-ap-southeast-1`（新加坡）就用 `sin1`，否則每次查詢都要跨洋。
+- `maxDuration`：上限依方案而定，以 [duration 文件](https://vercel.com/docs/functions/configuring-functions/duration) 為準；長任務不要塞進 request，改用 Queue 或排程。
+- `excludeFiles`：Python bundle 上限 500 MB，測試、範例資料、靜態檔都排除。
+
+### 跟 Render 不同的地方
+
+| 項目 | Render | Vercel |
+|------|--------|--------|
+| 啟動 | `uvicorn` 常駐 | 依請求啟動 Function，不需啟動指令 |
+| `lifespan` | 啟動一次 | 每個新實例都會跑；關閉時的清理只有 SIGTERM 後 500 ms |
+| 建表 | 可在啟動時 `init_db()` | 不要在 `lifespan` 跑 `create_all`，改在部署前執行 migration |
+| 靜態檔 | 自己 mount | 放專案根目錄 `public/` 由 CDN 提供，不要 `app.mount("/", ...)` 掛 `public/` |
+| 健康檢查 | `/health` 給 Render 用 | 不需要，保留也無害 |
+
+### 資料庫連線
+
+Function 會隨流量開出多個實例，每個實例各自建連線池，Neon 的連線數很快就會滿：
+
+- 用 Neon 的 pooled 連線字串（主機名含 `-pooler`）。
+- 每個實例的池子開小，或直接不池化：
+
+```python
+from sqlalchemy.pool import NullPool
+from sqlmodel import create_engine
+
+# Vercel：每個 request 用完即還，由 Neon 的 pooler 負責共用連線
+engine = create_engine(settings.database_url, poolclass=NullPool, pool_pre_ping=True)
+```
+
+### 本機與部署
+
+```bash
+vercel dev       # 本機模擬（CLI >= 48.1.8）
+vercel deploy    # 或接 Git 自動部署
+```
+
+成本與效能審查用外部收錄的 `vercel-optimize`（Vercel 官方）。
+
 ## 禁止事項
 
 1. **禁止 Fallback Mock 資料** - 資料庫連線失敗應回傳 503
@@ -662,3 +734,4 @@ psycopg2-binary>=2.9.9
 - [SQLModel 官方文件](https://sqlmodel.tiangolo.com/)
 - [Neon PostgreSQL](https://neon.tech/docs)
 - [Render 部署指南](https://render.com/docs)
+- [Vercel FastAPI 部署](https://vercel.com/docs/frameworks/backend/fastapi)

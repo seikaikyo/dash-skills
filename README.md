@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 19 個 (`skills/`) + 外部收錄 29 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 19 個 (`skills/`) + 外部收錄 27 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -41,9 +41,7 @@
 | Skill | 描述 | 來源 |
 |-------|------|------|
 | **react-best-practices** | React / Next.js 效能優化指南 | vercel-labs/agent-skills |
-| **vercel-react-best-practices** | React / Next.js 效能優化 (TSX 審查版) | vercel-labs/agent-skills |
-| **vercel-python** | Python 專案 Vercel 部署診斷與修復 | vercel-labs/agent-skills |
-| **vercel-cost-optimization** | Vercel 帳單分析與成本優化 | vercel-labs/agent-skills |
+| **vercel-optimize** | Vercel 成本與效能優化審查（以正式環境 metrics 為準） | vercel-labs/agent-skills |
 | **deploy-to-vercel** | 部署應用到 Vercel | vercel-labs/agent-skills |
 | **agent-browser** | 瀏覽器自動化 CLI (200+ 指令) | vercel-labs/agent-browser |
 | **mcp-builder** | 建立高品質 MCP server | anthropics/skills |
