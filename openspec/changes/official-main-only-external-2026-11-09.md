@@ -30,7 +30,8 @@
 4. `scripts/discover-new-skills.sh`：Vercel 部分改為比對 main 分支 `skills/` 目錄，不再列工作分支為候選。
 5. `skills/fastapi-patterns/SKILL.md`：新增「Vercel 部署」章節取代 vercel-python，內容依 Vercel 官方文件原創（入口偵測、`pyproject.toml` 入口設定、`.python-version`、`vercel.json` 的 regions / maxDuration / excludeFiles、lifespan 差異、Neon pooled 連線與 NullPool）。
 6. `skills/security-radar/SKILL.md`：每週一新候選暫停，淘汰時不找替代品、空位記在矩陣缺口欄；每日複查照舊。
-7. 三份 README：刪 vercel-react-best-practices、vercel-python、vercel-cost-optimization 三列，加 vercel-optimize 一列，外部 29 → 27。
+7. `CLAUDE.md`：目錄結構表的數量更新為自建 19、外部 27（原本停在 14 / 51）。
+8. 三份 README：刪 vercel-react-best-practices、vercel-python、vercel-cost-optimization 三列，加 vercel-optimize 一列，外部 29 → 27。
 
 ## 影響範圍
 
@@ -44,7 +45,7 @@
 
 ## 剩餘風險
 
-- vercel-optimize 帶約 30 支 .mjs 腳本，若首次同步被閘門擋下，README 會比 external/ 多一列，需人工判讀 security-reports/quarantine/ 後放行或撤回。
+- vercel-optimize 共 156 個檔案、其中 89 支 .mjs 腳本（以 `execFile` 呼叫 Vercel CLI，不走 shell），是 Vercel 系列裡程式碼最多的一包；若首次同步被閘門擋下，README 會比 external/ 多一列，需人工判讀 security-reports/quarantine/ 後放行或撤回。
 - 3 個改從 main 同步的 skill，main 版本與舊分支內容不同，首次同步的差異較大，閘門可能要求人工確認。
 
 ## UI 規格

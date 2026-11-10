@@ -6,8 +6,8 @@ Claude Code skills 集合：自建 skill 加上收錄的外部 skill，外部 sk
 
 | 路徑 | 內容 | 怎麼改 |
 |------|------|--------|
-| `skills/` | 自建 skill，14 個，每個一個目錄，入口是 `SKILL.md` | 直接編輯 |
-| `external/` | 收錄的外部 skill，51 個，每日從上游覆蓋 | 不手改，改了隔天會被蓋掉；要調整就改同步腳本或 `scripts/pin-refs.py` |
+| `skills/` | 自建 skill，19 個，每個一個目錄，入口是 `SKILL.md` | 直接編輯 |
+| `external/` | 收錄的外部 skill，27 個，每日從上游覆蓋 | 不手改，改了隔天會被蓋掉；要調整就改同步腳本或 `scripts/pin-refs.py` |
 | `scripts/` | 安裝、連結、同步、安檢腳本 | 直接編輯 |
 | `scripts/hooks/` | 給新專案用的 hook 範本與 session 腳本 | 直接編輯 |
 | `scripts/launchd/` | 每日自動更新的 launchd 設定 | 直接編輯 |
