@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 19 custom (`skills/`) + 27 external (`external/`). External skills auto-sync daily from upstream.
+> 20 custom (`skills/`) + 25 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -35,6 +35,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | **interface-design** | Craft-first design foundation and audit for dashboards, admin panels and tools |
 | **webapp-uat** | Screen-by-screen UAT of deployed apps (agent-browser, 3-size RWD, trilingual i18n, console/network, Sentry) |
 | **ui-ux-pro-max** | 50+ UI styles / 161 palettes / 57 font pairings (vendored from nextlevelbuilder/ui-ux-pro-max-skill, MIT) |
+| **web-design-guidelines** | Front-end UI code review against a fixed rule set, reported as file:line (a11y / keyboard / forms / motion / perf) |
 
 ### Development & Deployment
 
@@ -53,7 +54,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | Skill | Description | Source |
 |-------|-------------|--------|
 | **frontend-design** | Anti-generic-AI frontend design | anthropics/skills |
-| **web-design-guidelines** | UI code review (a11y / UX / perf) | vercel-labs/agent-skills |
 | **canvas-design** | PNG / PDF visual art via design philosophy | anthropics/skills |
 | **brand-guidelines** | Apply Anthropic brand colors and typography | anthropics/skills |
 | **theme-factory** | Style artifacts with themes (10 presets) | anthropics/skills |
@@ -71,7 +71,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 | Skill | Description | Source |
 |-------|-------------|--------|
 | **trailofbits-security** | Security analysis plugins (CodeQL / Semgrep) | trailofbits/skills |
-| **trailofbits-skills-curated** | Trail of Bits vetted plugins | trailofbits/skills-curated |
 | **sentry-security-review** | Sentry-convention commits + security review | getsentry/skills |
 | **cloudflare-security-audit** | Multi-agent orchestrated penetration audit (recon / attack classes / validated reporting) | cloudflare/security-audit-skill |
 
@@ -139,9 +138,7 @@ Add to `~/.zshrc` to catch up when the day's run has not finished (returns immed
 [ "$(cat ~/Documents/github/dash-skills/.last-update 2>/dev/null)" = "$(date +%Y-%m-%d)" ] || launchctl kickstart gui/$(id -u)/com.dash.skills-auto-update 2>/dev/null
 ```
 
-Daily auto: update SKILL.md files, check agent-browser CLI version, auto commit + push.
-
-## Changelog
+Daily auto: update external skills, auto commit + push. The agent-browser CLI is not upgraded automatically: review the release, then run `npm install -g agent-browser@<version>` by hand.
 
 ## License
 
@@ -157,7 +154,9 @@ SeiKai Kyo
 External skills come from open-source communities, licensed per source. Main sources:
 
 - [Anthropic](https://github.com/anthropics/skills) -- official skills (document processing / design / mcp-builder, etc.)
-- [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, web-design-guidelines, vercel series
+- [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, deploy-to-vercel, vercel-optimize
 - [Neon](https://github.com/neondatabase) -- neon-skills
 - [Trail of Bits](https://github.com/trailofbits) -- security plugins
-- plus Dammyjay93, nextlevelbuilder, bencium, Community-Access, kevintsai1202, blader, haowjy, kgraph57, ComposioHQ, gtmagents, agamm, mukul975, eth0izzle, afiqiqmal, getsentry, Ansvar-Systems, tsilverberg, wshuyi, and others
+- [Cloudflare](https://github.com/cloudflare/security-audit-skill) -- cloudflare-security-audit
+- [Sentry](https://github.com/getsentry/skills) -- sentry-security-review
+- Custom skills adapted or vendored from: nextlevelbuilder/ui-ux-pro-max-skill (MIT), everything-claude-code (MIT), tGD (Apache-2.0)

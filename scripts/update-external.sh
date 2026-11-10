@@ -83,34 +83,8 @@ update_agent_browser() {
     rm -rf "$temp_dir"
 }
 
-# 函數：更新 web-design-guidelines
-update_web_design_guidelines() {
-    local skill_dir="$EXTERNAL_DIR/web-design-guidelines"
-    local temp_dir=$(mktemp -d)
-    local branch="main"
-    local repo="vercel-labs/agent-skills"
-
-    echo "更新: web-design-guidelines"
-    echo "  來源: https://github.com/$repo/tree/$branch"
-
-    cd "$temp_dir"
-    git clone --depth 1 --filter=blob:none --sparse \
-        "https://github.com/$repo.git" \
-        --branch "$branch" repo 2>/dev/null
-
-    cd repo
-    git sparse-checkout set skills/web-design-guidelines 2>/dev/null
-
-    if [ -d "skills/web-design-guidelines" ]; then
-        rm -rf "$skill_dir"
-        cp -r skills/web-design-guidelines "$skill_dir"
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
+# web-design-guidelines 不再同步（2026-11-10）：上游 SKILL.md 只是空殼，每次執行都叫 agent 用 WebFetch
+# 抓遠端規則並照做，真正的指令不經過同步閘門。改為自建 skills/web-design-guidelines（靜態規則）。
 
 # 函數：更新 neon-skills
 update_neon_skills() {
@@ -140,9 +114,6 @@ update_neon_skills() {
     rm -rf "$temp_dir"
 }
 
-# ux-designer (bencium/design-skill) - 已移除 (repo 不存在)
-# ui-agents (JakobStadler/claude-code-ui-agents) - 已移除 (repo 不存在)
-# claude-designer (joeseesun/claude-designer-skill) - 已移除 (repo 不存在)
 
 # 通用函數：更新 anthropics/skills repo 中的 skill
 _update_anthropic_skill() {
@@ -224,14 +195,6 @@ update_internal_comms() { _update_anthropic_skill "internal-comms"; }
 # 函數：更新 slack-gif-creator (Anthropic 官方 - Slack 動畫 GIF 製作)
 update_slack_gif_creator() { _update_anthropic_skill "slack-gif-creator"; }
 
-# 函數：更新 cc-skills-golang (samber - Go 開發 skills，lo/do/slog 作者)
-
-# tgd-skills (openclawyhwang-hub/tGD)：上游 repo 與帳號已消失，external/tgd-skills 凍結於 2026-07-21，不再同步
-
-# 函數：更新 addy-agent-skills (addyosmani/agent-skills - 工程紀律 skills，tGD 的上游來源)
-# 只取 skills/ 與 references/ 文件層；明確不同步 hooks/、agents/、commands/、scripts/（供應鏈紀律）
-
-# 函數：更新 antfu-skills (Anthony Fu - Vue/Nuxt/Vite 生態 skills)
 
 # 通用函數：更新 vercel-labs/agent-skills 指定 branch + skills 子目錄
 _update_vercel_agent_skill() {
@@ -278,24 +241,10 @@ update_vercel_optimize() {
     _update_vercel_agent_skill "vercel-optimize" "main"
 }
 
-# 函數：更新 accessibility-agents
-
-# 函數：更新 bencium-marketplace (UX 設計)
-
-# 注意: neon-ai-rules 已移除 (含敏感資料，改用 neon-skills)
-
-# === 寫作 / 敘事 / 語言學 Skills ===
-
-# 函數：更新 creative-writing-skills (6 個子 skill)
-
-# 函數：更新 paper-writer-skill (EN+JA 學術寫作)
-
-# 函數：更新 content-research-writer
 
 # 函數：更新 doc-coauthoring (Anthropic 官方)
 update_doc_coauthoring() { _update_anthropic_skill "doc-coauthoring"; }
 
-# 函數：更新 storytelling (SCAR 框架)
 
 # === 安全 / 資安類 Skills ===
 
@@ -336,47 +285,12 @@ update_trailofbits_security() {
     rm -rf "$temp_dir"
 }
 
-# 函數：更新 claude-code-owasp (OWASP Top 10:2025 + ASVS 5.0)
 
-# 函數：更新 trailofbits-skills-curated (審核過的 skill marketplace)
-update_trailofbits_skills_curated() {
-    local skill_dir="$EXTERNAL_DIR/trailofbits-skills-curated"
-    local temp_dir=$(mktemp -d)
-    local repo="trailofbits/skills-curated"
+# trailofbits-skills-curated 不再同步（2026-11-10）：內容是 Trail of Bits 轉載的第三方作者 skill，
+# 不是原廠自己寫的；其中 wooyun-legacy 是攻擊手法庫。集合型目錄 Claude Code 也載入不到。
 
-    echo "更新: trailofbits-skills-curated (審核過的 marketplace)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        # 複製 plugins 目錄
-        [ -d "repo/plugins" ] && cp -r repo/plugins "$skill_dir/"
-        cp repo/CLAUDE.md "$skill_dir/" 2>/dev/null || true
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
-
-# 函數：更新 anthropic-cybersecurity-skills (MITRE ATT&CK 734+ skills)
-
-# 函數：更新 security-skills (SecOps/SOAR 自動化)
-
-# 函數：更新 security-audit (OWASP/CWE/NIST/MITRE 白箱審計)
 
 # 函數：更新 cloudflare-security-audit (Cloudflare 多 agent 編排式滲透審計)
-# 獨立目錄名，不覆蓋既有 external/security-audit (afiqiqmal)
 update_cloudflare_security_audit() {
     local skill_dir="$EXTERNAL_DIR/cloudflare-security-audit"
     local temp_dir=$(mktemp -d)
@@ -442,15 +356,6 @@ update_sentry_security_review() {
     rm -rf "$temp_dir"
 }
 
-# 函數：更新 ot-security-mcp (IEC 62443 OT 安全)
-
-# === 設計類 Skills (手動來源) ===
-
-
-
-# === 影片製作類 Skills ===
-
-# 函數：更新 remotion-video-skill (程式化影片製作)
 
 # 顯示可用的 skills
 show_available() {
@@ -459,7 +364,6 @@ show_available() {
     echo "  開發類:"
     echo "  - react-best-practices    (Vercel Labs)"
     echo "  - agent-browser           (Vercel Labs)"
-    echo "  - web-design-guidelines   (Vercel Labs)"
     echo "  - neon-skills             (Neon Database, 6 skills)"
     echo "  - frontend-design         (Anthropic 官方, 前端設計)"
     echo "  - canvas-design           (Anthropic 官方, 視覺設計/海報/藝術品)"
@@ -482,7 +386,6 @@ show_available() {
     echo ""
     echo "  安全 / 資安類:"
     echo "  - trailofbits-security       (Trail of Bits, 35+ security plugins)"
-    echo "  - trailofbits-skills-curated (Trail of Bits, 審核過的 marketplace)"
     echo "  - cloudflare-security-audit  (Cloudflare, 多 agent 編排式滲透審計)"
     echo "  - sentry-security-review     (Sentry 官方, security code review)"
     echo ""
@@ -493,7 +396,6 @@ show_available() {
     echo ""
 }
 
-# 函數：更新 archify（架構圖產生器，skill 本體在 repo 的 archify/ 子目錄）
 
 # 主程式
 if [ $# -eq 0 ]; then
@@ -504,12 +406,10 @@ if [ $# -eq 0 ]; then
     all_updates=(
         update_react_best_practices
         update_agent_browser
-        update_web_design_guidelines
         update_neon_skills
         update_frontend_design
         update_doc_coauthoring
         update_trailofbits_security
-        update_trailofbits_skills_curated
         update_cloudflare_security_audit
         update_sentry_security_review
         update_canvas_design
@@ -553,21 +453,6 @@ if [ $# -eq 0 ]; then
         pids+=($!)
     done
 
-    # npm 更新也平行跑（不計入 skill 進度條，但同時執行）
-    (
-        echo "更新: agent-browser CLI"
-        CURRENT_AB=$(npm ls -g agent-browser --depth=0 2>/dev/null | grep agent-browser | sed 's/.*@//')
-        LATEST_AB=$(npm view agent-browser version 2>/dev/null)
-        if [ -n "$LATEST_AB" ] && [ "$CURRENT_AB" != "$LATEST_AB" ]; then
-            echo "  $CURRENT_AB -> $LATEST_AB"
-            npm install -g agent-browser@latest > /dev/null 2>&1
-            echo "  狀態: 已更新"
-        else
-            echo "  狀態: 已是最新 ($CURRENT_AB)"
-        fi
-    ) > "$LOG_DIR/npm_update.log" 2>&1 &
-    npm_pid=$!
-
     # 監控進度 + 45 秒 timeout
     _start_time=$(date +%s)
     # 追蹤已完成的 job（避免重複計算）
@@ -607,7 +492,6 @@ if [ $# -eq 0 ]; then
 
     # 等待全部完成（回收 exit code）
     wait "${pids[@]}" 2>/dev/null
-    wait "$npm_pid" 2>/dev/null
 
     # 統計結果
     ok=0 fail=0 timeout_count=0
@@ -662,9 +546,6 @@ else
             "agent-browser")
                 update_agent_browser
                 ;;
-            "web-design-guidelines")
-                update_web_design_guidelines
-                ;;
             "neon-skills"|"neon")
                 update_neon_skills
                 ;;
@@ -674,14 +555,14 @@ else
             "trailofbits-security"|"trailofbits"|"tob")
                 update_trailofbits_security
                 ;;
-            "trailofbits-skills-curated"|"tob-curated"|"skills-curated")
-                update_trailofbits_skills_curated
-                ;;
             "cloudflare-security-audit"|"cf-audit"|"cloudflare-audit")
                 update_cloudflare_security_audit
                 ;;
             "sentry-security-review"|"sentry-review")
                 update_sentry_security_review
+                ;;
+            "frontend-design"|"frontend")
+                update_frontend_design
                 ;;
             "canvas-design"|"canvas")
                 update_canvas_design
@@ -743,22 +624,9 @@ else
     done
 fi
 
-# === npm CLI 工具更新 ===
-# 在 skill 同步的平行 wait 期間就已開始（npm_log 在上方平行區產生）
-if [ -f "$LOG_DIR/npm_update.log" ] 2>/dev/null; then
-    cat "$LOG_DIR/npm_update.log"
-else
-    echo "更新: agent-browser CLI"
-    CURRENT_AB=$(npm ls -g agent-browser --depth=0 2>/dev/null | grep agent-browser | sed 's/.*@//')
-    LATEST_AB=$(npm view agent-browser version 2>/dev/null)
-    if [ -n "$LATEST_AB" ] && [ "$CURRENT_AB" != "$LATEST_AB" ]; then
-        echo "  $CURRENT_AB -> $LATEST_AB"
-        npm install -g agent-browser@latest > /dev/null 2>&1
-        echo "  狀態: 已更新"
-    else
-        echo "  狀態: 已是最新 ($CURRENT_AB)"
-    fi
-fi
+# agent-browser CLI 不在這裡自動升級（2026-11-10 移除 npm install -g agent-browser@latest）：
+# 它的 SKILL.md 只是空殼，實際指令由 CLI 提供，自動裝最新版等於讓未經檢查的執行碼與 agent 指令
+# 每天繞過閘門進來。升級改為手動並指定版本，做法見 README「自動同步」一節。
 
 echo ""
 echo "同步完成!"

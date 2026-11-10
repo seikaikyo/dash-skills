@@ -65,13 +65,15 @@ class Settings(BaseSettings):
     api_prefix: str = "/api"
     debug: bool = False
 
-    # 認證
-    jwt_secret: str
-    jwt_algorithm: str = "HS256"
-    jwt_expire_minutes: int = 60 * 24  # 24 小時
+    # 認證（Logto 簽發的 access token，用 JWKS 公鑰驗證，後端不保管簽章密鑰）
+    logto_endpoint: str        # 例：https://your-tenant.logto.app
+    logto_api_resource: str    # 在 Logto Console 註冊的 API resource indicator，對應 token 的 aud
+    # 只列非對稱演算法。Logto 預設用 EC 金鑰（ES384），可在 Console 換成 RSA（RS256）
+    jwt_algorithms: list[str] = ["ES384", "RS256"]
 
-    # CORS
-    cors_origins: list[str] = ["*"]
+    # CORS：明列前端來源，沒有預設值，漏設就啟動失敗
+    # 環境變數寫 JSON 陣列：CORS_ORIGINS='["https://app.example.com"]'
+    cors_origins: list[str]
 
     class Config:
         env_file = ".env"
@@ -141,10 +143,10 @@ app = FastAPI(
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=settings.cors_origins,  # 明列來源，不用 ["*"]
+    allow_credentials=False,              # token 走 Authorization header，不需要跨站帶 cookie
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # 路由
@@ -457,60 +459,74 @@ def delete_work_order(
 
 ### dependencies.py
 
+access token 由 Logto 簽發，後端用 Logto 的 JWKS 公鑰驗證簽章，並檢查 issuer、audience 與過期時間。不要用共用密鑰（HS256）自己簽 token。
+
 ```python
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
-from datetime import datetime
+from jwt import PyJWKClient
 
 from app.config import get_settings
 
 settings = get_settings()
 security = HTTPBearer()
 
+ISSUER = f"{settings.logto_endpoint}/oidc"
+# PyJWKClient 會快取 JWKS，模組層級建立一次；金鑰輪替時依 token 的 kid 自動重抓
+jwks_client = PyJWKClient(f"{ISSUER}/jwks")
+
 
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ) -> dict:
-    """驗證 JWT Token 並取得當前使用者"""
+    """驗證 Logto 簽發的 access token 並取得當前使用者"""
     token = credentials.credentials
 
     try:
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
         payload = jwt.decode(
             token,
-            settings.jwt_secret,
-            algorithms=[settings.jwt_algorithm]
+            signing_key.key,
+            algorithms=settings.jwt_algorithms,
+            issuer=ISSUER,
+            audience=settings.logto_api_resource,
+            options={"require": ["exp", "iat", "sub"]},
         )
-
-        # 檢查過期
-        exp = payload.get("exp")
-        if exp and datetime.utcnow().timestamp() > exp:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token 已過期"
-            )
-
-        return payload
-
-    except jwt.InvalidTokenError:
+    except jwt.PyJWKClientConnectionError:
+        # 拿不到 JWKS 是後端依賴故障，不是使用者的 token 有問題
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="認證服務暫時無法使用"
+        )
+    except jwt.PyJWTError:
+        # 簽章錯、過期、issuer 或 audience 不符、找不到對應金鑰都走這裡
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="無效的 Token"
+            detail="無效的 Token",
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
+    return {
+        "id": payload["sub"],
+        "scopes": payload.get("scope", "").split(),
+        "organization_id": payload.get("organization_id"),
+    }
 
-def require_role(allowed_roles: list[str]):
-    """角色權限檢查"""
-    def role_checker(current_user: dict = Depends(get_current_user)):
-        user_role = current_user.get("role", "")
-        if user_role not in allowed_roles:
+
+def require_scopes(*required: str):
+    """權限檢查：Logto 的 RBAC 把權限放在 access token 的 scope（空白分隔）"""
+    def scope_checker(current_user: dict = Depends(get_current_user)):
+        if not set(required).issubset(current_user["scopes"]):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="權限不足"
             )
         return current_user
-    return role_checker
+    return scope_checker
 ```
+
+用法：`Depends(require_scopes("work-orders:write"))`。過期時間由 `jwt.decode` 檢查，不需要自己比對 `exp`。
 
 ## 稽核紀錄 (ISO 27001)
 
@@ -618,8 +634,12 @@ services:
         fromDatabase:
           name: mes-db
           property: connectionString
-      - key: JWT_SECRET
-        generateValue: true
+      - key: LOGTO_ENDPOINT
+        sync: false
+      - key: LOGTO_API_RESOURCE
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
     healthCheckPath: /health
     autoDeploy: true
 
@@ -637,7 +657,7 @@ fastapi>=0.109.0
 uvicorn[standard]>=0.27.0
 sqlmodel>=0.0.14
 pydantic-settings>=2.1.0
-python-jose[cryptography]>=3.3.0
+PyJWT[crypto]>=2.15.0
 psycopg2-binary>=2.9.9
 ```
 
@@ -719,6 +739,8 @@ vercel deploy    # 或接 Git 自動部署
 2. **禁止 Emoji** - 程式碼、註解都不使用
 3. **禁止簡體字** - 錯誤訊息使用正體中文
 4. **禁止硬編碼機敏資料** - 使用環境變數
+5. **禁止 CORS 萬用來源** - `allow_origins` 明列前端網域，不用 `["*"]`
+6. **禁止用共用密鑰驗 token** - 一律用 Logto JWKS 公鑰驗證，演算法清單只列非對稱演算法
 
 ## 效能標準
 

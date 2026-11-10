@@ -84,7 +84,10 @@ else
     out ""
     out "  缺漏 (可考慮加入):"
     missing_count=0
+    # 刻意不收的：web-design-guidelines 是每次執行都抓遠端規則的空殼，已改為自建
+    vercel_skip="web-design-guidelines"
     for skill in $remote_vercel; do
+        echo "$vercel_skip" | tr ' ' '\n' | grep -qx "$skill" && continue
         if ! echo "$local_vercel" | grep -qx "$skill"; then
             out "    - $skill"
             missing_count=$((missing_count + 1))

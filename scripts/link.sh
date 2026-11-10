@@ -14,8 +14,8 @@ SKILLS_DST="$HOME/.claude/skills"
 
 # 深層 skill 覆寫（2026-08-10）：Claude Code 只認 ~/.claude/skills/<name>/SKILL.md 這一層，
 # 集合型目錄裡的技能不會被載入。指名連出來，格式 <連結名稱>:<來源根目錄下相對路徑>。
-# ui-ux-pro-max 2026-10-25 內化到 skills/，覆寫對自建與外部兩個來源都適用。
-NESTED_OVERRIDES="ui-ux-pro-max:ui-ux-pro-max/ui-ux-pro-max"
+# 覆寫對自建與外部兩個來源都適用。目前沒有項目：ui-ux-pro-max 2026-11-10 精簡後 SKILL.md 已在頂層。
+NESTED_OVERRIDES=""
 
 resolve_nested_path() {
     local name="$1" base="$2" entry
