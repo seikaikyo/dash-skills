@@ -10,7 +10,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 ## 収録スキル
 
-> 自作 19 個 (`skills/`) + 外部収録 29 個 (`external/`)。外部スキルは毎日上流から自動同期。
+> 自作 20 個 (`skills/`) + 外部収録 25 個 (`external/`)。外部スキルは毎日上流から自動同期。
 
 ### 自作 (`skills/`)
 
@@ -35,15 +35,14 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | **interface-design** | ダッシュボード / 管理画面 / ツール向け craft-first 設計基盤と監査 |
 | **webapp-uat** | デプロイ済みサイトの画面単位 UAT (agent-browser、3 サイズ RWD、3 言語 i18n、console/network、Sentry) |
 | **ui-ux-pro-max** | 50以上の UI スタイル / 161 パレット / 57 フォントペア (nextlevelbuilder/ui-ux-pro-max-skill より取り込み, MIT) |
+| **web-design-guidelines** | フロントエンド UI コードレビュー、固定ルールに照らして file:line で報告 (a11y / キーボード / フォーム / アニメーション / 性能) |
 
 ### 開発・デプロイ
 
 | スキル | 説明 | ソース |
 |--------|------|--------|
 | **react-best-practices** | React / Next.js パフォーマンス最適化 | vercel-labs/agent-skills |
-| **vercel-react-best-practices** | React / Next.js 最適化 (TSX レビュー版) | vercel-labs/agent-skills |
-| **vercel-python** | Python プロジェクトの Vercel デプロイ診断・修復 | vercel-labs/agent-skills |
-| **vercel-cost-optimization** | Vercel 請求分析とコスト最適化 | vercel-labs/agent-skills |
+| **vercel-optimize** | Vercel のコスト・性能最適化監査（本番メトリクス基準） | vercel-labs/agent-skills |
 | **deploy-to-vercel** | アプリを Vercel にデプロイ | vercel-labs/agent-skills |
 | **agent-browser** | ブラウザ自動化 CLI (200以上のコマンド) | vercel-labs/agent-browser |
 | **mcp-builder** | 高品質な MCP サーバー構築 | anthropics/skills |
@@ -55,7 +54,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | スキル | 説明 | ソース |
 |--------|------|--------|
 | **frontend-design** | AI っぽさを排除したフロントエンドデザイン | anthropics/skills |
-| **web-design-guidelines** | UI コードレビュー (a11y / UX / 性能) | vercel-labs/agent-skills |
 | **canvas-design** | デザイン哲学で PNG / PDF ビジュアル作成 | anthropics/skills |
 | **brand-guidelines** | Anthropic 公式ブランドカラーとフォント適用 | anthropics/skills |
 | **theme-factory** | テーマで artifact をスタイリング (10 プリセット) | anthropics/skills |
@@ -73,7 +71,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 | スキル | 説明 | ソース |
 |--------|------|--------|
 | **trailofbits-security** | セキュリティ分析プラグイン (CodeQL / Semgrep) | trailofbits/skills |
-| **trailofbits-skills-curated** | Trail of Bits 審査済みプラグイン | trailofbits/skills-curated |
 | **sentry-security-review** | Sentry 規約コミット + セキュリティレビュー | getsentry/skills |
 | **cloudflare-security-audit** | マルチエージェント編成型ペネトレーション監査 (偵察 / 攻撃クラス / 検証レポート) | cloudflare/security-audit-skill |
 
@@ -141,9 +138,7 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-upd
 [ "$(cat ~/Documents/github/dash-skills/.last-update 2>/dev/null)" = "$(date +%Y-%m-%d)" ] || launchctl kickstart gui/$(id -u)/com.dash.skills-auto-update 2>/dev/null
 ```
 
-毎日自動：SKILL.md 更新、agent-browser CLI バージョン確認、自動 commit + push。
-
-## 更新履歴
+毎日自動：外部スキルの更新、自動 commit + push。agent-browser CLI は自動更新しない：リリース内容を確認してから `npm install -g agent-browser@<バージョン>` を手動で実行する。
 
 ## ライセンス
 
@@ -159,7 +154,9 @@ SeiKai Kyo
 外部スキルは各オープンソースコミュニティ由来、ライセンスは各ソースに準拠。主なソース：
 
 - [Anthropic](https://github.com/anthropics/skills) -- 公式 skills（ドキュメント処理 / デザイン / mcp-builder など）
-- [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, web-design-guidelines, vercel シリーズ
+- [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, deploy-to-vercel, vercel-optimize
 - [Neon](https://github.com/neondatabase) -- neon-skills
 - [Trail of Bits](https://github.com/trailofbits) -- セキュリティプラグイン
-- ほか Dammyjay93, nextlevelbuilder, bencium, Community-Access, kevintsai1202, blader, haowjy, kgraph57, ComposioHQ, gtmagents, agamm, mukul975, eth0izzle, afiqiqmal, getsentry, Ansvar-Systems, tsilverberg, wshuyi など
+- [Cloudflare](https://github.com/cloudflare/security-audit-skill) -- cloudflare-security-audit
+- [Sentry](https://github.com/getsentry/skills) -- sentry-security-review
+- 自作スキルのうち改作・取り込み元：nextlevelbuilder/ui-ux-pro-max-skill (MIT)、everything-claude-code (MIT)、tGD (Apache-2.0)

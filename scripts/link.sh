@@ -14,8 +14,8 @@ SKILLS_DST="$HOME/.claude/skills"
 
 # 深層 skill 覆寫（2026-08-10）：Claude Code 只認 ~/.claude/skills/<name>/SKILL.md 這一層，
 # 集合型目錄裡的技能不會被載入。指名連出來，格式 <連結名稱>:<來源根目錄下相對路徑>。
-# ui-ux-pro-max 2026-10-25 內化到 skills/，覆寫對自建與外部兩個來源都適用。
-NESTED_OVERRIDES="ui-ux-pro-max:ui-ux-pro-max/ui-ux-pro-max"
+# 覆寫對自建與外部兩個來源都適用。目前沒有項目：ui-ux-pro-max 2026-11-10 精簡後 SKILL.md 已在頂層。
+NESTED_OVERRIDES=""
 
 resolve_nested_path() {
     local name="$1" base="$2" entry
@@ -90,6 +90,23 @@ else
     echo "  (無)"
 fi
 echo ""
+
+# 清掉死連結：skill 從 repo 移除後，~/.claude/skills 裡指向它的連結會留下來。
+# 只處理「指向本 repo 的 skills/ 或 external/、而且目標已不存在」的符號連結，其他一律不動。
+removed=0
+for link in "$SKILLS_DST"/*; do
+    [ -L "$link" ] || continue
+    [ -e "$link" ] && continue
+    target="$(readlink "$link")"
+    case "$target" in
+        "$SKILLS_SRC"/*|"$EXTERNAL_SRC"/*)
+            echo "  移除死連結: $(basename "$link")"
+            rm "$link"
+            removed=$((removed + 1))
+            ;;
+    esac
+done
+[ "$removed" -gt 0 ] && echo ""
 
 echo "Symlink 設定完成!"
 echo ""

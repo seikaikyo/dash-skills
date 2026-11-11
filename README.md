@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 19 個 (`skills/`) + 外部收錄 29 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 20 個 (`skills/`) + 外部收錄 25 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -35,15 +35,14 @@
 | **interface-design** | 儀表板 / 後台 / 工具類介面的 craft-first 設計基礎與稽核 |
 | **webapp-uat** | 對部署站做逐畫面 UAT (agent-browser、三尺寸 RWD、三語 i18n、console/network、Sentry) |
 | **ui-ux-pro-max** | 50+ UI 風格 / 161 色彩 / 57 字型配對 (內化自 nextlevelbuilder/ui-ux-pro-max-skill, MIT) |
+| **web-design-guidelines** | 前端 UI 程式碼審查，對照固定規則回報 file:line (無障礙 / 鍵盤 / 表單 / 動畫 / 效能) |
 
 ### 開發與部署
 
 | Skill | 描述 | 來源 |
 |-------|------|------|
 | **react-best-practices** | React / Next.js 效能優化指南 | vercel-labs/agent-skills |
-| **vercel-react-best-practices** | React / Next.js 效能優化 (TSX 審查版) | vercel-labs/agent-skills |
-| **vercel-python** | Python 專案 Vercel 部署診斷與修復 | vercel-labs/agent-skills |
-| **vercel-cost-optimization** | Vercel 帳單分析與成本優化 | vercel-labs/agent-skills |
+| **vercel-optimize** | Vercel 成本與效能優化審查（以正式環境 metrics 為準） | vercel-labs/agent-skills |
 | **deploy-to-vercel** | 部署應用到 Vercel | vercel-labs/agent-skills |
 | **agent-browser** | 瀏覽器自動化 CLI (200+ 指令) | vercel-labs/agent-browser |
 | **mcp-builder** | 建立高品質 MCP server | anthropics/skills |
@@ -55,7 +54,6 @@
 | Skill | 描述 | 來源 |
 |-------|------|------|
 | **frontend-design** | 反 AI 罐頭風格的前端設計 | anthropics/skills |
-| **web-design-guidelines** | UI 程式碼審查 (a11y / UX / 效能) | vercel-labs/agent-skills |
 | **canvas-design** | 用設計哲學做 PNG / PDF 視覺作品 | anthropics/skills |
 | **brand-guidelines** | 套用 Anthropic 官方品牌色彩與字型 | anthropics/skills |
 | **theme-factory** | 用主題為 artifact 上樣式 (10 種預設) | anthropics/skills |
@@ -73,7 +71,6 @@
 | Skill | 描述 | 來源 |
 |-------|------|------|
 | **trailofbits-security** | 安全分析 plugin (CodeQL / Semgrep) | trailofbits/skills |
-| **trailofbits-skills-curated** | Trail of Bits 審核過的 plugin 精選 | trailofbits/skills-curated |
 | **sentry-security-review** | Sentry 慣例 commit + 安全審查 | getsentry/skills |
 | **cloudflare-security-audit** | 多 agent 編排式滲透審計 (偵察 / 攻擊類別 / 驗證報告) | cloudflare/security-audit-skill |
 
@@ -120,6 +117,12 @@
 
 ## 安裝
 
+```bash
+git clone https://github.com/seikaikyo/dash-skills.git
+cd dash-skills
+./scripts/install.sh
+```
+
 ## 自動同步
 
 由 launchd 每天 06:00 在背景執行，輸出寫入 `~/Library/Logs/dash-skills-auto-update.log`：
@@ -138,7 +141,7 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-upd
 每日自動：
 
 - 從官方來源更新外部 skills SKILL.md
-- 檢查 agent-browser CLI npm 版本，有新版自動更新
+- agent-browser CLI 不自動升級：確認發版內容後手動執行 `npm install -g agent-browser@<版本>`
 - 有變更自動 commit + push
 
 ## 技術棧總覽
@@ -151,8 +154,6 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dash.skills-auto-upd
 | 資料庫 | Neon PostgreSQL |
 | 前端部署 | Vercel |
 | 後端部署 | Render |
-
-## 更新紀錄
 
 ## 授權
 
@@ -168,7 +169,9 @@ SeiKai Kyo (許正解)
 外部 skill 來自各開源社群,授權依各來源。主要來源:
 
 - [Anthropic](https://github.com/anthropics/skills) -- 官方 skills(文件處理 / 設計 / mcp-builder 等)
-- [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, web-design-guidelines, vercel 系列
+- [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, deploy-to-vercel, vercel-optimize
 - [Neon](https://github.com/neondatabase) -- neon-skills
 - [Trail of Bits](https://github.com/trailofbits) -- 安全 plugin
-- 以及 Dammyjay93, nextlevelbuilder, bencium, Community-Access, kevintsai1202, blader, haowjy, kgraph57, ComposioHQ, gtmagents, agamm, mukul975, eth0izzle, afiqiqmal, getsentry, Ansvar-Systems, tsilverberg, wshuyi 等
+- [Cloudflare](https://github.com/cloudflare/security-audit-skill) -- cloudflare-security-audit
+- [Sentry](https://github.com/getsentry/skills) -- sentry-security-review
+- 自建 skill 中改寫或內化的來源：nextlevelbuilder/ui-ux-pro-max-skill (MIT)、everything-claude-code (MIT)、tGD (Apache-2.0)

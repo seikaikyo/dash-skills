@@ -76,7 +76,7 @@ CONTRACT: <貼上>
 
 只傳 ARTIFACT + CONTRACT，禁傳 CLAIM：把結論交給 reviewer 會誘導它同意。
 
-跨模型第二意見（Gemini / Codex CLI）流程本環境沒有常備工具，不搬進來；需要時看原文 `external/tgd-skills/tgd-doubt-driven-development/SKILL.md`，並遵守其安全守則（唯讀 sandbox、每次調用都要使用者授權）。
+跨模型第二意見（Gemini / Codex CLI）流程本環境沒有常備工具，不搬進來，原文也已不在本 repo。真的要用外部模型時守兩條：只在唯讀 sandbox 裡跑、每次調用都先取得使用者授權。
 
 ### Step 4 RECONCILE：findings 分類回收
 
@@ -124,7 +124,7 @@ reviewer 的輸出是資料不是判決，你還是 orchestrator。每條 findin
 
 - superpowers test-driven-development：RED 步驟的失敗測試就是行為主張的具體化懷疑。TDD 適用時，那個失敗測試即可抵本 skill 對行為主張的 doubt 步
 - /code-review 與 pr-review-toolkit：互補。事後 PR 層 vs 進行中決策層，兩個都要
-- 完整原文（含跨模型流程與 orchestration 反模式）：`external/tgd-skills/tgd-doubt-driven-development/`
+- 原文出自 openclawyhwang-hub/tGD 的 tgd-doubt-driven-development（Apache-2.0）；上游 repo 已消失，本 repo 也不再收錄原文；跨模型流程與 orchestration 反模式沒有搬進這份改寫
 
 ## 驗證
 

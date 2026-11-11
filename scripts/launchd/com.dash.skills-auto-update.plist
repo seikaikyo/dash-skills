@@ -5,12 +5,16 @@
     <key>Label</key>
     <string>com.dash.skills-auto-update</string>
 
-    <!-- ~/.env 帶入 GITGUARDIAN_API_KEY 等選用變數（以前由 .zshrc 載入） -->
+    <!--
+      這份檔案不放本機絕對路徑（公開 repo）。launchd 的 StandardOutPath、EnvironmentVariables
+      不會展開 $HOME，所以 PATH 與 log 導向都寫在下面的 bash 指令裡。
+      ~/.env 帶入 GITGUARDIAN_API_KEY 等選用變數（以前由 .zshrc 載入）。
+    -->
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
         <string>-c</string>
-        <string>[ -f "$HOME/.env" ] &amp;&amp; . "$HOME/.env"; exec /bin/bash "$HOME/Documents/github/dash-skills/scripts/auto-update.sh"</string>
+        <string>export HOME="${HOME:-$(echo ~)}"; export PATH="$HOME/.local/bin:$HOME/.pyenv/shims:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"; mkdir -p "$HOME/Library/Logs"; exec &gt;&gt; "$HOME/Library/Logs/dash-skills-auto-update.log" 2&gt;&amp;1; [ -f "$HOME/.env" ] &amp;&amp; . "$HOME/.env"; exec /bin/bash "$HOME/Documents/github/dash-skills/scripts/auto-update.sh"</string>
     </array>
 
     <key>StartCalendarInterval</key>
@@ -21,21 +25,7 @@
         <integer>0</integer>
     </dict>
 
-    <key>StandardOutPath</key>
-    <string>/Users/dash/Library/Logs/dash-skills-auto-update.log</string>
-
-    <key>StandardErrorPath</key>
-    <string>/Users/dash/Library/Logs/dash-skills-auto-update.log</string>
-
     <key>RunAtLoad</key>
     <false/>
-
-    <key>EnvironmentVariables</key>
-    <dict>
-        <key>PATH</key>
-        <string>/Users/dash/.local/bin:/Users/dash/.pyenv/shims:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
-        <key>HOME</key>
-        <string>/Users/dash</string>
-    </dict>
 </dict>
 </plist>
