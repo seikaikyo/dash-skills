@@ -91,6 +91,23 @@ else
 fi
 echo ""
 
+# 清掉死連結：skill 從 repo 移除後，~/.claude/skills 裡指向它的連結會留下來。
+# 只處理「指向本 repo 的 skills/ 或 external/、而且目標已不存在」的符號連結，其他一律不動。
+removed=0
+for link in "$SKILLS_DST"/*; do
+    [ -L "$link" ] || continue
+    [ -e "$link" ] && continue
+    target="$(readlink "$link")"
+    case "$target" in
+        "$SKILLS_SRC"/*|"$EXTERNAL_SRC"/*)
+            echo "  移除死連結: $(basename "$link")"
+            rm "$link"
+            removed=$((removed + 1))
+            ;;
+    esac
+done
+[ "$removed" -gt 0 ] && echo ""
+
 echo "Symlink 設定完成!"
 echo ""
 echo "現在你可以直接編輯 repo 中的 skills，變更會即時生效。"

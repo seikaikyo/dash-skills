@@ -30,7 +30,7 @@
 ### 5. fastapi-patterns 的不安全範例
 
 - CORS：`cors_origins` 不再預設 `["*"]`，改為必填並明列來源；`allow_credentials=False`（token 走 Authorization header）；方法與標頭改為明列。
-- 認證：原本用 HS256 共用密鑰，與實際的 Logto 認證不符。改為用 Logto JWKS 公鑰驗證（PyJWT 的 `PyJWKClient`），檢查 issuer、audience、必要欄位，演算法清單只列非對稱演算法（ES384、RS256）。寫法對照 Logto 官方文件的 Python 範例。JWKS 抓不到回 503，其餘驗證失敗回 401。
+- 認證：原本用 HS256 共用密鑰，與實際的 Logto 認證不符。`jwt.decode` 傳整個 PyJWK 而不是 `.key`，token 標頭的演算法與金鑰型別不符時才會回 401 而不是 500。全域 `HTTPException` handler 補上 `headers=exc.headers`，401 的 `WWW-Authenticate` 才不會被丟掉。改為用 Logto JWKS 公鑰驗證（PyJWT 的 `PyJWKClient`），檢查 issuer、audience、必要欄位，演算法清單只列非對稱演算法（ES384、RS256）。寫法對照 Logto 官方文件的 Python 範例。JWKS 抓不到回 503，其餘驗證失敗回 401。
 - 權限：`require_role` 改為 `require_scopes`，Logto 的 RBAC 把權限放在 access token 的 `scope`。
 - 相依：`python-jose` 換成 `PyJWT[crypto]>=2.15.0`（程式碼本來就 `import jwt`，版本下限依 security-radar）。
 - `render.yaml` 的 `JWT_SECRET` 換成 `LOGTO_ENDPOINT`、`LOGTO_API_RESOURCE`、`CORS_ORIGINS`。
@@ -46,7 +46,9 @@
 - `CLAUDE.md`：數量改為 20 / 25。
 - `.scanignore`、`.gitignore`：刪掉已移除 skill 的項目。
 - `update-external.sh`：刪掉 26 行已移除 skill 留下的註解標題。
-- `doubt-driven-development`：指向已不存在的 `external/tgd-skills` 的連結改為文字說明。
+- `doubt-driven-development`：兩處指向已不存在的 `external/tgd-skills` 的參照改為文字說明，跨模型流程的兩條安全守則直接寫進本文。
+- `link.sh`：新增死連結清理。只移除「指向本 repo 的 `skills/` 或 `external/`、而且目標已不存在」的符號連結，其他連結與目錄不動。原本文件說重跑 `link.sh` 會清掉死連結，但腳本沒有這段邏輯。
+- `discover-new-skills.sh`：已抓清單只算來源是 `vercel-labs/agent-skills` 的 skill，不再把另一個 repo 的 `agent-browser` 算進去。
 - `openspec/changes/`：7 份已完成的提案移到 `archive/`。
 
 ## 影響範圍
@@ -61,7 +63,7 @@
 ## 合併後
 
 1. 重新安裝 launchd 設定：`launchctl bootout gui/$(id -u)/com.dash.skills-auto-update`，複製新的 plist 到 `~/Library/LaunchAgents/`，再 `launchctl bootstrap`。不做的話舊設定照常運作，只是沒套用新版。
-2. 重跑 `scripts/link.sh`，清掉已移除 skill 的死連結，並讓 `ui-ux-pro-max`、`web-design-guidelines` 指向新位置。
+2. 重跑 `scripts/link.sh`（每日同步也會跑）：它會移除已刪除 skill 留下的死連結，並讓 `ui-ux-pro-max`、`web-design-guidelines` 指向新位置。
 3. agent-browser CLI 之後手動升級：`npm install -g agent-browser@<版本>`。
 
 ## 剩餘風險
@@ -78,6 +80,8 @@
 
 1. `bash -n` 檢查 `update-external.sh`、`discover-new-skills.sh`、`link.sh` 通過；`update_*` 函數的定義、平行清單、case 分派三者一致。
 2. `plistlib` 能解析 plist；以相同指令在暫存 HOME 下執行，確認 log 寫入與 PATH。
-3. `fastapi-patterns` 的 `config.py`、`dependencies.py` 範例實際執行：有效 token 通過；audience 或 issuer 不符、過期、缺欄位、其他金鑰簽的、未知 kid、用公鑰偽造的 HS256、`alg: none`、亂碼都回 401；scope 不足回 403；JWKS 抓不到回 503。
+3. `fastapi-patterns` 的 `config.py`、`dependencies.py` 範例實際執行：有效 token 通過；audience 或 issuer 不符、過期、缺欄位、其他金鑰簽的、未知 kid、用公鑰偽造的 HS256、`alg: none`、標頭演算法與金鑰型別不符、亂碼都回 401；scope 不足回 403；JWKS 抓不到回 503。
 4. `ui-ux-pro-max` 精簡後 `scripts/search.py` 可查詢，自帶測試結果與精簡前相同。
 5. 三份 README 列出 45 個 skill（自建 20、外部 25），與目錄一致。
+6. `update-external.sh` 在隔離的副本裡完整跑一次：25 個來源全部成功，抓回的目錄與 README 的外部清單相同。
+7. `link.sh` 在暫存 HOME 下測試：指向本 repo 的死連結被移除，指向別處的死連結、有效連結與一般目錄都不動，第二次執行不再有動作。

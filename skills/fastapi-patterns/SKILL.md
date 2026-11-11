@@ -485,9 +485,11 @@ def get_current_user(
 
     try:
         signing_key = jwks_client.get_signing_key_from_jwt(token)
+        # 傳整個 PyJWK（不是 .key）：token 標頭的 alg 與金鑰型別不符時，
+        # PyJWT 才會丟 InvalidAlgorithmError 走 401，而不是 TypeError 變成 500
         payload = jwt.decode(
             token,
-            signing_key.key,
+            signing_key,
             algorithms=settings.jwt_algorithms,
             issuer=ISSUER,
             audience=settings.logto_api_resource,
@@ -584,7 +586,8 @@ async def http_exception_handler(request: Request, exc: HTTPException):
                 "code": str(exc.status_code),
                 "message": exc.detail
             }
-        }
+        },
+        headers=exc.headers,  # 保留 401 的 WWW-Authenticate 等標頭
     )
 
 

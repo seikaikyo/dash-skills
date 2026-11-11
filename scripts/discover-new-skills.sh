@@ -76,9 +76,10 @@ remote_vercel=$(curl -s "https://api.github.com/repos/vercel-labs/agent-skills/c
 if [ -z "$remote_vercel" ]; then
     out "  錯誤：無法取得 vercel-labs/agent-skills 清單"
 else
-    # 本地已抓的 vercel skills：helper 第 1 個參數 + 專用函數 sparse-checkout 的 skills/<name>
+    # 本地已抓的 vercel skills：helper 第 1 個參數 + 專用函數 sparse-checkout 的 skills/<name>。
+    # 專用函數只算 repo 是 vercel-labs/agent-skills 的（agent-browser 來自另一個 repo，不算）。
     local_vercel=$( (grep -oE '_update_vercel_agent_skill "[^"]+"' "$UPDATE_SCRIPT" | sed 's/_update_vercel_agent_skill "//;s/"//'
-                     grep -oE 'sparse-checkout set skills/[A-Za-z0-9_-]+' "$UPDATE_SCRIPT" | sed 's|.*skills/||') | sort -u)
+                     awk '/local repo=/{r=$0} /sparse-checkout set skills\//{ if (r ~ /"vercel-labs\/agent-skills"/) { sub(/.*skills\//,""); sub(/[^A-Za-z0-9_-].*/,""); print } }' "$UPDATE_SCRIPT") | sort -u)
 
     out "  線上: $(echo "$remote_vercel" | wc -l | tr -d ' ') 個 / 已抓: $(echo "$local_vercel" | wc -l | tr -d ' ') 個"
     out ""

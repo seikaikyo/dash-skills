@@ -115,7 +115,7 @@ updated: 2026-11-10
 
 | 代碼 | 等級 | 規則 |
 |------|------|------|
-| X1 | E | `v-html`、`[innerHTML]` 的內容必須先經 DOMPurify 之類的淨化；來源是使用者輸入或 API 時不可直接渲染 |
+| X1 | E | Vue 的 `v-html` 不會淨化內容，來源是使用者輸入或 API 時必須先經 DOMPurify 之類的淨化。Angular 的 `[innerHTML]` 會自動淨化，不用報；要報的是 `bypassSecurityTrustHtml` 等 `bypassSecurityTrust*` 用在非固定內容上 |
 | X2 | W | `target="_blank"` 的外部連結加 `rel="noopener noreferrer"` |
 | X3 | E | token、金鑰不可寫進 template、前端常數或 `NUXT_PUBLIC_*` |
 
