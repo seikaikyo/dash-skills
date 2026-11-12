@@ -1,6 +1,7 @@
 ---
 name: humanizer-en
-description: Rewrites already-written English text so it reads like a person wrote it and drops the tells of AI generation. Use when the user asks to rewrite, tighten, or de-AI an existing piece of English writing (email, README, PR description, blog post, docs, customer message), or says things like "this sounds very AI", "make this sound human", "clean up this draft". This is a rewrite tool, not a checker: symbol-level issues (em dashes, emoji) are handled by hooks, so focus on filler, formulaic structure, rhythm, and tone. For Traditional Chinese text use humanizer-zh-tw instead.
+description: >-
+  Rewrites already-written English text so it reads like a person wrote it and drops the tells of AI generation. Use when the user asks to rewrite, tighten, or de-AI an existing piece of English writing (email, README, PR description, blog post, docs, customer message), or says things like "this sounds very AI", "make this sound human", "clean up this draft". This is a rewrite tool, not a checker: symbol-level issues (em dashes, emoji) are handled by hooks, so focus on filler, formulaic structure, rhythm, and tone. For Traditional Chinese text use humanizer-zh-tw instead.
 ---
 
 # humanizer-en
