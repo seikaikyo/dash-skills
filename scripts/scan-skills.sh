@@ -21,6 +21,9 @@ EXTERNAL_DIR="$REPO_DIR/external"
 REPORT_DIR="$REPO_DIR/security-reports"
 FINDINGS_LOG="$REPORT_DIR/findings.log"
 SCAN_TIMEOUT="${SCAN_SKILLS_TIMEOUT:-240}"   # 每目錄逾時秒數，補掃大目錄時可環境變數拉長
+# SkillSpector 2.13 起整體時間上限可用環境變數調（預設 60 秒）。設成比外層逾時短，
+# 掃不完時掃描器自己交出部分報告，才有機會改走逐子目錄掃描，而不是被外層直接砍掉。
+export SKILLSPECTOR_MAX_WORKFLOW_SECONDS="${SKILLSPECTOR_MAX_WORKFLOW_SECONDS:-$((SCAN_TIMEOUT > 60 ? SCAN_TIMEOUT - 30 : SCAN_TIMEOUT))}"
 TODAY=$(date +%Y-%m-%d)
 STATUS_FILE="${SCAN_STATUS_FILE:-}"
 
@@ -91,6 +94,10 @@ for name in "${targets[@]}"; do
     rc=0
     perl -e 'alarm shift; exec @ARGV' "$SCAN_TIMEOUT" \
         skillspector scan "$dir" --no-llm --format json --output "$report" "${baseline_args[@]}" > /dev/null 2>&1 || rc=$?
+    if ! jq -e '.risk_assessment' "$report" > /dev/null 2>&1 && [ "$rc" -ge 128 ]; then
+        echo "[scan-skills] 整包掃描逾時（${SCAN_TIMEOUT}s），改逐子目錄掃描: $name"
+        python3 "$SCRIPT_DIR/scan-split.py" "$dir" "$report" "${baseline_args[@]:1}"
+    fi
     if ! jq -e '.risk_assessment' "$report" > /dev/null 2>&1; then
         if [ "$rc" -ge 128 ]; then
             echo "[scan-skills] 掃描逾時（${SCAN_TIMEOUT}s）: $name"
@@ -102,12 +109,14 @@ for name in "${targets[@]}"; do
         failed=$((failed + 1))
         continue
     fi
-    # 完整度：SkillSpector 的時間上限寫死在程式裡，檔案多的集合整包掃描時多數分析器跑不完，
-    # 報告照樣產出、分數照樣是 0（2026-11-14 trailofbits-security 1639 檔，完整檢查 0 檔仍判通過）。
+    # 完整度：檔案多的集合整包掃描時多數分析器跑不完，報告照樣產出、分數照樣是 0
+    # （2026-11-14 trailofbits-security 1639 檔，完整檢查 0 檔仍判通過）。
     # 不完整就改成逐子目錄掃描再合併；合併後仍不完整回報 incomplete，由閘門隔離。
     if ! _complete "$report" "$name" quiet; then
-        echo "[scan-skills] 整包掃描不完整，改逐子目錄掃描: $name"
-        python3 "$SCRIPT_DIR/scan-split.py" "$dir" "$report" "${baseline_args[@]:1}"
+        if ! jq -e '.skill.split_scan == true' "$report" > /dev/null 2>&1; then
+            echo "[scan-skills] 整包掃描不完整，改逐子目錄掃描: $name"
+            python3 "$SCRIPT_DIR/scan-split.py" "$dir" "$report" "${baseline_args[@]:1}"
+        fi
         if ! _complete "$report" "$name"; then
             echo "[scan-skills] 掃描不完整: $name"
             _status "$name" incomplete

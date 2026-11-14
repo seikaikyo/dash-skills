@@ -18,10 +18,13 @@ SCRIPTS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 假的 skillspector：
 # - STUB_PARTIAL 列出的目錄名稱（逗號分隔，* 代表全部）回報「只做部分檢查」
 # - 目錄裡每個 flag.md 回報一筆 HIGH 的 T1，除非 baseline 已列該路徑
+# - STUB_HANG 列出的目錄名稱不產報告、卡住不動，用來模擬整包掃描逾時
 STUB = r'''#!/usr/bin/env python3
-import json, os, re, sys
+import json, os, re, sys, time
 args = sys.argv[1:]
 target = args[1]
+if os.path.basename(target.rstrip("/")) in os.environ.get("STUB_HANG", "").split(","):
+    time.sleep(60)
 out = args[args.index("--output") + 1]
 baseline = args[args.index("--baseline") + 1] if "--baseline" in args else None
 accepted = set()
@@ -158,6 +161,13 @@ class GateTest(unittest.TestCase):
         out = self.gate(STUB_PARTIAL="big")
         self.assertIn("通過 1、隔離 0", out)
         self.assertTrue(os.path.exists(self.path("external/big/a/flag.md")))
+
+    def test_timeout_falls_back_to_split_scan(self):
+        self.write("external/big/a/SKILL.md", "One more harmless line.\n", "a")
+        out = self.gate(STUB_HANG="big", SCAN_SKILLS_TIMEOUT="2")
+        self.assertIn("整包掃描逾時", out)
+        self.assertIn("通過 1、隔離 0", out)
+        self.assertTrue(self.report("big")["skill"]["split_scan"])
 
     def complete_check(self, report):
         self.write("report.json", json.dumps(report))

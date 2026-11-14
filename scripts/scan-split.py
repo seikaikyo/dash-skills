@@ -3,6 +3,7 @@
 
 用法: scan-split.py <集合目錄> <輸出報告.json> [baseline.yaml]
       scan-split.py --complete-check <報告.json> <skill 名稱>
+      scan-split.py --accept <報告.json> <skill 名稱>
 
 為什麼需要：SkillSpector 的時間上限寫死在程式裡，沒有選項可調。檔案很多的集合整包掃描時，
 多數分析器跑不完，報告照樣產出、分數照樣是 0。拆成子目錄後每次掃描都在上限內。
@@ -17,6 +18,9 @@
 security-reports/scan-incomplete-allow.tsv 加一行即可接受：
     <skill>\t<相對 skill 根目錄的路徑>\t<reason_code>[\t<sha256>]
 有 sha256 時只接受該檔這一版內容。
+
+--accept：把報告裡指名的缺口全部以目前內容的 sha256 寫進接受清單（已存在的不重複）。
+人工看過報告後才用；檔案內容之後一變，接受就失效，該目錄會再被隔離。
 """
 import hashlib
 import json
@@ -33,7 +37,7 @@ ROOT_UNIT = "."
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INCOMPLETE_ALLOW = os.path.join(REPO, "security-reports", "scan-incomplete-allow.tsv")
 # 這個原因碼只代表文件裡有一個本機路徑參照對不到檔案，檔案本身仍算完整檢查
-NOT_A_GAP = {"reference_unresolved"}
+NOT_A_GAP = {"reference_unresolved", "reference_missing"}
 
 
 def rank(sev):
@@ -97,12 +101,47 @@ def sha256(path):
         return ""
 
 
-def complete_check(report_path, name):
+def named_gaps(comp):
+    return sorted({(e.get("path") or "", e.get("reason_code") or "")
+                   for e in comp.get("ledger_exceptions") or []
+                   if e.get("reason_code") not in NOT_A_GAP and e.get("path")
+                   and e.get("outcome", "partial") != "completed"})
+
+
+def load_report_completeness(report_path):
     try:
         with open(report_path, encoding="utf-8") as f:
             comp = json.load(f).get("analysis_completeness")
     except (OSError, ValueError):
         comp = None
+    return comp if isinstance(comp, dict) else None
+
+
+def accept(report_path, name):
+    comp = load_report_completeness(report_path)
+    if comp is None:
+        print("[scan-split] 報告沒有完整度欄位")
+        return 1
+    existing = set()
+    if os.path.exists(INCOMPLETE_ALLOW):
+        with open(INCOMPLETE_ALLOW, encoding="utf-8") as f:
+            existing = {line.rstrip("\n") for line in f}
+    added = []
+    for path, reason in named_gaps(comp):
+        digest = sha256(os.path.join(REPO, "external", name, path))
+        line = f"{name}\t{path}\t{reason}\t{digest}"
+        if digest and line not in existing:
+            added.append(line)
+    if added:
+        os.makedirs(os.path.dirname(INCOMPLETE_ALLOW), exist_ok=True)
+        with open(INCOMPLETE_ALLOW, "a", encoding="utf-8") as f:
+            f.write("".join(line + "\n" for line in added))
+    print(f"[scan-split] {name}: 接受清單新增 {len(added)} 筆")
+    return 0
+
+
+def complete_check(report_path, name):
+    comp = load_report_completeness(report_path)
     if not isinstance(comp, dict):
         print("[scan-split]   報告沒有完整度欄位")
         return 1
@@ -112,9 +151,7 @@ def complete_check(report_path, name):
     gaps = int(comp.get("partially_inspected_files") or 0) + int(comp.get("entirely_uninspected_files") or 0)
     if gaps == 0:
         return 0
-    named = sorted({(e.get("path") or "", e.get("reason_code") or "")
-                    for e in comp.get("ledger_exceptions") or []
-                    if e.get("reason_code") not in NOT_A_GAP and e.get("path")})
+    named = named_gaps(comp)
     # 報告指名的檔案數對不上缺口數，代表有檔案沒被完整檢查卻沒列出原因，不能逐檔接受
     if len({p for p, _ in named}) != gaps:
         print(f"[scan-split]   {gaps} 個檔案沒被完整檢查")
@@ -140,6 +177,8 @@ def complete_check(report_path, name):
 def main():
     if len(sys.argv) == 4 and sys.argv[1] == "--complete-check":
         return complete_check(sys.argv[2], sys.argv[3])
+    if len(sys.argv) == 4 and sys.argv[1] == "--accept":
+        return accept(sys.argv[2], sys.argv[3])
     if len(sys.argv) not in (3, 4):
         print(__doc__)
         return 2

@@ -56,3 +56,9 @@
    - 個別檔案要有相符的接受紀錄才算完整，內容變了接受就失效；沒有逐檔指名的缺口不能接受。
 3. 對現有 `external/trailofbits-security` 實跑拆分掃描，確認合併報告完整，並回報 baseline 外的告警數。
 4. 改動前後對照：對四個今天放行的目錄各跑一次 `scan-skills.sh`，小型集合的判定與改動前相同。
+
+## 後續調整（同日，SkillSpector 升到 2.13.3 之後）
+
+- `scripts/scan-skills.sh`：整包掃描逾時也改走逐子目錄掃描；設定 `SKILLSPECTOR_MAX_WORKFLOW_SECONDS`（預設為外層逾時減 30 秒），讓掃描器先交出部分報告。
+- `scripts/scan-split.py`：新增 `--accept`，把報告指名的未完整檔案以目前內容的 sha256 寫進接受清單；`reference_missing` 不算缺口。
+- `scripts/tests/test_gate.py`：新增逾時後改走逐子目錄的測試，共 10 項。
