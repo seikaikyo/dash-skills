@@ -33,7 +33,7 @@ update_react_best_practices() {
 
     if [ -d "skills/react-best-practices" ]; then
         rm -rf "$skill_dir"
-        cp -r skills/react-best-practices "$skill_dir"
+        cp -RP skills/react-best-practices "$skill_dir"
         echo "  狀態: 已更新"
     else
         echo "  狀態: 失敗"
@@ -69,7 +69,7 @@ update_agent_browser() {
         fi
 
         rm -rf "$skill_dir"
-        cp -r skills/agent-browser "$skill_dir"
+        cp -RP skills/agent-browser "$skill_dir"
 
         if [ "$has_extensions" = true ]; then
             cp "$temp_dir/EXTENSIONS.md.bak" "$skill_dir/EXTENSIONS.md"
@@ -101,7 +101,7 @@ update_neon_skills() {
     if [ -d "repo/neon-plugin/skills" ]; then
         rm -rf "$skill_dir"
         mkdir -p "$skill_dir"
-        cp -r repo/neon-plugin/skills/* "$skill_dir/"
+        cp -RP repo/neon-plugin/skills/* "$skill_dir/"
         echo "  狀態: 已更新"
         echo "  包含:"
         ls -1 "$skill_dir" | while read s; do
@@ -137,7 +137,7 @@ _update_anthropic_skill() {
 
     if [ -d "skills/$name" ]; then
         rm -rf "$skill_dir"
-        cp -r "skills/$name" "$skill_dir"
+        cp -RP "skills/$name" "$skill_dir"
         echo "  狀態: 已更新"
     else
         echo "  狀態: 失敗"
@@ -222,7 +222,7 @@ _update_vercel_agent_skill() {
 
     if [ -d "skills/$name" ]; then
         rm -rf "$skill_dir"
-        cp -r "skills/$name" "$skill_dir"
+        cp -RP "skills/$name" "$skill_dir"
         echo "  狀態: 已更新"
     else
         echo "  狀態: 失敗"
@@ -272,7 +272,7 @@ update_trailofbits_security() {
             local dirname=$(basename "$dir")
             [ "$dirname" = ".git" ] && continue
             [ "$dirname" = ".github" ] && continue
-            [ -d "$dir" ] && cp -r "$dir" "$skill_dir/"
+            [ -d "$dir" ] && cp -RP "$dir" "$skill_dir/"
         done
         cp repo/CLAUDE.md "$skill_dir/" 2>/dev/null || true
         cp repo/README.md "$skill_dir/" 2>/dev/null || true
@@ -312,7 +312,7 @@ update_cloudflare_security_audit() {
     if [ -f "$src/SKILL.md" ]; then
         rm -rf "$skill_dir"
         mkdir -p "$skill_dir"
-        cp -r "$src/." "$skill_dir/" 2>/dev/null || true
+        cp -RP "$src/." "$skill_dir/" 2>/dev/null || true
         cp repo/README.md "$skill_dir/" 2>/dev/null || true
         cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
         # frontmatter name 對齊獨立目錄名，避免與既有 security-audit 撞名
@@ -346,7 +346,7 @@ update_sentry_security_review() {
     if [ -d "$src" ] && [ -n "$(ls -A "$src" 2>/dev/null)" ]; then
         rm -rf "$skill_dir"
         mkdir -p "$skill_dir"
-        cp -r "$src/." "$skill_dir/"
+        cp -RP "$src/." "$skill_dir/"
         cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
         echo "  狀態: 已更新"
     else

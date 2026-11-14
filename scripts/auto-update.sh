@@ -161,6 +161,15 @@ if [ -n "$new_links" ]; then
     echo "$new_links" | sed 's/^/[dash-skills]   /'
 fi
 
+# 保險：external/ 不該有符號連結。閘門會隔離，這裡擋閘門沒跑到的情況，
+# 連結若被提交，下一次用會跟隨連結的工具處理時可能把本機檔案內容帶進公開 repo。
+stray_links=$(find external -type l 2>/dev/null)
+if [ -n "$stray_links" ]; then
+    echo "[dash-skills] external/ 有符號連結，停止提交與推送："
+    echo "$stray_links" | sed 's/^/[dash-skills]   /'
+    exit 1
+fi
+
 # 檢查是否有變更
 if [ -n "$(git status --porcelain)" ]; then
     # [4/5] 提交 + 推送

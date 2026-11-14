@@ -121,7 +121,8 @@ def added_lines(name):
     try:
         subprocess.run(["git", "-C", REPO, "read-tree", "HEAD"], env=env, check=True, capture_output=True)
         subprocess.run(["git", "-C", REPO, "add", "-A", "--", f"external/{name}"], env=env, check=True, capture_output=True)
-        diff = subprocess.run(["git", "-C", REPO, "diff", "--cached", "-M", "-U0", "--no-color", "HEAD",
+        diff = subprocess.run(["git", "-C", REPO, "diff", "--cached", "-M", "-U0", "--no-color", "--text",
+                               "--no-ext-diff", "--no-textconv", "HEAD",
                                "--", f"external/{name}"], env=env, check=True, capture_output=True,
                               text=True, errors="replace").stdout
     finally:
@@ -169,8 +170,27 @@ def allowed(allow, name, rule, path):
     return False
 
 
+def structure_blocks(name):
+    """上游目錄裡不該出現的檔案型態，一律擋，不走 allowlist。
+
+    符號連結：同步是在本機複製，連結可以指到 repo 以外的本機檔案。
+    .gitattributes：能把檔案標成不可 diff，added_lines() 就看不到新增的內容。
+    """
+    hits = []
+    root = os.path.join(REPO, "external", name)
+    for base, dirs, files in os.walk(root):
+        for entry in dirs + files:
+            full = os.path.join(base, entry)
+            rel = os.path.relpath(full, REPO)
+            if os.path.islink(full):
+                hits.append(("symlink", rel, "上游目錄含符號連結", os.readlink(full)[:160]))
+            elif entry == ".gitattributes":
+                hits.append(("gitattributes", rel, "上游目錄含 .gitattributes", ""))
+    return hits
+
+
 def check_rules(name, allow):
-    blocks, warns, domains = [], [], set()
+    blocks, warns, domains = structure_blocks(name), [], set()
     for path, lines in added_lines(name).items():
         ext = os.path.splitext(path)[1].lower()
         is_script = ext in SCRIPT_EXTS or os.access(os.path.join(REPO, path), os.X_OK)
