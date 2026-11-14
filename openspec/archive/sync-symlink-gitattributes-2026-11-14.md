@@ -1,12 +1,12 @@
 # 外部 skill 同步：不跟隨符號連結、閘門不受 .gitattributes 影響
 
 - **type**: fix
-- **建立日期**: 2026-11-16
+- **建立日期**: 2026-11-14
 - **status**: completed
 
 ## 背景
 
-2026-11-16 檢查同步流程時找到兩個閘門沒擋到的情況，都在本機重現過：
+2026-11-14 檢查同步流程時找到兩個閘門沒擋到的情況，都在本機重現過：
 
 1. `scripts/update-external.sh` 用 `cp -r` 複製上游目錄。macOS 的 `cp -r` 會跟隨符號連結並複製目標內容，上游目錄裡的連結若指到 repo 以外的本機檔案，該檔內容會變成 `external/` 底下的一般檔案，之後被提交並推送。
 2. `scripts/gate-external.py` 的 `added_lines()` 靠 `git diff` 的新增行跑規則。上游目錄裡放一個 `.gitattributes`（例如 `* -diff`），diff 只印「Binary files differ」，新增行清單是空的，所有差異規則都不會命中。
