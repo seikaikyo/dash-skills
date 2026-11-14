@@ -12,7 +12,7 @@
 # 掃描器未安裝、逾時、個別失敗：明講跳過，不靜默。
 # 報告目錄 security-reports/ 已 gitignore（public repo 不對外發布第三方 skill 的漏洞判定）。
 #
-# SCAN_STATUS_FILE 有設時，逐目錄寫一行 `<name>\t<pass|alert|failed|timeout>` 給 gate-external.py
+# SCAN_STATUS_FILE 有設時，逐目錄寫一行 `<name>\t<pass|alert|failed|timeout|incomplete>` 給 gate-external.py
 # 讀；掃描器未安裝寫 `*\tnot-installed`。檔案由呼叫端清空，這裡只 append。
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -25,6 +25,17 @@ TODAY=$(date +%Y-%m-%d)
 STATUS_FILE="${SCAN_STATUS_FILE:-}"
 
 _status() { [ -n "$STATUS_FILE" ] && printf '%s\t%s\n' "$1" "$2" >> "$STATUS_FILE"; return 0; }
+
+# 報告是否涵蓋全部檔案：沒有完整度欄位、有檔案只做部分檢查或沒檢查、拆分掃描有子目錄失敗，都算不完整。
+# 人工接受的個別檔案列在 security-reports/scan-incomplete-allow.tsv，判定邏輯在 scan-split.py。
+# 用法：_complete <報告> <skill 名稱> [quiet]
+_complete() {
+    if [ "$3" = "quiet" ]; then
+        python3 "$SCRIPT_DIR/scan-split.py" --complete-check "$1" "$2" > /dev/null 2>&1
+    else
+        python3 "$SCRIPT_DIR/scan-split.py" --complete-check "$1" "$2"
+    fi
+}
 
 if ! command -v skillspector > /dev/null 2>&1; then
     echo "[scan-skills] skillspector 未安裝，跳過安檢（安裝: uv tool install git+https://github.com/NVIDIA/skillspector.git）"
@@ -90,6 +101,19 @@ for name in "${targets[@]}"; do
         fi
         failed=$((failed + 1))
         continue
+    fi
+    # 完整度：SkillSpector 的時間上限寫死在程式裡，檔案多的集合整包掃描時多數分析器跑不完，
+    # 報告照樣產出、分數照樣是 0（2026-11-14 trailofbits-security 1639 檔，完整檢查 0 檔仍判通過）。
+    # 不完整就改成逐子目錄掃描再合併；合併後仍不完整回報 incomplete，由閘門隔離。
+    if ! _complete "$report" "$name" quiet; then
+        echo "[scan-skills] 整包掃描不完整，改逐子目錄掃描: $name"
+        python3 "$SCRIPT_DIR/scan-split.py" "$dir" "$report" "${baseline_args[@]:1}"
+        if ! _complete "$report" "$name"; then
+            echo "[scan-skills] 掃描不完整: $name"
+            _status "$name" incomplete
+            failed=$((failed + 1))
+            continue
+        fi
     fi
     scanned=$((scanned + 1))
 

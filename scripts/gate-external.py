@@ -9,6 +9,8 @@
   攻擊者只要把惡意內容加進已列 baseline 的檔案就能避開。所以這裡另對「新增的行」
   做差異檢查，不受 baseline 影響。
 
+檢查前先刪除 external/ 底下被忽略規則蓋到的檔案（見 purge_ignored）。
+
 核心設計：git 已提交的 external/ 就是「已核准版本」。
 某個目錄的更新沒過閘門 → 複製一份到 security-reports/quarantine/ 供人工檢查，
 再用 git 把該目錄還原成 HEAD（新目錄則直接移除）。skill 不會消失，只是停在上一版，
@@ -17,7 +19,7 @@
 判定（任一成立即隔離，fail-closed）：
   1. 差異規則 BLOCK 級命中（見 RULES），且不在 allowlist
   2. SkillSpector 告警（baseline 外的新 HIGH/CRITICAL）
-  3. SkillSpector 掃描失敗、逾時，或未安裝（DASH_SKILLS_ALLOW_UNSCANNED=1 可放行未安裝的情況）
+  3. SkillSpector 掃描失敗、逾時、不完整（有檔案沒被完整檢查），或未安裝（DASH_SKILLS_ALLOW_UNSCANNED=1 可放行未安裝的情況）
 
 人工判讀為誤報後的放行方式：
   - SkillSpector 告警 → 照舊產 baseline（scripts/merge-baseline.py）
@@ -77,10 +79,13 @@ RULES = [
      "腳本讀取本機憑證位置",
      re.compile(r"~/\.ssh\b|\$HOME/\.ssh\b|\.aws/credentials|\.config/gh/hosts|\.claude/\.credentials"
                 r"|\.netrc\b|\bid_(rsa|ed25519|ecdsa)\b|\.docker/config\.json|security\s+find-(generic|internet)-password", re.I)),
-    ("pipe-to-shell-doc", "doc", "WARN",
-     "文件教 agent 用 curl | sh 安裝",
+    ("private-key", "all", "BLOCK",
+     "新增內容含私鑰標頭（本 repo 是公開的，進了 commit 就等於外洩）",
+     re.compile(r"-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----")),
+    ("pipe-to-shell-doc", "doc", "BLOCK",
+     "文件教 agent 用 curl | sh 安裝（skill 的本體是文件，agent 會照做）",
      re.compile(r"\b(curl|wget)\b[^\n|]*\|\s*(sudo\s+)?(ba|z)?sh\b", re.I)),
-    ("credential-path-doc", "doc", "WARN",
+    ("credential-path-doc", "doc", "BLOCK",
      "文件提到本機憑證位置",
      re.compile(r"~/\.ssh\b|\.aws/credentials|\.config/gh/hosts|\.claude/\.credentials|\.netrc\b", re.I)),
 ]
@@ -206,6 +211,20 @@ def run_scanner(names):
     return status
 
 
+def purge_ignored(dry_run):
+    """刪除 external/ 底下被忽略規則蓋到的檔案，回傳路徑清單。
+
+    閘門靠 git 的差異與未追蹤清單找檔案，被忽略的檔案兩邊都看不到：不進差異規則、不會被
+    commit，卻留在磁碟上被連結載入。忽略規則還包含上游自己帶進來的 .gitignore，等於上游
+    能決定哪些檔案不受檢查。這些檔案本來就進不了 repo，直接刪掉讓磁碟與 commit 內容一致。
+    """
+    out = git("ls-files", "--others", "--ignored", "--exclude-standard", "--", "external/", check=False)
+    paths = [p for p in out.splitlines() if p]
+    if paths and not dry_run:
+        git("clean", "-fdqX", "--", "external/", check=False)
+    return paths
+
+
 def quarantine(name, reasons, dry_run):
     src = os.path.join(REPO, "external", name)
     dst = os.path.join(QUARANTINE_DIR, f"{name}-{TODAY}")
@@ -224,13 +243,17 @@ def quarantine(name, reasons, dry_run):
     tracked = git("ls-files", "--", f"external/{name}").strip()
     if tracked:
         git("checkout", "HEAD", "--", f"external/{name}", check=False)
-    git("clean", "-fdq", "--", f"external/{name}", check=False)
+    git("clean", "-fdqx", "--", f"external/{name}", check=False)
 
 
 def main():
     # 被管線接到 sed 時 Python 預設整塊緩衝，要等結束才吐出；改成逐行輸出
     sys.stdout.reconfigure(line_buffering=True)
     dry_run = "--dry-run" in sys.argv
+    ignored = purge_ignored(dry_run)
+    if ignored:
+        print(f"[gate] {'發現' if dry_run else '已刪除'} {len(ignored)} 個被忽略規則蓋到的檔案："
+              f"{', '.join(ignored[:10])}" + ("（dry-run，未刪除）" if dry_run else ""))
     names = changed_dirs()
     if not names:
         print("[gate] external/ 無變更，跳過")
@@ -254,7 +277,7 @@ def main():
         if scanner_down:
             if not allow_unscanned:
                 reasons.append("scanner\t-\tSkillSpector 未安裝，無法掃描（fail-closed）")
-        elif st in ("alert", "failed", "timeout"):
+        elif st in ("alert", "failed", "timeout", "incomplete"):
             reasons.append(f"scanner\t-\tSkillSpector {st}（明細見 security-reports/findings.log 與當日報告）")
         elif st is None and os.path.isdir(os.path.join(REPO, "external", name)):
             reasons.append("scanner\t-\tSkillSpector 沒有回報此目錄的結果（fail-closed）")
