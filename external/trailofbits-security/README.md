@@ -64,6 +64,7 @@ cd /path/to/parent  # e.g., if repo is at ~/projects/skills, be in ~/projects
 | [audit-context-building](plugins/audit-context-building/) | Understand a codebase before looking for bugs in it, one function at a time |
 | [burpsuite-project-parser](plugins/burpsuite-project-parser/) | Search and extract data from Burp Suite project files |
 | [c-review](plugins/c-review/) | Comprehensive C/C++ security code review, with coverage verified against a parse of the source |
+| [cvss-scoring](plugins/cvss-scoring/) | Produce CVSS v4.0 vectors with metric justifications and a calculator link |
 | [differential-review](plugins/differential-review/) | Security-focused differential review of code changes with git history analysis |
 | [dimensional-analysis](plugins/dimensional-analysis/) | Annotate codebases with dimensional analysis comments to detect unit mismatches and formula bugs |
 | [fp-check](plugins/fp-check/) | Systematic false positive verification for security bug analysis with mandatory gate reviews |
@@ -75,7 +76,7 @@ cd /path/to/parent  # e.g., if repo is at ~/projects/skills, be in ~/projects
 | [static-analysis](plugins/static-analysis/) | Static analysis toolkit with CodeQL, Semgrep, and SARIF parsing |
 | [supply-chain-risk-auditor](plugins/supply-chain-risk-auditor/) | Audit npm, PyPI, and Go dependencies for version-matched advisories, abandoned upstreams, publisher concentration, and install scripts |
 | [testing-handbook-skills](plugins/testing-handbook-skills/) | Skills from the [Testing Handbook](https://appsec.guide): fuzzers, static analysis, sanitizers, coverage |
-| [trailmark](plugins/trailmark/) | Code graph analysis, bounded subagent context slicing, Mermaid diagrams, mutation testing triage, and protocol verification |
+| [trailmark](plugins/trailmark/) | Code graph analysis, native taint analyzer modeling, bounded subagent context slicing, Mermaid diagrams, mutation testing triage, and protocol verification |
 | [variant-analysis](plugins/variant-analysis/) | Find similar vulnerabilities across codebases using pattern-based analysis |
 | [vulnerability-triage-brocards](plugins/vulnerability-triage-brocards/) | Triage vulnerability reports using 7 brocards to accept, dismiss, or request more info before deeper analysis |
 
