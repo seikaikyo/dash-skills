@@ -1,7 +1,7 @@
 ---
 title: 整合 Everything Claude Code
 type: feature
-status: in-progress
+status: completed
 spec: everything-claude-code-integration
 created: 2026-01-22
 ---
@@ -64,4 +64,4 @@ created: 2026-01-22
 - [x] 整合 Hooks (hooks-template.json, session-start.sh, session-end.sh, pre-compact.sh)
 - [x] 更新 CLAUDE.md
 - [x] 更新 README.md
-- [ ] 提交變更
+- [x] 提交變更（2026-11-15 歸檔時查證：三個 skill 與 `scripts/hooks/` 的四個檔案都已在 repo 內；上方「實作步驟」的勾選沒跟著更新）

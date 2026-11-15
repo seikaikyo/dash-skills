@@ -2,11 +2,13 @@
 
 - **type**: chore
 - **建立日期**: 2026-11-09
+- **status**: completed（2026-11-11 隨 PR #64 合併）
 
 > **後續修訂（2026-11-10 ～ 11-11）**：本提案的部分內容已被 `audit-followups-2026-11-10.md` 取代，以該提案為準：
 > - `web-design-guidelines` 不再從 main 同步，改為自建（`skills/web-design-guidelines`）。
 > - 另移除 `trailofbits-skills-curated`，最終數量是自建 20、外部 25（本文的 19 / 27 是這一步當下的數字）。
 > - 「重跑 `link.sh` 後移除死連結」原本不成立（`link.sh` 沒有移除邏輯），已在後續提案補上。
+> - 2026-11-15 再移除 `trailofbits-security`（見 `drop-trailofbits-security-2026-11-15.md`），外部剩 24 個。
 
 ## 背景
 

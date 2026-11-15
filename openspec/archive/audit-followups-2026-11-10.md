@@ -2,6 +2,11 @@
 
 - **type**: fix
 - **建立日期**: 2026-11-10
+- **status**: completed（2026-11-11 隨 PR #64 合併）
+
+> **後續（2026-11-15）**：
+> - 再移除 `trailofbits-security`，外部剩 24 個（見 `drop-trailofbits-security-2026-11-15.md`）。「其餘三個集合型目錄」剩 `sentry-security-review` 與 `neon-skills`。
+> - 「直接執行 `update-external.sh` 會跳過閘門就提交」仍未處理：2026-11-15 實際發生一次，因推送被沙箱擋下才撤回。
 
 ## 背景
 
