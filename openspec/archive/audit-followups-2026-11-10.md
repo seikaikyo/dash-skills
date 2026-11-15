@@ -6,7 +6,7 @@
 
 > **後續（2026-11-15）**：
 > - 再移除 `trailofbits-security`，外部剩 24 個（見 `drop-trailofbits-security-2026-11-15.md`）。「其餘三個集合型目錄」剩 `sentry-security-review` 與 `neon-skills`。
-> - 「直接執行 `update-external.sh` 會跳過閘門就提交」仍未處理：2026-11-15 實際發生一次，因推送被沙箱擋下才撤回。
+> - 「直接執行 `update-external.sh` 會跳過閘門就提交」：2026-11-15 實際發生一次（推送被沙箱擋下才撤回），同日移除該腳本結尾的自動提交與推送，提交只走 `auto-update.sh`。
 
 ## 背景
 

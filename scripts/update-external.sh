@@ -591,21 +591,10 @@ fi
 echo ""
 echo "同步完成!"
 
-# === 自動 commit + push ===
-# 從 auto-update.sh 呼叫時跳過（由呼叫端統一 redact + commit + push）
+# 這支腳本只負責同步，不提交、不推送（2026-11-15）：直接執行時新內容沒經過裝載前閘門，
+# 以前結尾的自動 commit + push 會把沒檢查的上游內容連同工作區其他改動一起推上公開 repo。
+# 提交一律走 scripts/auto-update.sh（同步 → 閘門 → 提交）。
 if [ -z "$DASH_SKILLS_NO_PUSH" ]; then
-    cd "$REPO_DIR"
-    if [ -n "$(git status --porcelain)" ]; then
-        TODAY=$(date +%Y-%m-%d)
-        # 指名 stage（2026-07-25）：public repo 禁 git add -A
-        git add external openspec pi-agent scripts skills *.md 2>/dev/null || true
-        git commit -m "chore: daily external skills sync ($TODAY)"
-        git push
-        echo ""
-        echo "已自動 commit 並推送 ($TODAY)"
-    else
-        echo "無變更，跳過 commit"
-    fi
-else
-    echo "跳過 commit（由呼叫端處理）"
+    echo "external/ 已更新但尚未經過閘門檢查，也沒有提交。"
+    echo "要檢查並提交：rm -f .last-update && ./scripts/auto-update.sh"
 fi

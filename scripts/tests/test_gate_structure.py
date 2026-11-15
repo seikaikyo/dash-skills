@@ -161,6 +161,12 @@ class StructureTest(test_gate.GateTest):
         self.assertIn("gate-external.py --stray-links", text)
         self.assertNotIn("find external -type l", text)
 
+    def test_sync_script_never_commits(self):
+        """直接執行同步腳本時新內容沒過閘門，只有 auto-update.sh 可以提交與推送。"""
+        with open(os.path.join(SCRIPTS, "update-external.sh")) as f:
+            code = [ln for ln in f if not ln.lstrip().startswith("#")]
+        self.assertFalse([ln for ln in code if re.search(r"\bgit\s+(add|commit|push)\b", ln)])
+
     def test_sync_script_never_follows_symlinks(self):
         """BSD cp -r 會跟著符號連結走並複製目標內容，同步腳本只准用 cp -RP。"""
         with open(os.path.join(SCRIPTS, "update-external.sh")) as f:
