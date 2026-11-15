@@ -2,7 +2,7 @@
 
 - **type**: fix
 - **建立日期**: 2026-11-15
-- **status**: in-progress
+- **status**: completed
 
 ## 背景
 
