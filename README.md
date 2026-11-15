@@ -10,7 +10,7 @@
 
 ## 包含的 Skills
 
-> 自建 20 個 (`skills/`) + 外部收錄 25 個 (`external/`)。外部 skill 每日從上游自動同步。
+> 自建 20 個 (`skills/`) + 外部收錄 24 個 (`external/`)。外部 skill 每日從上游自動同步。
 
 ### 自建 Skills (`skills/`)
 
@@ -70,7 +70,6 @@
 
 | Skill | 描述 | 來源 |
 |-------|------|------|
-| **trailofbits-security** | 安全分析 plugin (CodeQL / Semgrep) | trailofbits/skills |
 | **sentry-security-review** | Sentry 慣例 commit + 安全審查 | getsentry/skills |
 | **cloudflare-security-audit** | 多 agent 編排式滲透審計 (偵察 / 攻擊類別 / 驗證報告) | cloudflare/security-audit-skill |
 
@@ -171,7 +170,6 @@ SeiKai Kyo (許正解)
 - [Anthropic](https://github.com/anthropics/skills) -- 官方 skills(文件處理 / 設計 / mcp-builder 等)
 - [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, deploy-to-vercel, vercel-optimize
 - [Neon](https://github.com/neondatabase) -- neon-skills
-- [Trail of Bits](https://github.com/trailofbits) -- 安全 plugin
 - [Cloudflare](https://github.com/cloudflare/security-audit-skill) -- cloudflare-security-audit
 - [Sentry](https://github.com/getsentry/skills) -- sentry-security-review
 - 自建 skill 中改寫或內化的來源：nextlevelbuilder/ui-ux-pro-max-skill (MIT)、everything-claude-code (MIT)、tGD (Apache-2.0)

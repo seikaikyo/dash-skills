@@ -248,43 +248,8 @@ update_doc_coauthoring() { _update_anthropic_skill "doc-coauthoring"; }
 
 # === 安全 / 資安類 Skills ===
 
-# 函數：更新 trailofbits-security (35+ security plugins)
-update_trailofbits_security() {
-    local skill_dir="$EXTERNAL_DIR/trailofbits-security"
-    local temp_dir=$(mktemp -d)
-    local repo="trailofbits/skills"
-
-    echo "更新: trailofbits-security (35+ plugins)"
-    echo "  來源: https://github.com/$repo"
-
-    cd "$temp_dir"
-    if ! git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null; then
-        echo "  狀態: 跳過（repo 不可用）"
-        rm -rf "$temp_dir"
-        return 0
-    fi
-
-    if [ -d "repo" ]; then
-        rm -rf "$skill_dir"
-        mkdir -p "$skill_dir"
-        # 複製所有 plugin 目錄（排除 .git 和非 skill 檔案）
-        for dir in repo/*/; do
-            local dirname=$(basename "$dir")
-            [ "$dirname" = ".git" ] && continue
-            [ "$dirname" = ".github" ] && continue
-            [ -d "$dir" ] && cp -RP "$dir" "$skill_dir/"
-        done
-        cp repo/CLAUDE.md "$skill_dir/" 2>/dev/null || true
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        echo "  狀態: 已更新"
-        echo "  包含: $(ls -1d "$skill_dir"/*/ 2>/dev/null | wc -l | tr -d ' ') plugins"
-    else
-        echo "  狀態: 失敗"
-    fi
-
-    rm -rf "$temp_dir"
-}
-
+# trailofbits-security 不再同步（2026-11-15）：Claude Code 載入不到的集合型目錄，平常沒在用，
+# 卻是 external/ 最大的一包；改以官方文件自建需要的 skill。
 
 # trailofbits-skills-curated 不再同步（2026-11-10）：內容是 Trail of Bits 轉載的第三方作者 skill，
 # 不是原廠自己寫的；其中 wooyun-legacy 是攻擊手法庫。集合型目錄 Claude Code 也載入不到。
@@ -385,7 +350,6 @@ show_available() {
     echo "  - vercel-optimize         (Vercel Labs, 成本與效能優化審查)"
     echo ""
     echo "  安全 / 資安類:"
-    echo "  - trailofbits-security       (Trail of Bits, 35+ security plugins)"
     echo "  - cloudflare-security-audit  (Cloudflare, 多 agent 編排式滲透審計)"
     echo "  - sentry-security-review     (Sentry 官方, security code review)"
     echo ""
@@ -409,7 +373,6 @@ if [ $# -eq 0 ]; then
         update_neon_skills
         update_frontend_design
         update_doc_coauthoring
-        update_trailofbits_security
         update_cloudflare_security_audit
         update_sentry_security_review
         update_canvas_design
@@ -551,9 +514,6 @@ else
                 ;;
             "doc-coauthoring"|"doc")
                 update_doc_coauthoring
-                ;;
-            "trailofbits-security"|"trailofbits"|"tob")
-                update_trailofbits_security
                 ;;
             "cloudflare-security-audit"|"cf-audit"|"cloudflare-audit")
                 update_cloudflare_security_audit

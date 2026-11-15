@@ -10,7 +10,7 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 ## 収録スキル
 
-> 自作 20 個 (`skills/`) + 外部収録 25 個 (`external/`)。外部スキルは毎日上流から自動同期。
+> 自作 20 個 (`skills/`) + 外部収録 24 個 (`external/`)。外部スキルは毎日上流から自動同期。
 
 ### 自作 (`skills/`)
 
@@ -70,7 +70,6 @@ Claude Code のスキルを一元管理 -- 自作の技術スタック規範 + �
 
 | スキル | 説明 | ソース |
 |--------|------|--------|
-| **trailofbits-security** | セキュリティ分析プラグイン (CodeQL / Semgrep) | trailofbits/skills |
 | **sentry-security-review** | Sentry 規約コミット + セキュリティレビュー | getsentry/skills |
 | **cloudflare-security-audit** | マルチエージェント編成型ペネトレーション監査 (偵察 / 攻撃クラス / 検証レポート) | cloudflare/security-audit-skill |
 
@@ -156,7 +155,6 @@ SeiKai Kyo
 - [Anthropic](https://github.com/anthropics/skills) -- 公式 skills（ドキュメント処理 / デザイン / mcp-builder など）
 - [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, deploy-to-vercel, vercel-optimize
 - [Neon](https://github.com/neondatabase) -- neon-skills
-- [Trail of Bits](https://github.com/trailofbits) -- セキュリティプラグイン
 - [Cloudflare](https://github.com/cloudflare/security-audit-skill) -- cloudflare-security-audit
 - [Sentry](https://github.com/getsentry/skills) -- sentry-security-review
 - 自作スキルのうち改作・取り込み元：nextlevelbuilder/ui-ux-pro-max-skill (MIT)、everything-claude-code (MIT)、tGD (Apache-2.0)

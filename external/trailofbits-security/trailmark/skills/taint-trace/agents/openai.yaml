@@ -1,3 +1,0 @@
-interface:
-  display_name: "Taint Trace"
-  short_description: "Enrich native taint models using Trailmark graph evidence"

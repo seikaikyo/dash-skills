@@ -10,7 +10,7 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 ## Included Skills
 
-> 20 custom (`skills/`) + 25 external (`external/`). External skills auto-sync daily from upstream.
+> 20 custom (`skills/`) + 24 external (`external/`). External skills auto-sync daily from upstream.
 
 ### Custom (`skills/`)
 
@@ -70,7 +70,6 @@ Centralized management of Claude Code Skills -- custom tech-stack standards + cu
 
 | Skill | Description | Source |
 |-------|-------------|--------|
-| **trailofbits-security** | Security analysis plugins (CodeQL / Semgrep) | trailofbits/skills |
 | **sentry-security-review** | Sentry-convention commits + security review | getsentry/skills |
 | **cloudflare-security-audit** | Multi-agent orchestrated penetration audit (recon / attack classes / validated reporting) | cloudflare/security-audit-skill |
 
@@ -156,7 +155,6 @@ External skills come from open-source communities, licensed per source. Main sou
 - [Anthropic](https://github.com/anthropics/skills) -- official skills (document processing / design / mcp-builder, etc.)
 - [Vercel Labs](https://github.com/vercel-labs) -- react-best-practices, agent-browser, deploy-to-vercel, vercel-optimize
 - [Neon](https://github.com/neondatabase) -- neon-skills
-- [Trail of Bits](https://github.com/trailofbits) -- security plugins
 - [Cloudflare](https://github.com/cloudflare/security-audit-skill) -- cloudflare-security-audit
 - [Sentry](https://github.com/getsentry/skills) -- sentry-security-review
 - Custom skills adapted or vendored from: nextlevelbuilder/ui-ux-pro-max-skill (MIT), everything-claude-code (MIT), tGD (Apache-2.0)
