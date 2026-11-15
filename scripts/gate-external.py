@@ -27,6 +27,8 @@
       <skill>\t<rule>\t<檔案路徑 glob>[\t<sha256>]
     有 sha256 時只放行該檔這一版內容；省略則放行該路徑往後所有內容（僅用於資安教材這類
     必然含攻擊範例的文件）。
+  - 符號連結 → 指到同一個集合內一般檔案的（規則 symlink）可照上面加一行，雜湊必填；
+    其餘的連結（symlink-outside）與 .gitattributes 一律隔離，放行清單對它們沒有作用。
   放行後重跑同步即可（auto-update.sh 以 .last-update 控制一天一次，刪掉該檔即可重跑）。
 
 用法：
@@ -140,6 +142,10 @@ def added_lines(name):
 
 
 def file_sha256(path):
+    """檔案內容的雜湊。符號連結算連結文字本身，連結改指別處雜湊就變。"""
+    full = os.path.join(REPO, path)
+    if os.path.islink(full):
+        return hashlib.sha256(("symlink:" + os.readlink(full)).encode()).hexdigest()
     try:
         with open(os.path.join(REPO, path), "rb") as f:
             return hashlib.sha256(f.read()).hexdigest()
@@ -170,27 +176,77 @@ def allowed(allow, name, rule, path):
     return False
 
 
-def structure_blocks(name):
-    """上游目錄裡不該出現的檔案型態，一律擋，不走 allowlist。
+def link_stays_inside(name, full):
+    """連結是不是指到同一個集合裡的一般檔案。
 
-    符號連結：同步是在本機複製，連結可以指到 repo 以外的本機檔案。
-    .gitattributes：能把檔案標成不可 diff，added_lines() 就看不到新增的內容。
+    字面路徑與解析後的路徑都要落在 external/<name> 內；絕對路徑、指到目錄、
+    目標不存在都不算。
+    """
+    target = os.readlink(full)
+    if os.path.isabs(target):
+        return False
+    root = os.path.join(REPO, "external", name)
+    literal = os.path.normpath(os.path.join(os.path.dirname(full), target))
+    real_root, real = os.path.realpath(root), os.path.realpath(full)
+    for top, path in ((root, literal), (real_root, real)):
+        if path == top or os.path.commonpath([top, path]) != top:
+            return False
+    return os.path.isfile(real)
+
+
+def link_allowed(allow, name, path):
+    """符號連結的放行比其他規則嚴：規則欄要寫 symlink（* 不算），雜湊必填。"""
+    sha = file_sha256(path)
+    return any(a_name == name and a_rule == "symlink" and a_sha and a_sha == sha
+               and fnmatch.fnmatch(path, a_glob)
+               for a_name, a_rule, a_glob, a_sha in allow)
+
+
+def structure_blocks(name, allow):
+    """上游目錄裡不該出現的檔案型態。
+
+    符號連結：同步是在本機複製，連結可以指到 repo 以外的本機檔案。指到集合外的
+    一律擋（symlink-outside）；留在同一個集合內的（symlink）要放行清單有雜湊相符的一行才過。
+    .gitattributes：能把檔案標成不可 diff，added_lines() 就看不到新增的內容，一律擋。
     """
     hits = []
     root = os.path.join(REPO, "external", name)
+    if os.path.islink(root):
+        return [("symlink-outside", os.path.relpath(root, REPO), "集合目錄本身是符號連結",
+                 os.readlink(root)[:160])]
     for base, dirs, files in os.walk(root):
         for entry in dirs + files:
             full = os.path.join(base, entry)
             rel = os.path.relpath(full, REPO)
             if os.path.islink(full):
-                hits.append(("symlink", rel, "上游目錄含符號連結", os.readlink(full)[:160]))
+                sample = os.readlink(full)[:160]
+                if not link_stays_inside(name, full):
+                    hits.append(("symlink-outside", rel, "符號連結沒有指到同一個集合內的一般檔案", sample))
+                elif not link_allowed(allow, name, rel):
+                    hits.append(("symlink", rel, "上游目錄含符號連結（目標在同一個集合內）", sample))
             elif entry == ".gitattributes":
                 hits.append(("gitattributes", rel, "上游目錄含 .gitattributes", ""))
     return hits
 
 
+# 放行清單對這些規則沒有作用，隔離時不印「誤報放行」的指令
+NO_ALLOW_RULES = {"scanner", "symlink-outside", "gitattributes"}
+
+
+def stray_links():
+    """external/ 底下沒通過 structure_blocks 的符號連結，給提交前的保險檢查用。"""
+    allow = load_allow()
+    top = os.path.join(REPO, "external")
+    found = []
+    for name in sorted(os.listdir(top)) if os.path.isdir(top) else []:
+        full = os.path.join(top, name)
+        if os.path.islink(full) or os.path.isdir(full):
+            found += [path for rule, path, _, _ in structure_blocks(name, allow) if rule.startswith("symlink")]
+    return found
+
+
 def check_rules(name, allow):
-    blocks, warns, domains = structure_blocks(name), [], set()
+    blocks, warns, domains = structure_blocks(name, allow), [], set()
     for path, lines in added_lines(name).items():
         ext = os.path.splitext(path)[1].lower()
         is_script = ext in SCRIPT_EXTS or os.access(os.path.join(REPO, path), os.X_OK)
@@ -269,6 +325,10 @@ def quarantine(name, reasons, dry_run):
 def main():
     # 被管線接到 sed 時 Python 預設整塊緩衝，要等結束才吐出；改成逐行輸出
     sys.stdout.reconfigure(line_buffering=True)
+    if "--stray-links" in sys.argv:
+        links = stray_links()
+        print("\n".join(links), end="\n" if links else "")
+        return 1 if links else 0
     dry_run = "--dry-run" in sys.argv
     ignored = purge_ignored(dry_run)
     if ignored:
@@ -320,7 +380,7 @@ def main():
             print(f"[gate] 隔離 {name}：退回上一個已提交版本" + ("（dry-run，未還原）" if dry_run else ""))
             for (rule, path, desc), sha in hints:
                 print(f"[gate]   - {rule} {path}：{desc}")
-                if rule != "scanner":
+                if rule not in NO_ALLOW_RULES:
                     print(f"[gate]     誤報放行：printf '%s\\t%s\\t%s\\t%s\\n' '{name}' '{rule}' '{path}' '{sha}' >> security-reports/gate-allow.tsv")
         else:
             passed.append(name)

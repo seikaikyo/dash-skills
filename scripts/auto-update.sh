@@ -161,11 +161,11 @@ if [ -n "$new_links" ]; then
     echo "$new_links" | sed 's/^/[dash-skills]   /'
 fi
 
-# 保險：external/ 不該有符號連結。閘門會隔離，這裡擋閘門沒跑到的情況，
+# 保險：external/ 的符號連結只准指到同一個集合內的檔案，而且要在放行清單裡。
+# 閘門會隔離，這裡擋閘門沒跑到的情況；檢查本身跑失敗也停。
 # 連結若被提交，下一次用會跟隨連結的工具處理時可能把本機檔案內容帶進公開 repo。
-stray_links=$(find external -type l 2>/dev/null)
-if [ -n "$stray_links" ]; then
-    echo "[dash-skills] external/ 有符號連結，停止提交與推送："
+if ! stray_links=$(python3 ./scripts/gate-external.py --stray-links 2>&1); then
+    echo "[dash-skills] external/ 有未放行的符號連結，停止提交與推送："
     echo "$stray_links" | sed 's/^/[dash-skills]   /'
     exit 1
 fi
