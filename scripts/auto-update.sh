@@ -44,6 +44,12 @@ fi
 echo $$ > "$LOCK_DIR/pid"
 trap 'rm -rf "$LOCK_DIR"' EXIT
 
+# 把 external/ 整個退回 HEAD：HEAD 沒有的檔案一併移除
+_restore_external() {
+    git checkout HEAD -- external > /dev/null 2>&1
+    git clean -fdqx -- external > /dev/null 2>&1
+}
+
 # 保存原始目錄，結束時還原（sourced 時會影響 shell 工作目錄）
 _dash_original_dir="$PWD"
 
@@ -154,6 +160,15 @@ fi
 # 被擋下的內容存到 security-reports/quarantine/ 供人工判讀。詳見 scripts/gate-external.py
 echo "[dash-skills] [3/5] 外部 skills 裝載前閘門..."
 python3 -u ./scripts/gate-external.py 2>&1 | sed 's/^/[dash-skills]   /'
+gate_exit=${PIPESTATUS[0]}
+# 閘門沒有正常跑完（崩潰、檢查出錯）就不能信任 external/ 的現況：整個退回 HEAD，
+# 不重建連結、不提交。2026-11-16 審查確認：上游放一個無法解碼的位元組就能讓閘門在退回前中止，
+# 以前這裡只看得到 sed 的結束碼，沒過閘門的內容照樣被提交推送。
+if [ "$gate_exit" -ne 0 ]; then
+    echo "[dash-skills] 閘門沒有正常完成（結束碼 $gate_exit），external/ 退回上一個已提交版本，停止提交與推送"
+    _restore_external
+    exit 1
+fi
 
 # 重建 ~/.claude/skills symlink，新增的 external skill 才會被 Claude Code 載入
 new_links=$(./scripts/link.sh 2>&1 | grep "建立連結" || true)

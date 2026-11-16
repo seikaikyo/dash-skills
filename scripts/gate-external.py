@@ -95,7 +95,14 @@ URL_RE = re.compile(r"https?://([A-Za-z0-9.-]+\.[A-Za-z]{2,})")
 
 
 def git(*args, check=True):
-    return subprocess.run(["git", "-C", REPO, *args], capture_output=True, text=True, check=check).stdout
+    # 上游檔案可能含無法以 UTF-8 解碼的位元組，解碼失敗不能讓閘門在退回前中止
+    return subprocess.run(["git", "-C", REPO, *args], capture_output=True, text=True,
+                          errors="replace", check=check).stdout
+
+
+def sh_quote(value):
+    """放行指令的欄位一律包單引號並跳脫內含的單引號；一般檔名的輸出跟以前相同。"""
+    return "'" + value.replace("'", "'\\''") + "'"
 
 
 def changed_dirs():
@@ -304,18 +311,25 @@ def purge_ignored(dry_run):
 def quarantine(name, reasons, dry_run):
     src = os.path.join(REPO, "external", name)
     dst = os.path.join(QUARANTINE_DIR, f"{name}-{TODAY}")
-    os.makedirs(QUARANTINE_DIR, exist_ok=True)
-    if os.path.isdir(src):
-        shutil.rmtree(dst, ignore_errors=True)
-        shutil.copytree(src, dst, symlinks=True)
-        diff = git("diff", "HEAD", "--no-color", "--", f"external/{name}", check=False)
-        with open(dst + ".diff", "w", encoding="utf-8") as f:
-            f.write(diff)
-    with open(QUARANTINE_LOG, "a", encoding="utf-8") as f:
-        for r in reasons:
-            f.write(f"{TODAY}\t{name}\t{r}\n")
-    if dry_run:
-        return
+    # 留存副本或寫紀錄失敗也要退回，所以退回放在 finally
+    try:
+        os.makedirs(QUARANTINE_DIR, exist_ok=True)
+        if os.path.isdir(src):
+            shutil.rmtree(dst, ignore_errors=True)
+            shutil.copytree(src, dst, symlinks=True)
+            diff = git("diff", "HEAD", "--no-color", "--", f"external/{name}", check=False)
+            with open(dst + ".diff", "w", encoding="utf-8") as f:
+                f.write(diff)
+        with open(QUARANTINE_LOG, "a", encoding="utf-8") as f:
+            for r in reasons:
+                f.write(f"{TODAY}\t{name}\t{r}\n")
+    finally:
+        if not dry_run:
+            restore(name)
+
+
+def restore(name):
+    """把 external/<name> 退回 HEAD；HEAD 沒有的檔案（含整個新目錄）直接移除。"""
     tracked = git("ls-files", "--", f"external/{name}").strip()
     if tracked:
         git("checkout", "HEAD", "--", f"external/{name}", check=False)
@@ -347,48 +361,66 @@ def main():
     scanner_down = status.get("*") == "not-installed"
     allow_unscanned = os.environ.get("DASH_SKILLS_ALLOW_UNSCANNED") == "1"
 
-    passed, blocked = [], []
+    passed, blocked, errored = [], [], []
     for name in names:
-        reasons = []
-        blocks, warns, domains = check_rules(name, allow)
-        for rule, path, desc, sample in blocks:
-            reasons.append(f"{rule}\t{path}\t{desc}\t{sample}")
-        st = status.get(name)
-        if scanner_down:
-            if not allow_unscanned:
-                reasons.append("scanner\t-\tSkillSpector 未安裝，無法掃描（fail-closed）")
-        elif st in ("alert", "failed", "timeout", "incomplete"):
-            reasons.append(f"scanner\t-\tSkillSpector {st}（明細見 security-reports/findings.log 與當日報告）")
-        elif st is None and os.path.isdir(os.path.join(REPO, "external", name)):
-            reasons.append("scanner\t-\tSkillSpector 沒有回報此目錄的結果（fail-closed）")
+        try:
+            if gate_one(name, allow, status, scanner_down, allow_unscanned, dry_run):
+                blocked.append(name)
+            else:
+                passed.append(name)
+        except Exception as e:  # 任何例外都先退回這個集合，再檢查下一個
+            errored.append(name)
+            print(f"[gate] 檢查 {name} 時出錯（{type(e).__name__}: {e}），退回上一個已提交版本"
+                  + ("（dry-run，未還原）" if dry_run else ""))
+            if not dry_run:
+                restore(name)
 
-        for rule, path, desc, sample in warns:
-            print(f"[gate]   注意 {name}: {rule} {path}（{desc}）")
-        if domains:
-            committed = git("grep", "-h", "-o", "-I", "-E", r"https?://[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
-                            "HEAD", "--", f"external/{name}", check=False)
-            known = {m.lower() for m in URL_RE.findall(committed)}
-            new = sorted(d for d in domains if d not in known)
-            if new:
-                print(f"[gate]   注意 {name}: 新增的網域 {', '.join(new[:10])}")
-
-        if reasons:
-            blocked.append(name)
-            # 雜湊要在還原前算，還原後檔案就變回舊版或不存在了
-            hints = [(r.split("\t")[:3], file_sha256(r.split("\t")[1])) for r in reasons]
-            quarantine(name, reasons, dry_run)
-            print(f"[gate] 隔離 {name}：退回上一個已提交版本" + ("（dry-run，未還原）" if dry_run else ""))
-            for (rule, path, desc), sha in hints:
-                print(f"[gate]   - {rule} {path}：{desc}")
-                if rule not in NO_ALLOW_RULES:
-                    print(f"[gate]     誤報放行：printf '%s\\t%s\\t%s\\t%s\\n' '{name}' '{rule}' '{path}' '{sha}' >> security-reports/gate-allow.tsv")
-        else:
-            passed.append(name)
-
-    print(f"[gate] 完成：通過 {len(passed)}、隔離 {len(blocked)}")
+    print(f"[gate] 完成：通過 {len(passed)}、隔離 {len(blocked)}"
+          + (f"、出錯退回 {len(errored)}" if errored else ""))
     if blocked:
         print(f"[gate] 被隔離的更新複本與 diff：security-reports/quarantine/（人工判讀後再決定放行）")
-    return 0
+    # 出錯時以非 0 結束，auto-update.sh 看到就把整個 external/ 退回並停止提交
+    return 1 if errored else 0
+
+
+def gate_one(name, allow, status, scanner_down, allow_unscanned, dry_run):
+    """檢查一個集合，不合格就隔離並回傳 True。"""
+    reasons = []
+    blocks, warns, domains = check_rules(name, allow)
+    for rule, path, desc, sample in blocks:
+        reasons.append(f"{rule}\t{path}\t{desc}\t{sample}")
+    st = status.get(name)
+    if scanner_down:
+        if not allow_unscanned:
+            reasons.append("scanner\t-\tSkillSpector 未安裝，無法掃描（fail-closed）")
+    elif st in ("alert", "failed", "timeout", "incomplete"):
+        reasons.append(f"scanner\t-\tSkillSpector {st}（明細見 security-reports/findings.log 與當日報告）")
+    elif st is None and os.path.isdir(os.path.join(REPO, "external", name)):
+        reasons.append("scanner\t-\tSkillSpector 沒有回報此目錄的結果（fail-closed）")
+
+    for rule, path, desc, sample in warns:
+        print(f"[gate]   注意 {name}: {rule} {path}（{desc}）")
+    if domains:
+        committed = git("grep", "-h", "-o", "-I", "-E", r"https?://[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
+                        "HEAD", "--", f"external/{name}", check=False)
+        known = {m.lower() for m in URL_RE.findall(committed)}
+        new = sorted(d for d in domains if d not in known)
+        if new:
+            print(f"[gate]   注意 {name}: 新增的網域 {', '.join(new[:10])}")
+
+    if not reasons:
+        return False
+    # 雜湊要在還原前算，還原後檔案就變回舊版或不存在了
+    hints = [(r.split("\t")[:3], file_sha256(r.split("\t")[1])) for r in reasons]
+    quarantine(name, reasons, dry_run)
+    print(f"[gate] 隔離 {name}：退回上一個已提交版本" + ("（dry-run，未還原）" if dry_run else ""))
+    for (rule, path, desc), sha in hints:
+        print(f"[gate]   - {rule} {path if path.isprintable() else repr(path)}：{desc}")
+        # 路徑含控制字元時不印放行指令：終端機上看到的跟貼上去的內容會不一樣
+        if rule not in NO_ALLOW_RULES and path.isprintable():
+            fields = " ".join(sh_quote(x) for x in (name, rule, path, sha))
+            print(f"[gate]     誤報放行：printf '%s\\t%s\\t%s\\t%s\\n' {fields} >> security-reports/gate-allow.tsv")
+    return True
 
 
 if __name__ == "__main__":

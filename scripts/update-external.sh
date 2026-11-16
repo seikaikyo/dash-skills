@@ -13,6 +13,33 @@ EXTERNAL_DIR="$REPO_DIR/external"
 echo "=== Dash Skills - 外部 Skill 同步 ==="
 echo ""
 
+# 上游 clone 裡的符號連結可以指到 repo 以外的本機路徑。cp -RP 只把連結原樣複製，
+# 但路徑中間有一層是連結時，cp 會穿過它讀進外部目錄的內容；不帶 -P 的 cp 會跟著
+# 目的地的連結寫到外部檔案（2026-11-16 審查確認）。下面兩個函式擋這兩種情況。
+
+# 相對路徑的每一層都存在且不是符號連結，最後一層是目錄
+_src_dir_ok() {
+    local path="$1" cur="" part
+    local IFS=/
+    for part in $path; do
+        cur="${cur:+$cur/}$part"
+        if [ -L "$cur" ] || [ ! -e "$cur" ]; then
+            return 1
+        fi
+    done
+    [ -d "$path" ]
+}
+
+# 從 clone 複製固定檔名的單一檔案：來源要是一般檔案，目的地先刪掉再複製，都不跟隨連結
+_copy_plain() {
+    local from="$1" to="$2"
+    if [ -L "$from" ] || [ ! -f "$from" ]; then
+        return 0
+    fi
+    rm -f -- "$to"
+    cp -P -- "$from" "$to"
+}
+
 # 函數：更新 react-best-practices
 update_react_best_practices() {
     local skill_dir="$EXTERNAL_DIR/react-best-practices"
@@ -31,7 +58,7 @@ update_react_best_practices() {
     cd repo
     git sparse-checkout set skills/react-best-practices 2>/dev/null
 
-    if [ -d "skills/react-best-practices" ]; then
+    if _src_dir_ok "skills/react-best-practices"; then
         rm -rf "$skill_dir"
         cp -RP skills/react-best-practices "$skill_dir"
         echo "  狀態: 已更新"
@@ -60,21 +87,11 @@ update_agent_browser() {
     cd repo
     git sparse-checkout set skills/agent-browser 2>/dev/null
 
-    if [ -d "skills/agent-browser" ]; then
-        # 保留本地的 EXTENSIONS.md
-        local has_extensions=false
-        if [ -f "$skill_dir/EXTENSIONS.md" ]; then
-            cp "$skill_dir/EXTENSIONS.md" "$temp_dir/EXTENSIONS.md.bak"
-            has_extensions=true
-        fi
-
+    # 以前會保留本地的 EXTENSIONS.md 並在複製後寫回，2026-11-16 移除：
+    # 這個檔案早已不存在，寫回那一步卻會跟著上游放的同名連結寫到 repo 外面
+    if _src_dir_ok "skills/agent-browser"; then
         rm -rf "$skill_dir"
         cp -RP skills/agent-browser "$skill_dir"
-
-        if [ "$has_extensions" = true ]; then
-            cp "$temp_dir/EXTENSIONS.md.bak" "$skill_dir/EXTENSIONS.md"
-        fi
-
         echo "  狀態: 已更新"
     else
         echo "  狀態: 失敗"
@@ -98,7 +115,7 @@ update_neon_skills() {
     cd "$temp_dir"
     git clone --depth 1 "https://github.com/$repo.git" repo 2>/dev/null
 
-    if [ -d "repo/neon-plugin/skills" ]; then
+    if _src_dir_ok "repo/neon-plugin/skills"; then
         rm -rf "$skill_dir"
         mkdir -p "$skill_dir"
         cp -RP repo/neon-plugin/skills/* "$skill_dir/"
@@ -135,7 +152,7 @@ _update_anthropic_skill() {
     cd repo
     git sparse-checkout set "skills/$name" 2>/dev/null
 
-    if [ -d "skills/$name" ]; then
+    if _src_dir_ok "skills/$name"; then
         rm -rf "$skill_dir"
         cp -RP "skills/$name" "$skill_dir"
         echo "  狀態: 已更新"
@@ -220,7 +237,7 @@ _update_vercel_agent_skill() {
     cd repo
     git sparse-checkout set "skills/$name" 2>/dev/null
 
-    if [ -d "skills/$name" ]; then
+    if _src_dir_ok "skills/$name"; then
         rm -rf "$skill_dir"
         cp -RP "skills/$name" "$skill_dir"
         echo "  狀態: 已更新"
@@ -274,12 +291,13 @@ update_cloudflare_security_audit() {
     # 2026-10 上游把檔案從 repo 根目錄移到 skills/security-audit/；整個目錄複製，
     # 不再逐檔列舉（上游常新增 .md / .cjs，列舉會漏）。README 與 LICENSE 仍在根。
     local src="repo/skills/security-audit"
-    if [ -f "$src/SKILL.md" ]; then
+    # SKILL.md 要是一般檔案：下面的 sed -i 會讀它並寫回，連結會把外部檔案內容帶進來
+    if _src_dir_ok "$src" && [ -f "$src/SKILL.md" ] && [ ! -L "$src/SKILL.md" ]; then
         rm -rf "$skill_dir"
         mkdir -p "$skill_dir"
         cp -RP "$src/." "$skill_dir/" 2>/dev/null || true
-        cp repo/README.md "$skill_dir/" 2>/dev/null || true
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        _copy_plain repo/README.md "$skill_dir/README.md"
+        _copy_plain repo/LICENSE "$skill_dir/LICENSE"
         # frontmatter name 對齊獨立目錄名，避免與既有 security-audit 撞名
         sed -i '' 's/^name: security-audit$/name: cloudflare-security-audit/' "$skill_dir/SKILL.md"
         echo "  狀態: 已更新"
@@ -308,11 +326,11 @@ update_sentry_security_review() {
 
     # 2026-10 上游把 skills 從 plugins/sentry-skills/skills/ 移到根目錄 skills/。
     local src="repo/skills"
-    if [ -d "$src" ] && [ -n "$(ls -A "$src" 2>/dev/null)" ]; then
+    if _src_dir_ok "$src" && [ -n "$(ls -A "$src" 2>/dev/null)" ]; then
         rm -rf "$skill_dir"
         mkdir -p "$skill_dir"
         cp -RP "$src/." "$skill_dir/"
-        cp repo/LICENSE "$skill_dir/" 2>/dev/null || true
+        _copy_plain repo/LICENSE "$skill_dir/LICENSE"
         echo "  狀態: 已更新"
     else
         echo "  狀態: 失敗（上游結構改變，找不到 $src/，需更新同步函數）"

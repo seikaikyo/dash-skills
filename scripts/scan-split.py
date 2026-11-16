@@ -101,6 +101,11 @@ def sha256(path):
         return ""
 
 
+def sh_quote(value):
+    """可貼上指令的欄位一律包單引號並跳脫內含的單引號；一般檔名的輸出跟以前相同。"""
+    return "'" + value.replace("'", "'\\''") + "'"
+
+
 def named_gaps(comp):
     return sorted({(e.get("path") or "", e.get("reason_code") or "")
                    for e in comp.get("ledger_exceptions") or []
@@ -168,9 +173,13 @@ def complete_check(report_path, name):
     missing = [item for item in named if item not in accepted]
     for path, reason in missing:
         digest = sha256(os.path.join(REPO, "external", name, path))
-        print(f"[scan-split]   沒被完整檢查：{path}（{reason}）")
-        print(f"[scan-split]     看過後接受：printf '%s\\t%s\\t%s\\t%s\\n' '{name}' '{path}' '{reason}' '{digest}'"
-              f" >> security-reports/scan-incomplete-allow.tsv")
+        printable = path.isprintable() and reason.isprintable()
+        print(f"[scan-split]   沒被完整檢查：{path if printable else repr(path)}（{reason if printable else repr(reason)}）")
+        # 路徑與原因來自掃描報告（上游檔名），含控制字元時不印可貼上的指令
+        if printable:
+            fields = " ".join(sh_quote(x) for x in (name, path, reason, digest))
+            print(f"[scan-split]     看過後接受：printf '%s\\t%s\\t%s\\t%s\\n' {fields}"
+                  f" >> security-reports/scan-incomplete-allow.tsv")
     return 1 if missing else 0
 
 

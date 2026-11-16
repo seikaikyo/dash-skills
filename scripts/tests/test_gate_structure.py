@@ -168,12 +168,13 @@ class StructureTest(test_gate.GateTest):
         self.assertFalse([ln for ln in code if re.search(r"\bgit\s+(add|commit|push)\b", ln)])
 
     def test_sync_script_never_follows_symlinks(self):
-        """BSD cp -r 會跟著符號連結走並複製目標內容，同步腳本只准用 cp -RP。"""
+        """BSD cp -r 會跟著符號連結走並複製目標內容，沒帶 -P 的 cp 會寫穿目的地的連結。
+        同步腳本的每個 cp 都要帶 -P：整包用 -RP，單一檔案用 -P。"""
         with open(os.path.join(SCRIPTS, "update-external.sh")) as f:
-            text = f.read()
-        copies = re.findall(r"^\s*(?:\[ -d \"\$dir\" \] && )?cp (-\S+)", text, re.M)
+            code = [ln for ln in f if not ln.lstrip().startswith("#")]
+        copies = re.findall(r"(?:^|[;&|]\s*|\s)cp(?:\s+(\S+))?", "".join(code), re.M)
         self.assertTrue(copies)
-        self.assertEqual(set(copies), {"-RP"})
+        self.assertEqual(set(copies), {"-RP", "-P"})
 
 
 if __name__ == "__main__":
