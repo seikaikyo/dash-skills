@@ -117,7 +117,7 @@ def changed_dirs():
 
 
 def added_lines(name):
-    """回傳 {相對路徑: [新增的行]}；新檔整份視為新增，刪除的檔案不列。
+    """回傳 ({相對路徑: [新增的行]}, [無法解析的檔頭])；新檔整份視為新增，刪除的檔案不列。
 
     同步是 rm -rf 再 cp，搬檔改名後的新路徑在 git 眼中是未追蹤檔。為了讓 -M 認得出
     「只是改名」，用一份暫存 index（HEAD 加上這個目錄的現況）來算 diff，不動真正的 index。
@@ -130,22 +130,44 @@ def added_lines(name):
     try:
         subprocess.run(["git", "-C", REPO, "read-tree", "HEAD"], env=env, check=True, capture_output=True)
         subprocess.run(["git", "-C", REPO, "add", "-A", "--", f"external/{name}"], env=env, check=True, capture_output=True)
-        diff = subprocess.run(["git", "-C", REPO, "diff", "--cached", "-M", "-U0", "--no-color", "--text",
-                               "--no-ext-diff", "--no-textconv", "HEAD",
-                               "--", f"external/{name}"], env=env, check=True, capture_output=True,
-                              text=True, errors="replace").stdout
+        raw = subprocess.run(["git", "-C", REPO, "-c", "core.quotePath=false", "diff", "--cached", "-M", "-U0",
+                              "--no-color", "--text", "--no-ext-diff", "--no-textconv",
+                              "--src-prefix=a/", "--dst-prefix=b/", "HEAD",
+                              "--", f"external/{name}"], env=env, check=True, capture_output=True).stdout
     finally:
         if os.path.exists(tmp_index):
             os.unlink(tmp_index)
-    result, cur = {}, None
-    for line in diff.splitlines():
-        if line.startswith("+++ "):
-            cur = None if line[4:] == "/dev/null" else line[6:]  # 去掉 "+++ b/"
+    # 內容是上游給的，行首長什麼樣都有可能（2026-11-16 審查確認）：
+    # 檔頭只在區塊外讀，區塊內每一行 + 都是新增內容（以 ++ 開頭的也是）。
+    # 以位元組讀進來、只用 LF 切行：文字模式會把 CR 也當成換行，把一行拆成兩半。
+    diff = raw.decode("utf-8", errors="replace")
+    result, unparsed, cur, in_hunk = {}, [], None, False
+    for line in diff.split("\n"):
+        if line.startswith("@@"):
+            in_hunk = True
+        elif in_hunk and line.startswith("+"):
             if cur:
-                result.setdefault(cur, [])
-        elif cur and line.startswith("+") and not line.startswith("+++"):
-            result[cur].append(line[1:])
-    return result
+                result[cur].append(line[1:])
+        elif in_hunk and line[:1] in ("-", "\\"):
+            continue
+        else:
+            in_hunk = False
+            if line.startswith("diff --git "):
+                cur = None
+            elif line.startswith("+++ "):
+                path = line[4:]
+                if path == "/dev/null":
+                    cur = None
+                    continue
+                if path.endswith("\t"):  # 檔名含空白時 git 在檔頭尾端補一個 tab
+                    path = path[:-1]
+                if path.startswith("b/"):
+                    cur = path[2:]
+                    result.setdefault(cur, [])
+                else:  # 含引號、反斜線或控制字元的檔名 git 仍會加引號跳脫，不猜，直接擋
+                    cur = None
+                    unparsed.append(line[:160])
+    return result, unparsed
 
 
 def file_sha256(path):
@@ -237,7 +259,7 @@ def structure_blocks(name, allow):
 
 
 # 放行清單對這些規則沒有作用，隔離時不印「誤報放行」的指令
-NO_ALLOW_RULES = {"scanner", "symlink-outside", "gitattributes"}
+NO_ALLOW_RULES = {"scanner", "symlink-outside", "gitattributes", "diff-parse"}
 
 
 def stray_links():
@@ -254,7 +276,10 @@ def stray_links():
 
 def check_rules(name, allow):
     blocks, warns, domains = structure_blocks(name, allow), [], set()
-    for path, lines in added_lines(name).items():
+    by_path, unparsed = added_lines(name)
+    for header in unparsed:
+        blocks.append(("diff-parse", f"external/{name}", "差異檔頭的檔名無法解析，看不出新增內容屬於哪個檔案", header))
+    for path, lines in by_path.items():
         ext = os.path.splitext(path)[1].lower()
         is_script = ext in SCRIPT_EXTS or os.access(os.path.join(REPO, path), os.X_OK)
         kind = "script" if is_script else "doc"
@@ -416,8 +441,9 @@ def gate_one(name, allow, status, scanner_down, allow_unscanned, dry_run):
     print(f"[gate] 隔離 {name}：退回上一個已提交版本" + ("（dry-run，未還原）" if dry_run else ""))
     for (rule, path, desc), sha in hints:
         print(f"[gate]   - {rule} {path if path.isprintable() else repr(path)}：{desc}")
-        # 路徑含控制字元時不印放行指令：終端機上看到的跟貼上去的內容會不一樣
-        if rule not in NO_ALLOW_RULES and path.isprintable():
+        # 路徑含控制字元時不印放行指令：終端機上看到的跟貼上去的內容會不一樣。
+        # 雜湊是空的（找不到檔案）也不印：空雜湊那一行等於該路徑往後所有內容都放行
+        if rule not in NO_ALLOW_RULES and path.isprintable() and sha:
             fields = " ".join(sh_quote(x) for x in (name, rule, path, sha))
             print(f"[gate]     誤報放行：printf '%s\\t%s\\t%s\\t%s\\n' {fields} >> security-reports/gate-allow.tsv")
     return True

@@ -106,11 +106,22 @@ def sh_quote(value):
     return "'" + value.replace("'", "'\\''") + "'"
 
 
-def named_gaps(comp):
+def ledger_gaps(comp):
     return sorted({(e.get("path") or "", e.get("reason_code") or "")
                    for e in comp.get("ledger_exceptions") or []
                    if e.get("reason_code") not in NOT_A_GAP and e.get("path")
                    and e.get("outcome", "partial") != "completed"})
+
+
+def excluded_gaps(comp):
+    """掃描器列為不在檢查範圍的檔案（二進位、壓縮檔），一樣沒被檢查過。
+    兩個檔案計數只算 ledger_exceptions，不含這些（2026-11-16 審查確認）。"""
+    return sorted({(e.get("path") or "", e.get("reason_code") or "out_of_scope")
+                   for e in comp.get("scope_exclusions") or [] if e.get("path")})
+
+
+def named_gaps(comp):
+    return sorted(set(ledger_gaps(comp)) | set(excluded_gaps(comp)))
 
 
 def load_report_completeness(report_path):
@@ -154,29 +165,36 @@ def complete_check(report_path, name):
         print(f"[scan-split]   掃描失敗的子目錄：{', '.join(comp['failed_units'])}")
         return 1
     gaps = int(comp.get("partially_inspected_files") or 0) + int(comp.get("entirely_uninspected_files") or 0)
-    if gaps == 0:
+    ledger, excluded = ledger_gaps(comp), excluded_gaps(comp)
+    if gaps == 0 and not excluded:
         return 0
-    named = named_gaps(comp)
     # 報告指名的檔案數對不上缺口數，代表有檔案沒被完整檢查卻沒列出原因，不能逐檔接受
-    if len({p for p, _ in named}) != gaps:
+    if len({p for p, _ in ledger}) != gaps:
         print(f"[scan-split]   {gaps} 個檔案沒被完整檢查")
         return 1
-    accepted = set()
+    named = named_gaps(comp)
+    accepted, hashed = set(), set()
     if os.path.exists(INCOMPLETE_ALLOW):
         with open(INCOMPLETE_ALLOW, encoding="utf-8") as f:
             for raw in f:
                 cols = raw.rstrip("\n").split("\t")
                 if len(cols) >= 3 and cols[0] == name and not raw.lstrip().startswith("#"):
                     full = os.path.join(REPO, "external", name, cols[1])
-                    if len(cols) < 4 or not cols[3] or cols[3] == sha256(full):
+                    if len(cols) < 4 or not cols[3]:
                         accepted.add((cols[1], cols[2]))
-    missing = [item for item in named if item not in accepted]
+                    elif cols[3] == sha256(full):
+                        accepted.add((cols[1], cols[2]))
+                        hashed.add((cols[1], cols[2]))
+    # 不在檢查範圍的檔案只認雜湊相符的那一行：內容一變就要重新看過
+    missing = [item for item in named
+               if item not in (hashed if item in excluded and item not in ledger else accepted)]
     for path, reason in missing:
         digest = sha256(os.path.join(REPO, "external", name, path))
         printable = path.isprintable() and reason.isprintable()
         print(f"[scan-split]   沒被完整檢查：{path if printable else repr(path)}（{reason if printable else repr(reason)}）")
-        # 路徑與原因來自掃描報告（上游檔名），含控制字元時不印可貼上的指令
-        if printable:
+        # 路徑與原因來自掃描報告（上游檔名），含控制字元時不印可貼上的指令；
+        # 找不到檔案（雜湊是空的）也不印，空雜湊那一行等於永久接受
+        if printable and digest:
             fields = " ".join(sh_quote(x) for x in (name, path, reason, digest))
             print(f"[scan-split]     看過後接受：printf '%s\\t%s\\t%s\\t%s\\n' {fields}"
                   f" >> security-reports/scan-incomplete-allow.tsv")
@@ -200,7 +218,7 @@ def main():
     loose = [e for e in entries if e not in units]
 
     work = tempfile.mkdtemp(prefix="scan-split-")
-    issues, failed_units, exceptions = [], [], []
+    issues, failed_units, exceptions, exclusions = [], [], [], []
     totals = {"total_components": 0, "fully_inspected_files": 0,
               "partially_inspected_files": 0, "entirely_uninspected_files": 0}
     score, sev, max_sev, suppressed = 0, "NONE", "NONE", 0
@@ -223,10 +241,12 @@ def main():
             comp = report.get("analysis_completeness") or {}
             for key in totals:
                 totals[key] += int(comp.get(key) or 0)
-            for exc in comp.get("ledger_exceptions") or []:
-                if unit != ROOT_UNIT and exc.get("path"):
-                    exc["path"] = f"{unit}/{exc['path']}"
-                exceptions.append(exc)
+            for src, dst in ((comp.get("ledger_exceptions") or [], exceptions),
+                             (comp.get("scope_exclusions") or [], exclusions)):
+                for exc in src:
+                    if unit != ROOT_UNIT and exc.get("path"):
+                        exc["path"] = f"{unit}/{exc['path']}"
+                    dst.append(exc)
             risk = report["risk_assessment"]
             score = max(score, int(risk.get("score") or 0))
             if rank(risk.get("severity")) > rank(sev):
@@ -252,7 +272,8 @@ def main():
         "analysis_completeness": dict(totals, is_complete=complete,
                                       status="complete" if complete else "partial",
                                       failed_units=failed_units,
-                                      ledger_exceptions=exceptions),
+                                      ledger_exceptions=exceptions,
+                                      scope_exclusions=exclusions),
     }
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(merged, f, ensure_ascii=False, indent=1)

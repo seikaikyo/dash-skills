@@ -57,6 +57,17 @@ echo "[dash-skills] 每日同步 ($(date '+%H:%M'))"
 
 cd "$SKILL_DIR"
 
+# 同步是直接寫進已載入的 external/。閘門沒有正常完成前流程就結束（被中斷、提早 exit），
+# 沒檢查過的內容會一直留在載入位置到下次同步，所以結束時一律退回（2026-11-16 審查確認）。
+_gate_done=0
+_on_exit() {
+    [ "$_gate_done" -eq 1 ] || _restore_external
+    rm -rf "$LOCK_DIR"
+}
+trap _on_exit EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
 # [1/5] 同步外部 skills
 echo "[dash-skills] [1/5] 同步外部 skills..."
 if ! DASH_SKILLS_NO_PUSH=1 perl -e 'alarm(120); exec @ARGV' ./scripts/update-external.sh > /dev/null 2>&1; then
@@ -184,6 +195,8 @@ if ! stray_links=$(python3 ./scripts/gate-external.py --stray-links 2>&1); then
     echo "$stray_links" | sed 's/^/[dash-skills]   /'
     exit 1
 fi
+# 閘門與連結檢查都過了，external/ 的現況就是要提交的版本，結束時不再退回
+_gate_done=1
 
 # 檢查是否有變更
 if [ -n "$(git status --porcelain)" ]; then

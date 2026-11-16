@@ -106,12 +106,18 @@ def pin_install_script(text):
 
 def main(root):
     changed = []
+    real_root = os.path.realpath(root)
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [d for d in dirnames if d != ".git"]
         for fn in filenames:
             if os.path.splitext(fn)[1].lower() not in EXTS:
                 continue
             path = os.path.join(dirpath, fn)
+            # 上游目錄的連結原樣複製進來，可能指到 repo 以外；不跟著連結讀寫（2026-11-16 審查確認）
+            if os.path.islink(path) or not os.path.isfile(path):
+                continue
+            if os.path.commonpath([real_root, os.path.realpath(path)]) != real_root:
+                continue
             try:
                 with open(path, encoding="utf-8") as f:
                     old = f.read()
