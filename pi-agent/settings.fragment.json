@@ -1,7 +1,30 @@
 {
   "skills": [
     "CHANGE_ME/dash-skills/skills",
-    "CHANGE_ME/dash-skills/external"
+    "CHANGE_ME/dash-skills/external/agent-browser",
+    "CHANGE_ME/dash-skills/external/algorithmic-art",
+    "CHANGE_ME/dash-skills/external/brand-guidelines",
+    "CHANGE_ME/dash-skills/external/canvas-design",
+    "CHANGE_ME/dash-skills/external/claude-api",
+    "CHANGE_ME/dash-skills/external/cloudflare-security-audit",
+    "CHANGE_ME/dash-skills/external/deploy-to-vercel",
+    "CHANGE_ME/dash-skills/external/doc-coauthoring",
+    "CHANGE_ME/dash-skills/external/docx",
+    "CHANGE_ME/dash-skills/external/frontend-design",
+    "CHANGE_ME/dash-skills/external/internal-comms",
+    "CHANGE_ME/dash-skills/external/mcp-builder",
+    "CHANGE_ME/dash-skills/external/neon-skills",
+    "CHANGE_ME/dash-skills/external/pdf",
+    "CHANGE_ME/dash-skills/external/pptx",
+    "CHANGE_ME/dash-skills/external/react-best-practices",
+    "CHANGE_ME/dash-skills/external/sentry-security-review/security-review",
+    "CHANGE_ME/dash-skills/external/skill-creator",
+    "CHANGE_ME/dash-skills/external/slack-gif-creator",
+    "CHANGE_ME/dash-skills/external/theme-factory",
+    "CHANGE_ME/dash-skills/external/vercel-optimize",
+    "CHANGE_ME/dash-skills/external/web-artifacts-builder",
+    "CHANGE_ME/dash-skills/external/webapp-testing",
+    "CHANGE_ME/dash-skills/external/xlsx"
   ],
   "extensions": [
     "~/.pi/agent/extensions"
