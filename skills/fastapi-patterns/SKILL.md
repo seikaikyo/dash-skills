@@ -313,7 +313,7 @@ from app.database import get_session
 from app.models.work_order import WorkOrder, WorkOrderStatus
 from app.schemas.base import ApiResponse, PaginatedResponse, success_response, error_response
 from app.schemas.work_order import WorkOrderCreate, WorkOrderUpdate, WorkOrderResponse
-from app.dependencies import get_current_user
+from app.dependencies import require_scopes
 from app.utils.audit import log_audit
 
 router = APIRouter()
@@ -326,6 +326,7 @@ def list_work_orders(
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
     session: Session = Depends(get_session),
+    current_user: dict = Depends(require_scopes("work-orders:read")),
 ):
     """取得工單列表"""
     query = select(WorkOrder)
@@ -354,6 +355,7 @@ def list_work_orders(
 def get_work_order(
     work_order_id: str,
     session: Session = Depends(get_session),
+    current_user: dict = Depends(require_scopes("work-orders:read")),
 ):
     """取得單一工單"""
     work_order = session.get(WorkOrder, work_order_id)
@@ -366,7 +368,7 @@ def get_work_order(
 def create_work_order(
     data: WorkOrderCreate,
     session: Session = Depends(get_session),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_scopes("work-orders:write")),
 ):
     """新增工單"""
     # 檢查工單編號是否重複
@@ -399,7 +401,7 @@ def update_work_order(
     work_order_id: str,
     data: WorkOrderUpdate,
     session: Session = Depends(get_session),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_scopes("work-orders:write")),
 ):
     """更新工單"""
     work_order = session.get(WorkOrder, work_order_id)
@@ -433,7 +435,7 @@ def update_work_order(
 def delete_work_order(
     work_order_id: str,
     session: Session = Depends(get_session),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_scopes("work-orders:write")),
 ):
     """刪除工單"""
     work_order = session.get(WorkOrder, work_order_id)
@@ -529,6 +531,8 @@ def require_scopes(*required: str):
 ```
 
 用法：`Depends(require_scopes("work-orders:write"))`。過期時間由 `jwt.decode` 檢查，不需要自己比對 `exp`。
+
+每個路由都要掛，讀取也一樣：只掛 `get_session` 的路由不用登入就能讀到整張表。資料分屬多個組織時，資料表加 `organization_id` 欄位，查詢與單筆讀寫都用 `current_user["organization_id"]` 過濾。
 
 ## 稽核紀錄 (ISO 27001)
 
