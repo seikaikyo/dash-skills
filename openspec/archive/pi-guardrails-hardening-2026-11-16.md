@@ -2,7 +2,7 @@
 
 - **type**: fix
 - **建立日期**: 2026-11-16
-- **status**: in-progress
+- **status**: completed
 
 ## 背景
 
@@ -18,19 +18,19 @@
 ## 變更內容
 
 1. `pi-agent/extensions/guardrails.ts` 重寫判斷方式：
-   - 把 shell 指令拆成一個個簡單指令再逐詞判斷，不對整串字做比對。
-   - 指令內容沒辦法靜態看出要做什麼時一律先問：指令替換 `$(...)` 與反引號、變數放在指令位置、`eval`、`sh -c` 這類巢狀 shell、`xargs`、管線接到 shell 或直譯器。
+   - 把 shell 指令拆成一個個簡單指令再逐詞判斷，不對整串字做比對。heredoc 與 here-string 的內文當資料，不當指令；結束標記沒加引號而內文有指令替換時先問。
+   - 指令內容沒辦法靜態看出要做什麼時一律先問：指令替換 `$(...)` 與反引號、變數放在指令位置、`eval`、`sh -c` 這類巢狀 shell、`xargs`、管線接到 shell 或直譯器、`git -c alias.`。
    - `git add`：`-A`、`--all`、`-u`、`--update`、`.`、`:/`、萬用字元直接擋；其他選項先問；指名路徑放行。git 的全域選項（`-C`、`-c`）之後的子指令也看得到。
    - `git commit`：短選項群組含 `a`（`-a`、`-am`）或 `--all` 直接擋；提交訊息含 emoji 擋。
    - `git push`、`git clean`、`git reset --hard` 先問。
    - `gh`：只有讀取類（`view`、`list`、`status`、`diff`、`checks`，與不帶寫入參數的 `gh api`）直接放行，其餘先問。
-   - 刪除：`rm` 帶 `r`、`R`、`f` 任一或對應長選項、`find -delete`、`find -exec rm` 先問。
-   - 機敏路徑（`.env*`、`.envrc`、私鑰、`.pem`、`.key`、`credentials`、`secret`、`.ssh/`、`.aws/`、`.netrc`、`.npmrc` 等）：寫入類工具、重新導向、`tee`、`cp`、`mv` 這類指令碰到就先問。
-   - 檢查範圍擴大到 `write`、`edit`、`bash`、`powershell`；讀取類工具放行。已知工具的欄位格式認不得時直接擋；其他工具帶了指令或路徑欄位時先問。
+   - 刪除：`rm` 帶 `r`、`R`、`f` 任一或對應長選項、`find -delete`、`find -exec` 先問。
+   - 機敏路徑（`.env*`、`.envrc`、私鑰、`.pem`、`.key`、`credentials`、`secret`、`.ssh/`、`.aws/`、`.netrc`、`.npmrc` 等）：寫入與讀取類工具、重新導向、`tee`、`cp`、`mv` 這類指令碰到就先問。
+   - 檢查範圍擴大到 `write`、`edit`、`bash`、`powershell`；PowerShell 的刪除、寫檔與執行字串指令先問。已知工具的欄位格式認不得時直接擋；其他工具帶了指令或路徑欄位時先問。
    - 需要確認但目前沒有互動介面時擋下。判斷過程出錯也擋下。
    - 只從 pi 套件引入型別，判斷邏輯不依賴 pi 執行環境，沒裝 pi 也能測。
 2. `pi-agent/settings.fragment.json`：`skills` 從整個 `external/` 改成逐一列出集合；sentry 集合只列 `security-review`。之後新增的外部集合不會自動給 pi 載入。
-3. `pi-agent/README.md`：說明防護的判斷方式與 skill 清單怎麼維護。
+3. `pi-agent/README.md`：說明防護的判斷方式、做不到的地方（看不到腳本檔內容）與 skill 清單怎麼維護。
 4. `scripts/tests/test_pi_guardrails.mjs`：用 Node 的 TypeScript 型別去除直接載入 `guardrails.ts` 測判斷結果。
 
 ## 影響範圍
@@ -49,5 +49,11 @@
    - 一般指令（`git status`、`git add 指名檔案`、`git commit -m`、`ls`、`gh pr view`）直接放行。
    - 無法靜態判讀的指令先問。
    - 欄位格式不對的已知工具被擋；確認時沒有互動介面被擋；使用者拒絕時被擋。
-2. 改動前的 `guardrails.ts` 跑同一份測試，繞過寫法的項目要失敗（舊版需要 pi 套件才能載入，改用同樣規則的副本比對）。
+2. 改動前的 `guardrails.ts` 跑同一批寫法比對（舊版需要 pi 套件才能載入，用只提供 `isToolCallEventType` 的假套件代替）。
 3. `settings.fragment.json` 列出的每個路徑在 repo 裡都存在且含 `SKILL.md`，沒有列到 `iterate-pr`。
+
+## 結果
+
+- 11 組測試全過。
+- 同一批 18 個寫法：改動前的版本漏掉 17 個（只擋到 `git commit -a -m`），改動後全部判斷正確。
+- 只用測試資料驗證；這台機器沒有安裝 pi，沒有在 pi 實際載入過。
