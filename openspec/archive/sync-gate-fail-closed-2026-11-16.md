@@ -2,7 +2,7 @@
 
 - **type**: fix
 - **建立日期**: 2026-11-16
-- **status**: in-progress
+- **status**: completed
 
 ## 背景
 
@@ -50,3 +50,9 @@
    - `auto-update.sh` 取用閘門結束碼，非 0 時退回並停止提交。
 2. `python3 scripts/tests/test_gate.py` 與 `python3 scripts/tests/test_gate_structure.py` 全過。
 3. `bash -n` 與 `py_compile` 通過。
+
+## 結果
+
+- 新增 12 個測試，其中 10 個在改動前的腳本上失敗，改動後全過；另 2 個是確認一般情況輸出不變的對照組。
+- 加強後的 `test_sync_script_never_follows_symlinks` 在改動前的腳本上失敗，改動後通過。
+- 三套測試共 60 個全過，`bash -n` 與 Python 語法檢查通過。
