@@ -162,14 +162,19 @@ export function parseShell(src: string): Simple[] | null {
   return cmds
 }
 
-function stripPrefixes(words: string[]): string[] {
+// 流程控制關鍵字後面接的才是真正的指令(if x; then git add -A; fi)
+const KEYWORDS = new Set(['if', 'then', 'else', 'elif', 'fi', 'do', 'done', 'while', 'until', 'case', 'esac', '!', '{', '}'])
+
+/** 去掉變數設定、流程關鍵字與 sudo 這類包裝。包裝帶選項時看不出哪個字是指令,回傳 null。 */
+function stripPrefixes(words: string[]): string[] | null {
   let i = 0
   while (i < words.length) {
     const w = words[i]
-    if (/^[A-Za-z_][A-Za-z0-9_]*=/.test(w)) i++
+    if (/^[A-Za-z_][A-Za-z0-9_]*=/.test(w) || KEYWORDS.has(w)) i++
     else if (PREFIXES.has(w)) {
       i++
-      while (i < words.length && words[i].startsWith('-')) i++
+      if (w === 'command' && /^-[vV]$/.test(words[i] ?? '')) return []
+      if ((words[i] ?? '').startsWith('-')) return null
     } else break
   }
   return words.slice(i)
@@ -191,7 +196,7 @@ function gitDecision(args: string[]): Decision {
       if (a === '--') continue
       if (['-A', '--all', '-u', '--update', '--no-ignore-removal'].includes(a) || /^-[^-]*[Au]/.test(a))
         return block('禁 git add -A / -u / --all,請指名檔案')
-      if (a === '.' || a === ':/' || a === ':' || a.startsWith(':/') || /[*?[]/.test(a))
+      if (/^[./]+$/.test(a) || a === ':' || a.startsWith(':/') || /[*?[]/.test(a))
         return block('禁 git add . 與萬用字元,請指名檔案')
       if (a.startsWith('-')) return ask(`git add 帶選項 ${a},確定執行?`)
     }
@@ -230,6 +235,7 @@ function commandDecision(cmd: Simple): Decision {
     if (SENSITIVE.test(target)) return ask(`重新導向寫入機敏檔 ${target},確定執行?`)
   }
   const words = stripPrefixes(cmd.words)
+  if (!words) return ask(`包裝指令帶選項,看不出實際執行什麼:\n${cmd.words.join(' ')}`)
   if (!words.length) return ALLOW
   const name = words[0].split('/').pop() ?? words[0]
   const args = words.slice(1)

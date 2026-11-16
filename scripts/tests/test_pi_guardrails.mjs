@@ -40,6 +40,17 @@ test('審查列出的繞過寫法都被擋或先問', () => {
     'tee .env.local < x': 'ask',
     'cd repo && git add -A': 'block',
     'true; git commit -am x': 'block',
+    'git add ./': 'block',
+    'git add ..': 'block',
+    'if true; then git add -A; fi': 'block',
+    'for f in a; do rm -rf "$f"; done': 'ask',
+    'while true; do git push; done': 'ask',
+    '! git push': 'ask',
+    '{ git push; }': 'ask',
+    'sudo -u x rm -rf y': 'ask',
+    'nice -n 5 git push': 'ask',
+    'env -u X git push': 'ask',
+    'sudo git add -A': 'block',
   }
   for (const [cmd, want] of Object.entries(cases)) assert.equal(bash(cmd), want, cmd)
 })
