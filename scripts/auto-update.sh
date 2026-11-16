@@ -57,24 +57,51 @@ echo "[dash-skills] 每日同步 ($(date '+%H:%M'))"
 
 cd "$SKILL_DIR"
 
-# 同步是直接寫進已載入的 external/。閘門沒有正常完成前流程就結束（被中斷、提早 exit），
-# 沒檢查過的內容會一直留在載入位置到下次同步，所以結束時一律退回（2026-11-16 審查確認）。
-_gate_done=0
-_on_exit() {
-    [ "$_gate_done" -eq 1 ] || _restore_external
-    rm -rf "$LOCK_DIR"
+# 暫存工作目錄：同步、釘版、遮蔽、閘門都在 repo 的第二個工作目錄裡做，過了閘門才套用到這裡的 external/。
+# ~/.claude/skills 的連結指向這裡，以前直接寫進來時，閘門判定前的幾分鐘未審內容就能被載入
+# （2026-11-16 審查確認）。放在專案目錄外：目錄內的 CLAUDE.md 會在讀到旁邊檔案時被載入。
+STAGE_DIR="$HOME/Library/Caches/dash-skills-staging"
+export DASH_SKILLS_REPORT_DIR="$SKILL_DIR/security-reports"
+BASE=$(git rev-parse HEAD)
+
+# 重設成這裡的 HEAD 並清空；不存在就建立。路徑上是別的東西時停止，不刪除。
+_prepare_stage() {
+    local main_git stage_git
+    main_git=$(cd "$(git rev-parse --git-common-dir)" && pwd -P)
+    if [ -e "$STAGE_DIR" ]; then
+        stage_git=$(cd "$STAGE_DIR" 2>/dev/null && git rev-parse --git-common-dir 2>/dev/null) || return 1
+        [ "$(cd "$STAGE_DIR" && cd "$stage_git" && pwd -P)" = "$main_git" ] || return 1
+        [ "$(cd "$STAGE_DIR" && git rev-parse --show-toplevel)" = "$(cd "$STAGE_DIR" && pwd -P)" ] || return 1
+        git -C "$STAGE_DIR" checkout -q --detach --force "$BASE" || return 1
+        git -C "$STAGE_DIR" reset -q --hard "$BASE" || return 1
+    else
+        mkdir -p "$(dirname "$STAGE_DIR")"
+        git worktree prune
+        git worktree add -q --detach "$STAGE_DIR" "$BASE" > /dev/null 2>&1 || return 1
+    fi
+    git -C "$STAGE_DIR" clean -ffdqx
 }
-trap _on_exit EXIT
-trap 'exit 130' INT
-trap 'exit 143' TERM
+if ! _prepare_stage; then
+    echo "[dash-skills] 暫存工作目錄 $STAGE_DIR 無法使用（不是這個 repo 的工作目錄或建立失敗），停止；external/ 沒有變動"
+    exit 1
+fi
+cd "$STAGE_DIR"
 
 # [1/5] 同步外部 skills
 echo "[dash-skills] [1/5] 同步外部 skills..."
-if ! DASH_SKILLS_NO_PUSH=1 perl -e 'alarm(120); exec @ARGV' ./scripts/update-external.sh > /dev/null 2>&1; then
+# 同步放在自己的程序群組，結束或逾時後整個群組一起停掉：
+# 同步腳本逾時只停掉它直接開的子程序，底下還在跑的 git、cp 會在閘門檢查時繼續寫檔
+DASH_SKILLS_NO_PUSH=1 perl -e 'setpgrp(0, 0); alarm(120); exec @ARGV' ./scripts/update-external.sh > /dev/null 2>&1 &
+sync_pid=$!
+wait "$sync_pid"
+sync_exit=$?
+kill -KILL -- "-$sync_pid" 2>/dev/null
+if [ "$sync_exit" -ne 0 ]; then
     echo "[dash-skills] [1/5] 同步逾時或失敗，跳過"
 fi
 # 個別 skill 的失敗不會讓整支同步失敗，只記在 .last-sync-failures；這裡把它印出來，
-# 每日巡檢也會讀這個檔，連續失敗不會再被吞掉。
+# 每日巡檢讀的是主目錄那一份，從暫存目錄複製回去。
+[ -f .last-sync-failures ] && cp .last-sync-failures "$SKILL_DIR/.last-sync-failures"
 if [ -s .last-sync-failures ]; then
     echo "[dash-skills]   警告：有 skill 同步失敗（$(head -1 .last-sync-failures)）"
     tail -n +2 .last-sync-failures | sed 's/^/[dash-skills]     - /'
@@ -172,11 +199,28 @@ fi
 echo "[dash-skills] [3/5] 外部 skills 裝載前閘門..."
 python3 -u ./scripts/gate-external.py 2>&1 | sed 's/^/[dash-skills]   /'
 gate_exit=${PIPESTATUS[0]}
-# 閘門沒有正常跑完（崩潰、檢查出錯）就不能信任 external/ 的現況：整個退回 HEAD，
-# 不重建連結、不提交。2026-11-16 審查確認：上游放一個無法解碼的位元組就能讓閘門在退回前中止，
+# 閘門沒有正常跑完（崩潰、檢查出錯）就不能信任暫存目錄的結果：不套用、不提交。
+# 2026-11-16 審查確認：上游放一個無法解碼的位元組就能讓閘門在退回前中止，
 # 以前這裡只看得到 sed 的結束碼，沒過閘門的內容照樣被提交推送。
 if [ "$gate_exit" -ne 0 ]; then
-    echo "[dash-skills] 閘門沒有正常完成（結束碼 $gate_exit），external/ 退回上一個已提交版本，停止提交與推送"
+    echo "[dash-skills] 閘門沒有正常完成（結束碼 $gate_exit），不套用這次同步，停止提交與推送；external/ 沒有變動"
+    exit 1
+fi
+
+# 閘門檢查完的暫存 external/ 記成 git 物件，之後只套用這個物件，暫存目錄後來再有變動也不影響
+git add -- external
+staged_tree=$(git write-tree)
+cd "$SKILL_DIR"
+
+# 閘門比對的基準是開始時的 HEAD；執行期間這裡有新 commit，比對結果就不能用
+if [ "$(git rev-parse HEAD)" != "$BASE" ]; then
+    echo "[dash-skills] 執行期間 HEAD 改變，不套用這次同步，下次重跑；external/ 沒有變動"
+    exit 1
+fi
+
+# 從 git 物件套用：刪除、權限與已放行的連結都照物件內容，不跟隨任何連結
+if ! git restore --source="$staged_tree" --staged --worktree -- external || ! git clean -fdqx -- external; then
+    echo "[dash-skills] 套用暫存目錄的結果失敗，external/ 退回上一個已提交版本，停止提交與推送"
     _restore_external
     exit 1
 fi
@@ -193,10 +237,9 @@ fi
 if ! stray_links=$(python3 ./scripts/gate-external.py --stray-links 2>&1); then
     echo "[dash-skills] external/ 有未放行的符號連結，停止提交與推送："
     echo "$stray_links" | sed 's/^/[dash-skills]   /'
+    _restore_external
     exit 1
 fi
-# 閘門與連結檢查都過了，external/ 的現況就是要提交的版本，結束時不再退回
-_gate_done=1
 
 # 檢查是否有變更
 if [ -n "$(git status --porcelain)" ]; then

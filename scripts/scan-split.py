@@ -35,7 +35,9 @@ ORDER = ["NONE", "INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"]
 TIMEOUT = int(os.environ.get("SCAN_SKILLS_TIMEOUT", "240"))
 ROOT_UNIT = "."
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-INCOMPLETE_ALLOW = os.path.join(REPO, "security-reports", "scan-incomplete-allow.tsv")
+# 排程在暫存工作目錄執行時，接受清單用主目錄那一份（DASH_SKILLS_REPORT_DIR）
+INCOMPLETE_ALLOW = os.path.join(os.environ.get("DASH_SKILLS_REPORT_DIR") or os.path.join(REPO, "security-reports"),
+                                "scan-incomplete-allow.tsv")
 # 這個原因碼只代表文件裡有一個本機路徑參照對不到檔案，檔案本身仍算完整檢查
 NOT_A_GAP = {"reference_unresolved", "reference_missing"}
 

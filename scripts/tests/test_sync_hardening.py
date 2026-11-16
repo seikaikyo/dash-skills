@@ -236,8 +236,18 @@ class SyncCopyTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(self.collection("cloudflare-security-audit", "LICENSE")))
 
 
+# 假的同步腳本：在暫存目錄裡改一個檔、刪一個檔、加一個集合內連結、寫同步失敗清單，
+# 並記下同步當下主目錄的檔案內容
+SYNC_STUB = '''#!/bin/bash
+cat "$HOME/Documents/github/dash-skills/external/demo/SKILL.md" > "$HOME/main-during-sync"
+pwd -P > "$HOME/sync-cwd"
+echo changed >> external/demo/SKILL.md
+rm -f external/demo/old.md
+ln -s SKILL.md external/demo/alias.md
+printf '2026-11-16 06:00 失敗 1 個\\nfoo\\n' > .last-sync-failures
+'''
 AUTO_STUBS = {
-    "scripts/update-external.sh": "#!/bin/bash\necho changed >> external/demo/SKILL.md\n",
+    "scripts/update-external.sh": SYNC_STUB,
     "scripts/pin-refs.py": "",
     "scripts/link.sh": "#!/bin/bash\ntouch link-ran\n",
 }
@@ -247,27 +257,42 @@ if "--stray-links" in sys.argv:
 print("[gate] boom")
 raise SystemExit(3)
 '''
+PASSING_GATE = '''import os, sys
+if "--stray-links" in sys.argv:
+    sys.exit(0)
+report_dir = os.environ.get("DASH_SKILLS_REPORT_DIR") or "security-reports"
+os.makedirs(report_dir, exist_ok=True)
+with open(os.path.join(report_dir, "gate-ran"), "w") as f:
+    f.write(os.getcwd())
+print("[gate] pass")
+'''
 
 
-class AutoUpdateGateExitTest(unittest.TestCase):
-    """auto-update.sh 遇到閘門非 0 結束時要退回 external/ 並停止提交。"""
+class AutoUpdateBase(unittest.TestCase):
+    """實際執行 auto-update.sh；暫存工作目錄是從 HEAD 檢出，所以假腳本都要先提交。"""
+    GATE = CRASHING_GATE
+    SYNC = SYNC_STUB
 
     def setUp(self):
         self.home = os.path.realpath(tempfile.mkdtemp(prefix="auto-test-"))
         self.addCleanup(shutil.rmtree, self.home, ignore_errors=True)
         self.repo = os.path.join(self.home, "Documents/github/dash-skills")
+        self.stage = os.path.join(self.home, "Library/Caches/dash-skills-staging")
         os.makedirs(os.path.join(self.repo, "scripts"))
         shutil.copy2(os.path.join(SCRIPTS, "auto-update.sh"), os.path.join(self.repo, "scripts"))
-        for rel, text in dict(AUTO_STUBS, **{"scripts/gate-external.py": CRASHING_GATE}).items():
+        files = dict(AUTO_STUBS, **{"scripts/update-external.sh": self.SYNC, "scripts/gate-external.py": self.GATE,
+                                    "external/demo/SKILL.md": "# demo\n", "external/demo/old.md": "old\n",
+                                    "README.md": "r\n", "openspec/a.md": "a\n", "pi-agent/a.md": "a\n",
+                                    "skills/s/SKILL.md": "s\n",
+                                    ".gitignore": ".auto-update.lock/\n.last-update\n.last-sync-failures\n"
+                                                  "link-ran\nsecurity-reports/\n"})
+        for rel, text in files.items():
             full = os.path.join(self.repo, rel)
+            os.makedirs(os.path.dirname(full), exist_ok=True)
             with open(full, "w") as f:
                 f.write(text)
-            os.chmod(full, 0o755)
-        os.makedirs(os.path.join(self.repo, "external/demo"))
-        with open(os.path.join(self.repo, "external/demo/SKILL.md"), "w") as f:
-            f.write("# demo\n")
-        with open(os.path.join(self.repo, ".gitignore"), "w") as f:
-            f.write(".auto-update.lock/\n.last-update\nlink-ran\n")
+            if rel.startswith("scripts/"):
+                os.chmod(full, 0o755)
         for args in (["init", "-q"], ["add", "."],
                      ["-c", "user.name=t", "-c", "user.email=t@example.com", "commit", "-qm", "init"]):
             subprocess.run(["git", "-C", self.repo, *args], check=True, capture_output=True)
@@ -278,22 +303,125 @@ class AutoUpdateGateExitTest(unittest.TestCase):
                         GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@example.com",
                         GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@example.com")
         self.env.pop("GITGUARDIAN_API_KEY", None)
+        self.env.pop("DASH_SKILLS_REPORT_DIR", None)
+        self.before = self.head()
 
     def head(self):
         return subprocess.run(["git", "-C", self.repo, "rev-parse", "HEAD"],
-                              capture_output=True, text=True, check=True).stdout
+                              capture_output=True, text=True, check=True).stdout.strip()
 
-    def test_crashed_gate_restores_and_skips_commit(self):
-        before = self.head()
-        proc = subprocess.run(["bash", os.path.join(self.repo, "scripts/auto-update.sh")],
+    def run_auto(self):
+        return subprocess.run(["bash", os.path.join(self.repo, "scripts/auto-update.sh")],
                               env=self.env, capture_output=True, text=True, errors="replace", timeout=120)
-        self.assertIn("[gate] boom", proc.stdout)  # 確認真的跑到閘門，不是提早結束
-        self.assertNotEqual(proc.returncode, 0, proc.stdout)
-        self.assertEqual(self.head(), before, proc.stdout)
-        with open(os.path.join(self.repo, "external/demo/SKILL.md")) as f:
-            self.assertEqual(f.read(), "# demo\n")
+
+    def main_file(self, rel):
+        with open(os.path.join(self.repo, rel)) as f:
+            return f.read()
+
+    def assert_main_untouched(self, proc):
+        self.assertEqual(self.head(), self.before, proc.stdout)
+        self.assertEqual(self.main_file("external/demo/SKILL.md"), "# demo\n")
+        self.assertTrue(os.path.exists(os.path.join(self.repo, "external/demo/old.md")))
+        self.assertFalse(os.path.lexists(os.path.join(self.repo, "external/demo/alias.md")))
         self.assertFalse(os.path.exists(os.path.join(self.repo, "link-ran")))
         self.assertFalse(os.path.exists(os.path.join(self.repo, ".last-update")))
+
+
+class AutoUpdateGateExitTest(AutoUpdateBase):
+    """閘門非 0 結束：不套用、不提交，主目錄的 external/ 完全沒被寫過。"""
+
+    def test_crashed_gate_restores_and_skips_commit(self):
+        proc = self.run_auto()
+        self.assertIn("[gate] boom", proc.stdout)  # 確認真的跑到閘門，不是提早結束
+        self.assertNotEqual(proc.returncode, 0, proc.stdout)
+        self.assert_main_untouched(proc)
+
+
+class AutoUpdateStagingTest(AutoUpdateBase):
+    GATE = PASSING_GATE
+
+    def test_gate_pass_applies_staged_tree_and_commits_once(self):
+        proc = self.run_auto()
+        self.assertIn("[gate] pass", proc.stdout)
+        # 同步在暫存目錄執行，當下主目錄的檔案一個字都沒變
+        with open(os.path.join(self.home, "sync-cwd")) as f:
+            self.assertEqual(f.read().strip(), self.stage)
+        with open(os.path.join(self.home, "main-during-sync")) as f:
+            self.assertEqual(f.read(), "# demo\n")
+        # 閘門在暫存目錄執行，讀寫的是主目錄的 security-reports/
+        with open(os.path.join(self.repo, "security-reports/gate-ran")) as f:
+            self.assertEqual(f.read(), self.stage)
+        # 套用：修改、刪除、集合內連結都進到主目錄，產生一個 commit
+        self.assertEqual(self.main_file("external/demo/SKILL.md"), "# demo\nchanged\n")
+        self.assertFalse(os.path.exists(os.path.join(self.repo, "external/demo/old.md")))
+        self.assertEqual(os.readlink(os.path.join(self.repo, "external/demo/alias.md")), "SKILL.md")
+        log = subprocess.run(["git", "-C", self.repo, "rev-list", f"{self.before}..HEAD"],
+                             capture_output=True, text=True, check=True).stdout.split()
+        self.assertEqual(len(log), 1, proc.stdout)
+        show = subprocess.run(["git", "-C", self.repo, "show", "--name-status", "--format=", "HEAD"],
+                              capture_output=True, text=True, check=True).stdout
+        self.assertIn("D\texternal/demo/old.md", show)
+        self.assertIn("A\texternal/demo/alias.md", show)
+        self.assertTrue(os.path.exists(os.path.join(self.repo, "link-ran")))
+        # 同步失敗清單複製回主目錄
+        self.assertIn("foo", self.main_file(".last-sync-failures"))
+
+    def test_existing_stage_is_reset_before_sync(self):
+        os.makedirs(os.path.dirname(self.stage))
+        subprocess.run(["git", "-C", self.repo, "worktree", "add", "-q", "--detach", self.stage, "HEAD"],
+                       check=True, capture_output=True)
+        with open(os.path.join(self.stage, "external/demo/SKILL.md"), "a") as f:
+            f.write("leftover from an earlier run\n")
+        with open(os.path.join(self.stage, "external/demo/stray.md"), "w") as f:
+            f.write("stray\n")
+        self.run_auto()
+        self.assertEqual(self.main_file("external/demo/SKILL.md"), "# demo\nchanged\n")
+        self.assertFalse(os.path.exists(os.path.join(self.repo, "external/demo/stray.md")))
+
+    def test_occupied_stage_path_stops_without_deleting(self):
+        os.makedirs(self.stage)
+        with open(os.path.join(self.stage, "keep.txt"), "w") as f:
+            f.write("not a worktree\n")
+        proc = self.run_auto()
+        self.assertNotEqual(proc.returncode, 0, proc.stdout)
+        self.assertTrue(os.path.exists(os.path.join(self.stage, "keep.txt")))
+        self.assert_main_untouched(proc)
+
+
+MOVING_HEAD_GATE = PASSING_GATE + '''import subprocess
+subprocess.run(["git", "-C", os.path.join(os.environ["HOME"], "Documents/github/dash-skills"),
+                "commit", "-q", "--allow-empty", "-m", "made during the run"], check=True)
+'''
+
+
+class AutoUpdateMovedHeadTest(AutoUpdateBase):
+    GATE = MOVING_HEAD_GATE
+
+    def test_head_change_during_run_stops_apply(self):
+        proc = self.run_auto()
+        self.assertIn("[gate] pass", proc.stdout)
+        self.assertNotEqual(proc.returncode, 0, proc.stdout)
+        self.assertEqual(self.main_file("external/demo/SKILL.md"), "# demo\n")
+        self.assertTrue(os.path.exists(os.path.join(self.repo, "external/demo/old.md")))
+        self.assertFalse(os.path.exists(os.path.join(self.repo, "link-ran")))
+
+
+# 同步結束後還留著一個背景程序，在閘門檢查期間寫檔
+STRAGGLER_SYNC = SYNC_STUB + '''( sleep 1; echo late-write >> external/demo/SKILL.md ) &
+'''
+SLOW_GATE = PASSING_GATE + '''import time
+time.sleep(3)
+'''
+
+
+class AutoUpdateStragglerTest(AutoUpdateBase):
+    GATE = SLOW_GATE
+    SYNC = STRAGGLER_SYNC
+
+    def test_background_writer_from_sync_does_not_reach_main(self):
+        proc = self.run_auto()
+        self.assertIn("[gate] pass", proc.stdout)
+        self.assertNotIn("late-write", self.main_file("external/demo/SKILL.md"))
 
 
 class DiffParseTest(GateTest):
@@ -419,22 +547,50 @@ os.kill(os.getppid(), signal.SIGTERM)
 '''
 
 
-class AutoUpdateInterruptTest(AutoUpdateGateExitTest):
-    def setUp(self):
-        super().setUp()
-        with open(os.path.join(self.repo, "scripts/gate-external.py"), "w") as f:
-            f.write(INTERRUPTED_GATE)
+class AutoUpdateInterruptTest(AutoUpdateBase):
+    GATE = INTERRUPTED_GATE
 
     def test_interrupted_run_restores_external(self):
-        proc = subprocess.run(["bash", os.path.join(self.repo, "scripts/auto-update.sh")],
-                              env=self.env, capture_output=True, text=True, errors="replace", timeout=120)
+        proc = self.run_auto()
         self.assertIn("[gate] interrupted", proc.stdout)
-        with open(os.path.join(self.repo, "external/demo/SKILL.md")) as f:
-            self.assertEqual(f.read(), "# demo\n")
-        self.assertFalse(os.path.exists(os.path.join(self.repo, ".last-update")))
+        self.assert_main_untouched(proc)
 
-    def test_crashed_gate_restores_and_skips_commit(self):
-        """父類別的測試換成中斷版閘門後不適用，這裡不重跑。"""
+
+class ReportDirOverrideTest(GateTest):
+    """DASH_SKILLS_REPORT_DIR：排程在暫存目錄跑閘門時，放行清單與隔離區用主目錄那一份。"""
+
+    def test_gate_uses_override_for_allow_list_and_quarantine(self):
+        other = os.path.realpath(tempfile.mkdtemp(prefix="reports-"))
+        self.addCleanup(shutil.rmtree, other, ignore_errors=True)
+        self.write("external/demo/SKILL.md", HIJACK, "a")
+        out = self.gate(DASH_SKILLS_REPORT_DIR=other)
+        self.assertIn("隔離 1", out)
+        self.assertTrue(os.listdir(os.path.join(other, "quarantine")))
+        self.assertFalse(os.path.exists(self.path("security-reports/quarantine")))
+        # 照印出的指令把放行列寫進覆寫的目錄，重跑就通過
+        cmd = [ln for ln in out.splitlines() if "誤報放行：" in ln][0].split("誤報放行：", 1)[1]
+        os.makedirs(self.path("security-reports"), exist_ok=True)
+        subprocess.run(["bash", "-c", cmd], cwd=self.repo, check=True)
+        os.replace(self.path("security-reports/gate-allow.tsv"), os.path.join(other, "gate-allow.tsv"))
+        self.write("external/demo/SKILL.md", HIJACK, "a")
+        self.assertIn("通過 1", self.gate(DASH_SKILLS_REPORT_DIR=other))
+
+    def test_scan_split_reads_override_allow_list(self):
+        other = os.path.realpath(tempfile.mkdtemp(prefix="reports-"))
+        self.addCleanup(shutil.rmtree, other, ignore_errors=True)
+        self.write("external/demo/blob.bin", "v1")
+        report = os.path.join(other, "r.json")
+        with open(report, "w") as f:
+            json.dump({"analysis_completeness": {
+                "partially_inspected_files": 0, "entirely_uninspected_files": 0,
+                "scope_exclusions": [{"path": "blob.bin", "reason_code": "binary_content"}]}}, f)
+        env = dict(os.environ, DASH_SKILLS_REPORT_DIR=other)
+        subprocess.run([sys.executable, self.path("scripts/scan-split.py"), "--accept", report, "demo"],
+                       env=env, check=True, capture_output=True)
+        self.assertTrue(os.path.exists(os.path.join(other, "scan-incomplete-allow.tsv")))
+        check = [sys.executable, self.path("scripts/scan-split.py"), "--complete-check", report, "demo"]
+        self.assertEqual(subprocess.run(check, env=env, capture_output=True).returncode, 0)
+        self.assertEqual(subprocess.run(check, capture_output=True).returncode, 1)
 
 
 if __name__ == "__main__":

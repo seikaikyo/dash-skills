@@ -17,11 +17,11 @@ Claude Code skills 集合：自建 skill 加上收錄的外部 skill，外部 sk
 
 ## 每日同步流程
 
-`scripts/auto-update.sh` 由 launchd 每天早上 6 點執行，分五步：
+`scripts/auto-update.sh` 由 launchd 每天早上 6 點執行，分五步。前三步在 repo 的第二個工作目錄（`~/Library/Caches/dash-skills-staging`，每次重設成目前的 HEAD）進行，主目錄的 `external/` 在閘門通過前不會被寫入：
 
 1. 同步：`scripts/update-external.sh` 從上游拉外部 skill，再由 `scripts/pin-refs.py` 把曾遭入侵或會被改指向的引用釘死
 2. 清理與遮蔽：刪掉 iCloud 衝突產生的重複檔，把外部 skill 裡金鑰格式的範例值遮蔽掉（GitHub 推送保護連範例值都會擋）
-3. 裝載前閘門：`scripts/gate-external.py` 檢查有變更的外部 skill，並呼叫 `scripts/scan-skills.sh` 做靜態安檢；不合格的退回上一個已提交版本。之後 `scripts/link.sh` 重建 `~/.claude/skills` 的符號連結
+3. 裝載前閘門：`scripts/gate-external.py` 檢查有變更的外部 skill，並呼叫 `scripts/scan-skills.sh` 做靜態安檢；不合格的退回上一個已提交版本。放行清單與掃描基準用主目錄的 `security-reports/`。通過後從 git 物件套用到主目錄的 `external/`，再由 `scripts/link.sh` 重建 `~/.claude/skills` 的符號連結
 4. 提交並推送，訊息固定為 `chore: daily external skills sync (日期)`
 5. 順帶備份另一個私人設定 repo
 

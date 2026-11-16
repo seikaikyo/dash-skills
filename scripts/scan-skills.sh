@@ -18,7 +18,8 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
 EXTERNAL_DIR="$REPO_DIR/external"
-REPORT_DIR="$REPO_DIR/security-reports"
+# 排程在暫存工作目錄執行時，報告、基準與告警紀錄用主目錄那一份（DASH_SKILLS_REPORT_DIR）
+REPORT_DIR="${DASH_SKILLS_REPORT_DIR:-$REPO_DIR/security-reports}"
 FINDINGS_LOG="$REPORT_DIR/findings.log"
 SCAN_TIMEOUT="${SCAN_SKILLS_TIMEOUT:-240}"   # 每目錄逾時秒數，補掃大目錄時可環境變數拉長
 # SkillSpector 2.13 起整體時間上限可用環境變數調（預設 60 秒）。設成比外層逾時短，

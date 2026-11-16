@@ -46,7 +46,8 @@ import tempfile
 from datetime import date
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPORT_DIR = os.path.join(REPO, "security-reports")
+# 排程在暫存工作目錄執行閘門，放行清單、基準與隔離區要用主目錄那一份
+REPORT_DIR = os.environ.get("DASH_SKILLS_REPORT_DIR") or os.path.join(REPO, "security-reports")
 QUARANTINE_DIR = os.path.join(REPORT_DIR, "quarantine")
 QUARANTINE_LOG = os.path.join(REPORT_DIR, "quarantine.log")
 ALLOW_FILE = os.path.join(REPORT_DIR, "gate-allow.tsv")
